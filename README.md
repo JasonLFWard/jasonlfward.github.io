@@ -1,2 +1,1726 @@
-# jasonlfward.github.io
-webpage
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro OS Portfolio & CMS</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React 18, ReactDOM & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'xp-portfolio-app';
+    let firebaseConfig = null;
+    try {
+      if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        firebaseConfig = JSON.parse(__firebase_config);
+      }
+    } catch(e) {}
+
+    window.FirebaseBridge = {
+      appId,
+      firebaseConfig,
+      initializeApp,
+      getAuth,
+      signInAnonymously,
+      signInWithCustomToken,
+      onAuthStateChanged,
+      getFirestore,
+      doc,
+      setDoc,
+      onSnapshot,
+      getDoc
+    };
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
+
+    :root {
+      --xp-bg: #ece9d8;
+      --xp-blue: #0055e5;
+      --xp-title-gradient: linear-gradient(to bottom, #0058e6 0%, #3a93ff 4%, #288eff 6%, #127dff 8%, #036bfe 10%, #005ce3 14%, #003db3 100%);
+      --xp-title-text: #ffffff;
+      --xp-taskbar: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
+      --xp-start-btn: linear-gradient(to bottom, #4c9900 0%, #53a600 10%, #3c8000 50%, #3c8000 90%, #295700 100%);
+    }
+
+    body {
+      font-family: 'Tahoma', sans-serif;
+      margin: 0; padding: 0; overflow: hidden;
+      height: 100vh; width: 100vw;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .desktop {
+      width: 100%; height: calc(100vh - 40px);
+      position: relative; padding: 15px;
+    }
+
+    .desktop-icon {
+      position: absolute;
+      display: flex; flex-direction: column; align-items: center;
+      width: 84px; cursor: move; color: white;
+      text-shadow: 1px 1px 2px black; font-size: 11px; text-align: center;
+      padding: 6px 4px; border: 1px dashed transparent; border-radius: 3px;
+      z-index: 5;
+    }
+    .desktop-icon:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
+    .desktop-icon.selected { background: rgba(11, 97, 255, 0.4); border-color: rgba(255,255,255,0.8); }
+    .desktop-icon svg, .desktop-icon img { width: 38px; height: 38px; margin-bottom: 4px; filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.6)); pointer-events: none; }
+
+    .xp-window {
+      position: absolute; display: flex; flex-direction: column;
+      background: var(--xp-bg);
+      border: 3px solid var(--xp-blue);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.4);
+      min-width: 280px; min-height: 180px;
+    }
+
+    .xp-window.classic-win {
+      border: 2px solid;
+      border-color: #ffffff #808080 #808080 #ffffff;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      box-shadow: 2px 2px 0px #000;
+    }
+
+    .xp-window.maximized {
+      top: 0 !important; left: 0 !important;
+      width: 100% !important; height: calc(100vh - 40px) !important;
+      border-radius: 0; border: none; resize: none;
+    }
+
+    .xp-titlebar {
+      background: var(--xp-title-gradient); color: var(--xp-title-text);
+      padding: 3px 6px; font-weight: bold; font-size: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: move;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      flex-shrink: 0;
+    }
+    .classic-win .xp-titlebar {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    .xp-controls { display: flex; gap: 2px; }
+    .xp-controls button {
+      width: 21px; height: 21px; font-size: 11px; font-weight: bold;
+      border: 1px solid #fff; border-radius: 3px;
+      background-color: #d7d1c5; color: #222;
+      display: flex; justify-content: center; align-items: center;
+      cursor: pointer; box-shadow: inset -1px -1px 2px rgba(0,0,0,0.5), inset 1px 1px 2px rgba(255,255,255,0.8);
+    }
+    .classic-win .xp-controls button {
+      border: 2px solid; border-color: #ffffff #808080 #808080 #ffffff;
+      border-radius: 0; box-shadow: none;
+    }
+    .xp-controls button:active { box-shadow: inset 1px 1px 2px rgba(0,0,0,0.6); }
+    .xp-controls button.close { background-color: #e44f2c; color: white; }
+    .xp-controls button.close:hover { background-color: #ff3b10; }
+
+    .xp-menu-bar {
+      background: var(--xp-bg); padding: 2px 4px; font-size: 11px; color: #000;
+      border-bottom: 1px solid #c0c0c0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+      position: relative;
+    }
+
+    .xp-menu-item { padding: 3px 8px; cursor: pointer; border: 1px solid transparent; position: relative; }
+    .xp-menu-item:hover, .xp-menu-item.active { background: #316ac5; color: white; }
+
+    .xp-menu-dropdown {
+      position: absolute; top: 100%; left: 0; background: #fff; color: #000;
+      border: 1px solid #7f9db9; box-shadow: 2px 2px 8px rgba(0,0,0,0.25);
+      min-width: 160px; z-index: 1000; display: flex; flex-direction: column; padding: 2px;
+    }
+    .xp-menu-dropdown-item { padding: 5px 10px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .xp-menu-dropdown-item:hover { background: #316ac5; color: white; }
+
+    .xp-content { flex-grow: 1; background: #fff; margin: 2px; border: 1px solid #7f9db9; padding: 10px; overflow-y: auto; }
+    .xp-resize-handle {
+      position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; cursor: se-resize; z-index: 50;
+      background: linear-gradient(135deg, transparent 50%, #888 50%, #888 60%, transparent 60%, transparent 75%, #888 75%);
+    }
+
+    .layout-grid-large { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; align-items: start; }
+    .layout-grid-compact { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; align-items: start; }
+    .layout-grid-flat { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 3px; align-items: start; }
+    .layout-grid-masonry { columns: 3 160px; column-gap: 10px; }
+    .layout-grid-masonry .photo-item-clean { break-inside: avoid; margin-bottom: 10px; }
+
+    .layout-list { display: flex; flex-direction: column; gap: 6px; }
+    .layout-list .photo-item-list { display: flex; align-items: center; gap: 12px; padding: 6px; border: 1px solid #eee; cursor: pointer; }
+    .layout-list .photo-item-list:hover { background: #e8f2fe; border-color: var(--xp-blue); }
+    .layout-list .photo-item-list img { width: 56px; height: 42px; object-fit: cover; border-radius: 2px; }
+
+    .photo-details-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+    .photo-details-table th { background: #f0f0e8; padding: 6px 8px; border-bottom: 1px solid #ccc; color: #444; font-weight: bold; }
+    .photo-details-table td { padding: 6px 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+    .photo-details-table tr:hover { background: #e8f2fe; }
+
+    .photo-item-clean { position: relative; background: #000; overflow: hidden; cursor: pointer; transition: transform 0.15s ease; }
+    .photo-item-clean:hover { transform: scale(1.02); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .photo-item-clean-wrap { width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #111; }
+    .layout-grid-large .photo-item-clean-wrap { height: 140px; }
+    .layout-grid-compact .photo-item-clean-wrap { height: 90px; }
+    .layout-grid-flat .photo-item-clean-wrap { height: 120px; }
+    .layout-grid-masonry .photo-item-clean-wrap { height: auto; }
+    .photo-item-clean img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .layout-grid-masonry .photo-item-clean img { height: auto; object-fit: contain; }
+
+    .taskbar {
+      background: var(--xp-taskbar); height: 40px; width: 100%;
+      position: absolute; bottom: 0; left: 0; display: flex; align-items: center; z-index: 99999;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+    }
+    .start-btn {
+      background: var(--xp-start-btn); color: white; font-weight: bold; font-style: italic; font-size: 14px; height: 100%;
+      padding: 0 12px 0 8px; border: none; border-radius: 0 15px 15px 0;
+      display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    }
+    .start-btn:hover { filter: brightness(1.1); }
+    .taskbar-items { display: flex; flex-grow: 1; padding: 0 8px; gap: 4px; overflow-x: auto; }
+    .taskbar-item {
+      background: linear-gradient(to bottom, #3a84f3 0%, #1e53c4 100%); color: white; padding: 4px 10px; border-radius: 3px; font-size: 11px; cursor: pointer;
+      min-width: 110px; max-width: 180px; display: flex; align-items: center; gap: 6px; border: 1px solid #16367c;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .taskbar-item.active { background: linear-gradient(to bottom, #1e53c4 0%, #11368a 100%); font-weight: normal; }
+    .system-tray {
+      background: linear-gradient(to bottom, #19a1e6 0%, #0c71cc 100%); height: 100%; padding: 0 12px; display: flex; align-items: center; gap: 10px; color: white; font-size: 11px; border-left: 1px solid #16367c;
+    }
+
+    .start-menu {
+      position: absolute; bottom: 40px; left: 0; width: 360px; background: #fff; border: 2px solid var(--xp-blue);
+      border-top-right-radius: 8px; box-shadow: 4px 4px 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; z-index: 100000; overflow: hidden;
+    }
+    .start-menu-header { background: var(--xp-blue); color: white; padding: 10px 12px; display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 14px; }
+    .start-menu-body { display: flex; height: 280px; }
+    .start-menu-left { width: 50%; padding: 8px; display: flex; flex-direction: column; gap: 4px; background: #fff; border-right: 1px solid #dcdcdc; }
+    .start-menu-right { width: 50%; padding: 8px; display: flex; flex-direction: column; gap: 4px; background: #d3e5fa; }
+    .start-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; font-size: 11px; color: #333; cursor: pointer; border-radius: 3px; }
+    .start-item:hover { background: #316ac5; color: white; }
+    .start-menu-footer { background: linear-gradient(to bottom, #4282d6 0%, #2058ad 100%); padding: 8px 12px; display: flex; justify-content: flex-end; gap: 12px; }
+    .start-footer-btn { background: transparent; border: none; color: white; font-size: 11px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const playXpSound = (type) => {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        if (type === 'click') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.04);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(ctx.currentTime + 0.04);
+        } else if (type === 'error') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, ctx.currentTime);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(ctx.currentTime + 0.25);
+        } else if (type === 'recycle') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(400, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.18);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(ctx.currentTime + 0.18);
+        } else if (type === 'notify') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(ctx.currentTime + 0.25);
+        }
+      } catch(e) {}
+    };
+
+    const OS_THEMES = [
+      { 
+        id: "xp", 
+        name: "Windows XP Professional",
+        defaultBg: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80",
+        subSchemes: [
+          { id: "luna", name: "Luna (Classic Blue)", primary: "#0055e5" },
+          { id: "olive", name: "Homestead (Olive Green)", primary: "#839b5c" },
+          { id: "silver", name: "Metallic (Silver)", primary: "#78849b" },
+          { id: "royale", name: "Royale (Energy Blue)", primary: "#1f2937" }
+        ]
+      },
+      { 
+        id: "w2k", 
+        name: "Windows 2000 Professional", 
+        defaultBg: "#3A6EA5",
+        subSchemes: [
+          { id: "classic", name: "Standard 2000 Gray", primary: "#000080" },
+          { id: "marine", name: "Marine Teal", primary: "#004040" },
+          { id: "plum", name: "Plum Deep Purple", primary: "#400040" },
+          { id: "charcoal", name: "Charcoal Dark", primary: "#222222" }
+        ]
+      },
+      { 
+        id: "w98", 
+        name: "Windows 98 Classic", 
+        defaultBg: "#008080",
+        subSchemes: [
+          { id: "standard", name: "Windows Standard", primary: "#000080" },
+          { id: "brick", name: "Red Brick", primary: "#800000" },
+          { id: "highcontrast", name: "High Contrast Black", primary: "#000000" }
+        ]
+      }
+    ];
+
+    const FEATURED_25_PHOTOS = [
+      { id: "p1", url: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80", caption: "Golden Dunes - 35mm Film", date: "2024-05-12", size: "3.4 MB" },
+      { id: "p2", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80", caption: "Pacific Horizon Waters", date: "2024-06-01", size: "4.1 MB" },
+      { id: "p3", url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80", caption: "Alpine Echoes Mountain Peak", date: "2024-06-18", size: "5.2 MB" },
+      { id: "p4", url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80", caption: "Rolling Hills Bliss Meadow", date: "2024-07-04", size: "2.8 MB" },
+      { id: "p5", url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", caption: "Misty Mountain Valley", date: "2024-07-22", size: "3.9 MB" },
+      { id: "p6", url: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=800&q=80", caption: "Yosemite Granite Wilderness", date: "2024-08-05", size: "4.6 MB" },
+      { id: "p7", url: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80", caption: "Tokyo Rain Night Lights", date: "2024-08-14", size: "3.8 MB" },
+      { id: "p8", url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80", caption: "Architectural Shadows & Angles", date: "2024-08-20", size: "2.9 MB" },
+      { id: "p9", url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80", caption: "Portrait in Golden Hour Sunlight", date: "2024-09-02", size: "4.3 MB" },
+      { id: "p10", url: "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=800&q=80", caption: "Silent Winter Pines & Snow", date: "2024-09-15", size: "5.0 MB" },
+      { id: "p11", url: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80", caption: "Forest Canopy Light Rays", date: "2024-09-28", size: "3.7 MB" },
+      { id: "p12", url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=80", caption: "Venice Canal Reflections", date: "2024-10-05", size: "4.4 MB" },
+      { id: "p13", url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80", caption: "Vintage Sports Coupe Detail", date: "2024-10-12", size: "3.1 MB" },
+      { id: "p14", url: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80", caption: "Analog Film Grain Portrait", date: "2024-10-19", size: "2.7 MB" },
+      { id: "p15", url: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=800&q=80", caption: "Dramatic Coastal Wave Crash", date: "2024-11-01", size: "4.8 MB" },
+      { id: "p16", url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80", caption: "Nordic Starry Mountain Ridge", date: "2024-11-10", size: "5.5 MB" },
+      { id: "p17", url: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80", caption: "Classic SLR Lens & Film Body", date: "2024-11-18", size: "3.3 MB" },
+      { id: "p18", url: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80", caption: "Desert Horizon Roadtrip", date: "2024-12-02", size: "4.0 MB" },
+      { id: "p19", url: "https://images.unsplash.com/photo-1477959858617-67f30ac4ce78?auto=format&fit=crop&w=800&q=80", caption: "Metropolis Skyline Twilight", date: "2024-12-14", size: "4.5 MB" },
+      { id: "p20", url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80", caption: "Autumn Woodland Gold Path", date: "2024-12-28", size: "3.6 MB" },
+      { id: "p21", url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80", caption: "Solitary Oak Tree Meadow", date: "2025-01-08", size: "2.8 MB" },
+      { id: "p22", url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80", caption: "Yosemite Mirror Lake Reflection", date: "2025-01-20", size: "4.9 MB" },
+      { id: "p23", url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=800&q=80", caption: "Emerald Mossy Forest Stream", date: "2025-02-01", size: "3.8 MB" },
+      { id: "p24", url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", caption: "Green Valley Sunbeam Glow", date: "2025-02-14", size: "4.2 MB" },
+      { id: "p25", url: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=800&q=80", caption: "Black and White Studio Portrait", date: "2025-02-28", size: "3.0 MB" }
+    ];
+
+    const DEFAULT_DATA = {
+      settings: {
+        siteTitle: "Jason Ward Photography Portfolio",
+        username: "Administrator",
+        adminPassword: "admin",
+        osTheme: "xp",
+        subScheme: "luna",
+        desktopBg: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80",
+        themeWallpapers: {
+          xp: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80",
+          w2k: "#3A6EA5",
+          w98: "#008080"
+        },
+        enableSounds: true
+      },
+      desktopIcons: {
+        "sys-computer": { x: 15, y: 15 },
+        "sys-recyclebin": { x: 15, y: 110 },
+        "win-readme": { x: 15, y: 205 },
+        "win-1": { x: 15, y: 300 },
+        "win-2": { x: 15, y: 395 }
+      },
+      recycleBin: [],
+      windows: [
+        {
+          id: "sys-computer",
+          title: "My Computer & Control Panel",
+          type: "system",
+          x: 100, y: 60, width: 620, height: 460,
+          isOpen: false,
+          isOpenOnStart: false,
+          isMinimized: false,
+          isMaximized: false,
+          zIndex: 100
+        },
+        {
+          id: "sys-recyclebin",
+          title: "Recycle Bin",
+          type: "system",
+          x: 140, y: 100, width: 480, height: 320,
+          isOpen: false,
+          isOpenOnStart: false,
+          isMinimized: false,
+          isMaximized: false,
+          zIndex: 100
+        },
+        {
+          id: "win-readme",
+          title: "README.txt",
+          type: "txt",
+          x: 140, y: 80, width: 480, height: 340,
+          layout: "text",
+          defaultViewMode: "large",
+          viewMode: "large",
+          isOpen: true,
+          isOpenOnStart: true,
+          isMinimized: false,
+          isMaximized: false,
+          zIndex: 12,
+          content: "Welcome to Jason Ward Photography Portfolio!\n\nThis website is an interactive retro operating system portfolio.\n\nTips for visitors:\n• Right-click any photograph to set it as your desktop background, move it between folders, or open in full view!\n• Click any photo thumbnail in a folder to open it in the Photo Viewer.\n• Double-click desktop icons to open folders and documents.\n• Drag desktop icons around on the desktop grid to organize your layout.\n• Drag windows by their titlebars or resize them from the bottom-right corner.\n• Open 'My Computer' or 'Control Panel' to change theme styles, wallpapers, or enter Admin Password to manage portfolio content."
+        },
+        {
+          id: "win-1",
+          title: "Featured Photography",
+          type: "folder",
+          x: 60, y: 30, width: 820, height: 540,
+          layout: "masonry",
+          defaultViewMode: "masonry",
+          viewMode: "masonry",
+          isOpen: false,
+          isOpenOnStart: false,
+          isMinimized: false,
+          isMaximized: false,
+          zIndex: 10,
+          photos: FEATURED_25_PHOTOS
+        },
+        {
+          id: "win-2",
+          title: "About The Photographer",
+          type: "txt",
+          x: 180, y: 90, width: 440, height: 360,
+          layout: "text",
+          defaultViewMode: "large",
+          viewMode: "large",
+          isOpen: false,
+          isOpenOnStart: false,
+          isMinimized: false,
+          isMaximized: false,
+          zIndex: 11,
+          content: "Welcome to my photography portfolio!\n\nI am an analog visual artist specializing in landscape photography, vintage film color palettes, and nostalgic web experiences."
+        }
+      ]
+    };
+
+    const ThemeFolderIcon = ({ theme = 'xp', className = "w-10 h-10" }) => {
+      if (theme === 'xp') {
+        return (
+          <svg viewBox="0 0 48 48" className={className} fill="none">
+            <path d="M4 10C4 7.8 5.8 6 8 6H17.2C18.2 6 19.2 6.4 20 7.2L23.8 11H40C42.2 11 44 12.8 44 15V38C44 40.2 42.2 42 40 42H8C5.8 42 4 40.2 4 38V10Z" fill="#FDE047"/>
+            <path d="M44 18H4V38C4 40.2 5.8 42 8 42H40C42.2 42 44 40.2 44 38V18Z" fill="#FACC15"/>
+          </svg>
+        );
+      }
+      return (
+        <svg viewBox="0 0 48 48" className={className} fill="none">
+          <path d="M4 8H20L24 12H44V40H4V8Z" fill="#D4D0C8" stroke="#808080" strokeWidth="2"/>
+          <path d="M6 14H42V38H6V14Z" fill="#FFE082" stroke="#B28F00" strokeWidth="1"/>
+          <path d="M4 14H44V38H4V14Z" fill="#FFECB3" stroke="#808080" strokeWidth="1"/>
+        </svg>
+      );
+    };
+
+    const ThemeComputerIcon = ({ theme = 'xp', className = "w-10 h-10" }) => {
+      if (theme === 'xp') {
+        return (
+          <svg viewBox="0 0 48 48" className={className} fill="none">
+            <rect x="6" y="8" width="36" height="26" rx="2" fill="#E2E8F0" stroke="#475569" strokeWidth="2"/>
+            <rect x="10" y="12" width="28" height="18" fill="#38BDF8"/>
+            <path d="M14 38H34M24 34V38" stroke="#475569" strokeWidth="3"/>
+          </svg>
+        );
+      }
+      return (
+        <svg viewBox="0 0 48 48" className={className} fill="none">
+          <rect x="4" y="6" width="40" height="28" rx="1" fill="#D4D0C8" stroke="#000000" strokeWidth="2"/>
+          <rect x="8" y="10" width="32" height="20" fill="#000080" stroke="#808080" strokeWidth="1"/>
+          <path d="M12 34H36M24 34V40M16 40H32" stroke="#000000" strokeWidth="2"/>
+        </svg>
+      );
+    };
+
+    const ThemeNotepadIcon = ({ theme = 'xp', className = "w-10 h-10" }) => {
+      if (theme === 'xp') {
+        return (
+          <svg viewBox="0 0 48 48" className={className} fill="none">
+            <rect x="10" y="6" width="28" height="36" rx="2" fill="#FFFFFF" stroke="#3B82F6" strokeWidth="2"/>
+            <path d="M16 14H32M16 20H32M16 26H28" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round"/>
+            <circle cx="32" cy="32" r="6" fill="#2563EB"/>
+            <path d="M30 32L34 32" stroke="#FFFFFF" strokeWidth="2"/>
+          </svg>
+        );
+      }
+      return (
+        <svg viewBox="0 0 48 48" className={className} fill="none">
+          <rect x="10" y="6" width="28" height="36" fill="#FFFFFF" stroke="#000000" strokeWidth="2"/>
+          <rect x="10" y="6" width="28" height="8" fill="#000080"/>
+          <path d="M16 18H32M16 24H32M16 30H26" stroke="#000000" strokeWidth="1.5"/>
+        </svg>
+      );
+    };
+
+    const ThemeRecycleBinIcon = ({ theme = 'xp', isFull = false, className = "w-10 h-10" }) => {
+      return (
+        <svg viewBox="0 0 48 48" className={className} fill="none">
+          <rect x="12" y="14" width="24" height="28" rx="2" fill={isFull ? "#94A3B8" : "#E2E8F0"} stroke="#334155" strokeWidth="2"/>
+          <path d="M8 12H40M18 12V8H30V12" stroke="#334155" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M18 20V34M24 20V34M30 20V34" stroke={isFull ? "#0055e5" : "#64748B"} strokeWidth="2" strokeLinecap="round"/>
+          {isFull && <circle cx="24" cy="26" r="4" fill="#EF4444"/>}
+        </svg>
+      );
+    };
+
+    const generateXPCss = (settings = {}) => {
+      const os = settings.osTheme || 'xp';
+      const sub = settings.subScheme || 'luna';
+
+      let primaryColor = '#0055e5';
+      let titleGradient = 'linear-gradient(to bottom, #0058e6 0%, #3a93ff 4%, #288eff 6%, #127dff 8%, #036bfe 10%, #005ce3 14%, #003db3 100%)';
+      let titleText = '#ffffff';
+      let taskbarBg = 'linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%)';
+      let startBtnBg = 'linear-gradient(to bottom, #4c9900 0%, #53a600 10%, #3c8000 50%, #3c8000 90%, #295700 100%)';
+      let bgWindow = '#ece9d8';
+
+      if (os === 'xp') {
+        if (sub === 'olive') {
+          primaryColor = '#839b5c';
+          titleGradient = 'linear-gradient(to bottom, #d4db9c 0%, #b3c178 10%, #8ca152 50%, #6e8238 100%)';
+          titleText = '#000000';
+          taskbarBg = 'linear-gradient(to bottom, #d6dcc6 0%, #b2bd96 9%, #96a86c 18%, #738548 100%)';
+          bgWindow = '#e2e6d6';
+        } else if (sub === 'silver') {
+          primaryColor = '#78849b';
+          titleGradient = 'linear-gradient(to bottom, #fcfcfc 0%, #cfd2d8 10%, #b2b6bf 50%, #90949e 100%)';
+          titleText = '#000000';
+          taskbarBg = 'linear-gradient(to bottom, #e2e2e2 0%, #bebebe 9%, #9c9ea5 18%, #7e8087 100%)';
+          bgWindow = '#e8e8e8';
+        } else if (sub === 'royale') {
+          primaryColor = '#1f2937';
+          titleGradient = 'linear-gradient(to bottom, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%)';
+          startBtnBg = 'linear-gradient(to bottom, #f97316 0%, #ea580c 50%, #c2410c 100%)';
+          taskbarBg = 'linear-gradient(to bottom, #111827 0%, #1f2937 100%)';
+          bgWindow = '#e5e9f0';
+        }
+      } else if (os === 'w2k') {
+        bgWindow = '#d4d0c8';
+        taskbarBg = '#d4d0c8';
+        startBtnBg = '#d4d0c8';
+        if (sub === 'marine') {
+          primaryColor = '#004040';
+          titleGradient = 'linear-gradient(to right, #004040 0%, #008080 100%)';
+        } else if (sub === 'plum') {
+          primaryColor = '#400040';
+          titleGradient = 'linear-gradient(to right, #400040 0%, #800080 100%)';
+        } else if (sub === 'charcoal') {
+          primaryColor = '#222222';
+          titleGradient = 'linear-gradient(to right, #222222 0%, #555555 100%)';
+        } else {
+          primaryColor = '#000080';
+          titleGradient = 'linear-gradient(to right, #000080 0%, #1084d0 100%)';
+        }
+      } else if (os === 'w98') {
+        bgWindow = '#c0c0c0';
+        taskbarBg = '#c0c0c0';
+        startBtnBg = '#c0c0c0';
+        if (sub === 'brick') {
+          primaryColor = '#800000';
+          titleGradient = 'linear-gradient(to right, #800000 0%, #e04040 100%)';
+        } else if (sub === 'highcontrast') {
+          primaryColor = '#000000';
+          titleGradient = '#000000';
+          titleText = '#ffff00';
+        } else {
+          primaryColor = '#000080';
+          titleGradient = 'linear-gradient(to right, #000080 0%, #1084d0 100%)';
+        }
+      }
+
+      return `
+        :root {
+          --xp-bg: ${bgWindow};
+          --xp-blue: ${primaryColor};
+          --xp-title-gradient: ${titleGradient};
+          --xp-title-text: ${titleText};
+          --xp-taskbar: ${taskbarBg};
+          --xp-start-btn: ${startBtnBg};
+        }
+      `;
+    };
+
+    function App() {
+      const [data, setData] = useState(() => {
+        try {
+          const saved = localStorage.getItem('xp_portfolio_data');
+          return saved ? JSON.parse(saved) : DEFAULT_DATA;
+        } catch (e) {
+          return DEFAULT_DATA;
+        }
+      });
+
+      const [firebaseUser, setFirebaseUser] = useState(null);
+      const [isSyncing, setIsSyncing] = useState(false);
+
+      const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
+      const [adminPasswordInput, setAdminPasswordInput] = useState('');
+      const [adminAuthError, setAdminAuthError] = useState('');
+
+      const [selectedWindowId, setSelectedWindowId] = useState('win-1');
+      const [selectedIconId, setSelectedIconId] = useState(null);
+      const [myComputerTab, setMyComputerTab] = useState('drives');
+      const [adminTab, setAdminTab] = useState('sections');
+      const [selectedAdminWinId, setSelectedAdminWinId] = useState('win-1');
+
+      const [viewerState, setViewerState] = useState({
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        x: 120, y: 50, width: 720, height: 500,
+        zIndex: 200,
+        photos: [],
+        currentIndex: 0,
+        title: ''
+      });
+
+      const [highestZIndex, setHighestZIndex] = useState(120);
+      const [sysTime, setSysTime] = useState('');
+      const [isStartOpen, setIsStartOpen] = useState(false);
+      const [showShutdownModal, setShowShutdownModal] = useState(false);
+
+      const [contextMenu, setContextMenu] = useState({
+        visible: false,
+        type: 'photo',
+        x: 0, y: 0, photo: null, sourceWinId: null
+      });
+
+      const [recycleConfirmItem, setRecycleConfirmItem] = useState(null);
+
+      const [draggingWin, setDraggingWin] = useState(null);
+      const [resizingWin, setResizingWin] = useState(null);
+      const [draggingIconId, setDraggingIconId] = useState(null);
+      const dragStartPos = useRef({ x: 0, y: 0, winX: 0, winY: 0, winW: 0, winH: 0, iconX: 0, iconY: 0 });
+
+      const directAddFileInputRef = useRef(null);
+      const currentUploadingWinId = useRef(null);
+
+      useEffect(() => {
+        const FB = window.FirebaseBridge;
+        if (!FB || !FB.firebaseConfig) return;
+
+        try {
+          const app = FB.initializeApp(FB.firebaseConfig);
+          const auth = FB.getAuth(app);
+          const db = FB.getFirestore(app);
+
+          const authenticateAndSubscribe = async () => {
+            try {
+              if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await FB.signInWithCustomToken(auth, __initial_auth_token);
+              } else {
+                await FB.signInAnonymously(auth);
+              }
+            } catch (authErr) {
+              console.warn("Firebase Auth fallback:", authErr);
+            }
+
+            FB.onAuthStateChanged(auth, (user) => {
+              if (!user) return;
+              setFirebaseUser(user);
+
+              const docRef = FB.doc(db, 'artifacts', FB.appId, 'public', 'data');
+
+              FB.onSnapshot(docRef, (snapshot) => {
+                if (snapshot.exists()) {
+                  setData(snapshot.data());
+                }
+              }, (err) => {
+                console.warn("Firestore Snapshot error:", err);
+              });
+            });
+          };
+
+          authenticateAndSubscribe();
+        } catch(e) {
+          console.warn("Firebase initialization skipped:", e);
+        }
+      }, []);
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('xp_portfolio_data', JSON.stringify(data));
+        } catch (e) {}
+
+        const FB = window.FirebaseBridge;
+        if (FB && firebaseUser) {
+          setIsSyncing(true);
+          try {
+            const app = FB.initializeApp(FB.firebaseConfig);
+            const db = FB.getFirestore(app);
+            const docRef = FB.doc(db, 'artifacts', FB.appId, 'public', 'data');
+            FB.setDoc(docRef, data).then(() => setIsSyncing(false)).catch(() => setIsSyncing(false));
+          } catch(e) {
+            setIsSyncing(false);
+          }
+        }
+      }, [data, firebaseUser]);
+
+      useEffect(() => {
+        const updateTime = () => {
+          const now = new Date();
+          let h = now.getHours();
+          let m = now.getMinutes();
+          const ampm = h >= 12 ? 'PM' : 'AM';
+          h = h % 12 || 12;
+          m = m < 10 ? '0' + m : m;
+          setSysTime(`${h}:${m} ${ampm}`);
+        };
+        updateTime();
+        const interval = setInterval(updateTime, 1000);
+        return () => clearInterval(interval);
+      }, []);
+
+      const updateSettings = (key, value) => {
+        setData(prev => ({ ...prev, settings: { ...prev.settings, [key]: value } }));
+      };
+
+      const handleOSThemeChange = (newOsId) => {
+        const selectedTheme = OS_THEMES.find(t => t.id === newOsId);
+        if (!selectedTheme) return;
+        if (data.settings.enableSounds) playXpSound('click');
+
+        const rememberedBg = data.settings.themeWallpapers?.[newOsId] || selectedTheme.defaultBg;
+
+        setData(prev => ({
+          ...prev,
+          settings: {
+            ...prev.settings,
+            osTheme: newOsId,
+            subScheme: selectedTheme.subSchemes[0].id,
+            desktopBg: rememberedBg
+          }
+        }));
+      };
+
+      const setWallpaperForCurrentTheme = (newBg) => {
+        const currentOs = data.settings.osTheme || 'xp';
+        setData(prev => ({
+          ...prev,
+          settings: {
+            ...prev.settings,
+            desktopBg: newBg,
+            themeWallpapers: {
+              ...(prev.settings.themeWallpapers || {}),
+              [currentOs]: newBg
+            }
+          }
+        }));
+      };
+
+      const handleAdminLogin = (e) => {
+        e.preventDefault();
+        const currentPass = data.settings.adminPassword || 'admin';
+        if (adminPasswordInput === currentPass) {
+          setIsAdminUnlocked(true);
+          setAdminAuthError('');
+          if (data.settings.enableSounds) playXpSound('notify');
+        } else {
+          setAdminAuthError('Incorrect Password.');
+          if (data.settings.enableSounds) playXpSound('error');
+        }
+      };
+
+      const updateWindow = (id, updates) => {
+        setData(prev => ({
+          ...prev,
+          windows: prev.windows.map(w => w.id === id ? { ...w, ...updates } : w)
+        }));
+      };
+
+      const bringToFront = (id) => {
+        setHighestZIndex(prev => {
+          const nextZ = prev + 1;
+          updateWindow(id, { zIndex: nextZ, isMinimized: false });
+          return nextZ;
+        });
+      };
+
+      const toggleMinimize = (id) => {
+        if (data.settings.enableSounds) playXpSound('click');
+        const win = data.windows.find(w => w.id === id);
+        if (!win) return;
+        updateWindow(id, { isMinimized: !win.isMinimized });
+      };
+
+      const toggleMaximize = (id) => {
+        if (data.settings.enableSounds) playXpSound('click');
+        const win = data.windows.find(w => w.id === id);
+        if (!win) return;
+        updateWindow(id, { isMaximized: !win.isMaximized });
+      };
+
+      const closeWindow = (id) => {
+        if (data.settings.enableSounds) playXpSound('click');
+        updateWindow(id, { isOpen: false });
+      };
+
+      const openWindow = (id) => {
+        if (data.settings.enableSounds) playXpSound('click');
+        setData(prev => {
+          let exists = prev.windows.some(w => w.id === id);
+          let nextWindows = prev.windows;
+
+          if (!exists) {
+            if (id === 'sys-computer') {
+              nextWindows = [...prev.windows, {
+                id: "sys-computer", title: "My Computer & Control Panel", type: "system",
+                x: 100, y: 60, width: 620, height: 460, isOpen: true, isMinimized: false, zIndex: highestZIndex + 1
+              }];
+            } else if (id === 'sys-recyclebin') {
+              nextWindows = [...prev.windows, {
+                id: "sys-recyclebin", title: "Recycle Bin", type: "system",
+                x: 140, y: 100, width: 480, height: 320, isOpen: true, isMinimized: false, zIndex: highestZIndex + 1
+              }];
+            }
+          } else {
+            nextWindows = prev.windows.map(w => w.id === id ? { ...w, isOpen: true, isMinimized: false, zIndex: highestZIndex + 1 } : w);
+          }
+
+          return { ...prev, windows: nextWindows };
+        });
+        setHighestZIndex(prev => prev + 1);
+      };
+
+      const addWindow = (type = 'folder') => {
+        if (data.settings.enableSounds) playXpSound('click');
+        const newId = `win-${Date.now()}`;
+        const isText = type === 'txt';
+        
+        const allIcons = data.desktopIcons || {};
+        let gridY = 15; let gridX = 15;
+        let isOccupied = true;
+        while (isOccupied) {
+          isOccupied = Object.values(allIcons).some(pos => Math.abs(pos.x - gridX) < 30 && Math.abs(pos.y - gridY) < 30);
+          if (isOccupied) {
+            gridY += 95;
+            if (gridY > 400) { gridY = 15; gridX += 90; }
+          }
+        }
+
+        const newWin = {
+          id: newId,
+          title: isText ? "New Document.txt" : "New Photo Gallery",
+          type: isText ? "txt" : "folder",
+          x: 90, y: 70, width: isText ? 480 : 580, height: isText ? 340 : 440,
+          layout: isText ? "text" : "masonry",
+          defaultViewMode: isText ? "large" : "masonry",
+          viewMode: isText ? "large" : "masonry",
+          isOpen: true, isMinimized: false, zIndex: highestZIndex + 1,
+          content: isText ? "Enter text document content..." : "",
+          photos: []
+        };
+
+        setHighestZIndex(prev => prev + 1);
+        setData(prev => ({
+          ...prev,
+          desktopIcons: { ...(prev.desktopIcons || {}), [newId]: { x: gridX, y: gridY } },
+          windows: [...prev.windows, newWin]
+        }));
+        setSelectedAdminWinId(newId);
+      };
+
+      const confirmMoveToRecycleBin = (win) => {
+        setRecycleConfirmItem(win);
+        if (data.settings.enableSounds) playXpSound('error');
+      };
+
+      const executeRecycleBinMove = () => {
+        if (!recycleConfirmItem) return;
+        const item = recycleConfirmItem;
+        if (data.settings.enableSounds) playXpSound('recycle');
+
+        setData(prev => {
+          const nextIcons = { ...prev.desktopIcons };
+          delete nextIcons[item.id];
+          return {
+            ...prev,
+            desktopIcons: nextIcons,
+            recycleBin: [...(prev.recycleBin || []), item],
+            windows: prev.windows.filter(w => w.id !== item.id)
+          };
+        });
+        setRecycleConfirmItem(null);
+      };
+
+      const triggerDirectPhotoUpload = (winId) => {
+        currentUploadingWinId.current = winId;
+        if (directAddFileInputRef.current) {
+          directAddFileInputRef.current.click();
+        }
+      };
+
+      const handleDirectPhotoFileSelect = (e) => {
+        const file = e.target.files[0];
+        const winId = currentUploadingWinId.current;
+        if (!file || !winId) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width; let height = img.height;
+            const maxDim = 1000;
+
+            if (width > height && width > maxDim) {
+              height *= maxDim / width; width = maxDim;
+            } else if (height > maxDim) {
+              width *= maxDim / height; height = maxDim;
+            }
+
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
+            const fileNameClean = file.name.replace(/\.[^/.]+$/, "");
+
+            const win = data.windows.find(w => w.id === winId);
+            if (!win) return;
+
+            const newPhotoObj = {
+              id: `p-${Date.now()}`,
+              url: compressedBase64,
+              caption: fileNameClean,
+              date: new Date().toISOString().split('T')[0],
+              size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+            };
+
+            updateWindow(winId, { photos: [...(win.photos || []), newPhotoObj] });
+            if (data.settings.enableSounds) playXpSound('notify');
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+      };
+
+      const deletePhotoFromAdminWin = (winId, photoId) => {
+        const win = data.windows.find(w => w.id === winId);
+        if (!win || !win.photos) return;
+        updateWindow(winId, { photos: win.photos.filter(p => p.id !== photoId) });
+      };
+
+      const updatePhotoInAdminWin = (winId, photoId, key, value) => {
+        const win = data.windows.find(w => w.id === winId);
+        if (!win || !win.photos) return;
+        const newPhotos = win.photos.map(p => p.id === photoId ? { ...p, [key]: value } : p);
+        updateWindow(winId, { photos: newPhotos });
+      };
+
+      const handleImageUpload = (e, winId, photoId) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width; let height = img.height;
+            const maxDim = 1000;
+
+            if (width > height && width > maxDim) {
+              height *= maxDim / width; width = maxDim;
+            } else if (height > maxDim) {
+              width *= maxDim / height; height = maxDim;
+            }
+
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
+            updatePhotoInAdminWin(winId, photoId, 'url', compressedBase64);
+            updatePhotoInAdminWin(winId, photoId, 'size', `${(file.size / (1024 * 1024)).toFixed(1)} MB`);
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      };
+
+      const openPhotoViewer = (photos, index, windowTitle = 'Photo Gallery') => {
+        if (!photos || photos.length === 0) return;
+        if (data.settings.enableSounds) playXpSound('click');
+        setHighestZIndex(prev => {
+          const nextZ = prev + 1;
+          setViewerState(prevVs => ({
+            ...prevVs,
+            isOpen: true,
+            isMinimized: false,
+            zIndex: nextZ,
+            photos,
+            currentIndex: index,
+            title: windowTitle
+          }));
+          return nextZ;
+        });
+      };
+
+      const bringViewerToFront = () => {
+        setHighestZIndex(prev => {
+          const nextZ = prev + 1;
+          setViewerState(vs => ({ ...vs, zIndex: nextZ, isMinimized: false }));
+          return nextZ;
+        });
+      };
+
+      const handleViewerMouseDown = (e) => {
+        e.preventDefault();
+        bringViewerToFront();
+        if (viewerState.isMaximized) return;
+        setDraggingWin('sys-viewer');
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winX: viewerState.x, winY: viewerState.y };
+      };
+
+      const handleViewerResizeDown = (e) => {
+        e.preventDefault(); e.stopPropagation();
+        bringViewerToFront();
+        if (viewerState.isMaximized) return;
+        setResizingWin('sys-viewer');
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winW: viewerState.width, winH: viewerState.height };
+      };
+
+      const handleMouseDown = (e, winId) => {
+        e.preventDefault();
+        bringToFront(winId);
+        setSelectedWindowId(winId);
+        
+        const win = data.windows.find(w => w.id === winId);
+        if (!win || win.isMaximized) return;
+
+        setDraggingWin(winId);
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winX: win.x, winY: win.y };
+      };
+
+      const handleResizeDown = (e, winId) => {
+        e.preventDefault(); e.stopPropagation();
+        bringToFront(winId);
+        setSelectedWindowId(winId);
+
+        const win = data.windows.find(w => w.id === winId);
+        if (!win || win.isMaximized) return;
+
+        setResizingWin(winId);
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winW: win.width, winH: win.height };
+      };
+
+      const handleIconMouseDown = (e, iconId) => {
+        e.preventDefault(); e.stopPropagation();
+        setSelectedIconId(iconId);
+        setDraggingIconId(iconId);
+        
+        const iconPos = data.desktopIcons?.[iconId] || { x: 15, y: 15 };
+        dragStartPos.current = { x: e.clientX, y: e.clientY, iconX: iconPos.x, iconY: iconPos.y };
+      };
+
+      const handleMouseMove = (e) => {
+        if (draggingWin === 'sys-viewer') {
+          const dx = e.clientX - dragStartPos.current.x;
+          const dy = e.clientY - dragStartPos.current.y;
+          setViewerState(prev => ({
+            ...prev,
+            x: Math.max(0, dragStartPos.current.winX + dx),
+            y: Math.max(0, dragStartPos.current.winY + dy)
+          }));
+        } else if (resizingWin === 'sys-viewer') {
+          const dx = e.clientX - dragStartPos.current.x;
+          const dy = e.clientY - dragStartPos.current.y;
+          setViewerState(prev => ({
+            ...prev,
+            width: Math.max(340, dragStartPos.current.winW + dx),
+            height: Math.max(240, dragStartPos.current.winH + dy)
+          }));
+        } else if (draggingWin) {
+          const dx = e.clientX - dragStartPos.current.x;
+          const dy = e.clientY - dragStartPos.current.y;
+          updateWindow(draggingWin, { x: Math.max(0, dragStartPos.current.winX + dx), y: Math.max(0, dragStartPos.current.winY + dy) });
+        } else if (resizingWin) {
+          const dx = e.clientX - dragStartPos.current.x;
+          const dy = e.clientY - dragStartPos.current.y;
+          updateWindow(resizingWin, { width: Math.max(280, dragStartPos.current.winW + dx), height: Math.max(180, dragStartPos.current.winH + dy) });
+        } else if (draggingIconId) {
+          const dx = e.clientX - dragStartPos.current.x;
+          const dy = e.clientY - dragStartPos.current.y;
+          const newX = Math.max(0, dragStartPos.current.iconX + dx);
+          const newY = Math.max(0, dragStartPos.current.iconY + dy);
+
+          setData(prev => ({
+            ...prev,
+            desktopIcons: { ...(prev.desktopIcons || {}), [draggingIconId]: { x: newX, y: newY } }
+          }));
+        }
+      };
+
+      const handleMouseUp = () => {
+        if (draggingIconId) {
+          const currentPos = data.desktopIcons?.[draggingIconId];
+          if (currentPos) {
+            let snappedX = Math.max(15, Math.round(currentPos.x / 90) * 90 + 15);
+            let snappedY = Math.max(15, Math.round(currentPos.y / 95) * 95 + 15);
+
+            setData(prev => ({
+              ...prev,
+              desktopIcons: { ...(prev.desktopIcons || {}), [draggingIconId]: { x: snappedX, y: snappedY } }
+            }));
+          }
+        }
+        setDraggingWin(null); setResizingWin(null); setDraggingIconId(null);
+      };
+
+      const handlePhotoContextMenu = (e, photo, sourceWinId) => {
+        e.preventDefault(); e.stopPropagation();
+        if (data.settings.enableSounds) playXpSound('click');
+        setContextMenu({ visible: true, type: 'photo', x: e.clientX, y: e.clientY, photo, sourceWinId });
+      };
+
+      const handleDesktopContextMenu = (e) => {
+        e.preventDefault();
+        if (data.settings.enableSounds) playXpSound('click');
+        setContextMenu({ visible: true, type: 'desktop', x: e.clientX, y: e.clientY, photo: null, sourceWinId: null });
+      };
+
+      const userSections = data.windows.filter(w => w.type !== 'system');
+      const allPortfolioPhotos = data.windows.flatMap(w => w.photos || []);
+
+      const winComp = data.windows.find(w => w.id === 'sys-computer');
+      const winRecycle = data.windows.find(w => w.id === 'sys-recyclebin');
+      const currentPhoto = viewerState.photos[viewerState.currentIndex] || {};
+
+      const currentThemeObj = OS_THEMES.find(t => t.id === (data.settings.osTheme || 'xp')) || OS_THEMES[0];
+      const selectedAdminWin = data.windows.find(w => w.id === selectedAdminWinId);
+
+      return (
+        <div 
+          className="w-screen h-screen relative overflow-hidden select-none"
+          style={{
+            ...(data.settings.desktopBg?.startsWith('#') 
+              ? { backgroundColor: data.settings.desktopBg } 
+              : { backgroundImage: `url(${data.settings.desktopBg})`, backgroundSize: 'cover', backgroundPosition: 'center' })
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onContextMenu={handleDesktopContextMenu}
+          onClick={() => {
+            setIsStartOpen(false);
+            setContextMenu({ visible: false, type: 'photo', x: 0, y: 0, photo: null, sourceWinId: null });
+          }}
+        >
+          <style>{generateXPCss(data.settings)}</style>
+
+          <input 
+            type="file" 
+            accept="image/*" 
+            ref={directAddFileInputRef} 
+            className="hidden" 
+            onChange={handleDirectPhotoFileSelect} 
+          />
+
+          <div className="desktop">
+            <div 
+              className={`desktop-icon ${selectedIconId === 'sys-computer' ? 'selected' : ''}`}
+              style={{ left: data.desktopIcons?.['sys-computer']?.x ?? 15, top: data.desktopIcons?.['sys-computer']?.y ?? 15 }}
+              onDoubleClick={() => openWindow('sys-computer')}
+              onMouseDown={(e) => handleIconMouseDown(e, 'sys-computer')}
+            >
+              <ThemeComputerIcon theme={data.settings.osTheme} />
+              <span>My Computer</span>
+            </div>
+
+            <div 
+              className={`desktop-icon ${selectedIconId === 'sys-recyclebin' ? 'selected' : ''}`}
+              style={{ left: data.desktopIcons?.['sys-recyclebin']?.x ?? 15, top: data.desktopIcons?.['sys-recyclebin']?.y ?? 110 }}
+              onDoubleClick={() => openWindow('sys-recyclebin')}
+              onMouseDown={(e) => handleIconMouseDown(e, 'sys-recyclebin')}
+            >
+              <ThemeRecycleBinIcon theme={data.settings.osTheme} isFull={(data.recycleBin || []).length > 0} />
+              <span>Recycle Bin</span>
+            </div>
+
+            {userSections.map((win, idx) => {
+              const isText = win.layout === 'text' || win.type === 'txt';
+              const iconPos = data.desktopIcons?.[win.id] || { x: 15, y: 205 + (idx * 95) };
+              return (
+                <div 
+                  key={`icon-${win.id}`} 
+                  className={`desktop-icon ${selectedIconId === win.id ? 'selected' : ''}`}
+                  style={{ left: iconPos.x, top: iconPos.y }}
+                  onDoubleClick={() => openWindow(win.id)}
+                  onMouseDown={(e) => handleIconMouseDown(e, win.id)}
+                >
+                  {isText ? <ThemeNotepadIcon theme={data.settings.osTheme} /> : <ThemeFolderIcon theme={data.settings.osTheme} />}
+                  <span>{win.title}</span>
+                </div>
+              );
+            })}
+
+            {}
+            {userSections.map(win => {
+              if (!win.isOpen || win.isMinimized) return null;
+              const isText = win.layout === 'text' || win.type === 'txt';
+              const viewMode = win.viewMode || win.defaultViewMode || 'masonry';
+              const isClassic = data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98';
+
+              return (
+                <div 
+                  key={win.id} 
+                  className={`xp-window ${isClassic ? 'classic-win' : ''} ${win.isMaximized ? 'maximized' : ''}`}
+                  style={{ 
+                    left: win.isMaximized ? 0 : win.x, 
+                    top: win.isMaximized ? 0 : win.y, 
+                    width: win.isMaximized ? '100%' : win.width, 
+                    height: win.isMaximized ? 'calc(100vh - 40px)' : win.height, 
+                    zIndex: win.zIndex || 10 
+                  }}
+                  onClick={() => bringToFront(win.id)}
+                >
+                  <div className="xp-titlebar" onMouseDown={(e) => handleMouseDown(e, win.id)}>
+                    <span className="flex items-center gap-1.5 truncate">
+                      {isText ? '📝' : '📁'} {win.title}
+                    </span>
+                    <div className="xp-controls">
+                      <button onClick={(e) => { e.stopPropagation(); toggleMinimize(win.id); }}>_</button>
+                      <button onClick={(e) => { e.stopPropagation(); toggleMaximize(win.id); }}>□</button>
+                      <button className="close" onClick={(e) => { e.stopPropagation(); closeWindow(win.id); }}>X</button>
+                    </div>
+                  </div>
+
+                  <div className="xp-menu-bar">
+                    <div className="flex gap-2"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
+                  </div>
+
+                  <div className="xp-content">
+                    {isText ? (
+                      <div className="h-full flex flex-col font-mono text-xs leading-relaxed text-slate-800 whitespace-pre-wrap select-text p-2">
+                        {win.content || 'Empty document.'}
+                      </div>
+                    ) : viewMode === 'list' ? (
+                      <div className="layout-list">
+                        {(win.photos || []).map((p, idx) => (
+                          <div key={p.id} className="photo-item-list" onClick={() => openPhotoViewer(win.photos, idx, win.title)} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
+                            <img src={p.url} alt="" />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-bold text-xs truncate">{p.caption || 'Photo'}</div>
+                              <div className="text-[10px] text-slate-400">{p.date || '2024'} • {p.size || '3.2 MB'}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={`layout-grid-${viewMode}`}>
+                        {(win.photos || []).map((p, idx) => (
+                          <div 
+                            key={p.id} 
+                            className="photo-item-clean"
+                            onClick={() => openPhotoViewer(win.photos, idx, win.title)}
+                            onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}
+                          >
+                            <div className="photo-item-clean-wrap">
+                              <img src={p.url || 'https://placehold.co/400x300?text=Empty'} alt="" loading="lazy" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {!win.isMaximized && (
+                    <div className="xp-resize-handle" onMouseDown={(e) => handleResizeDown(e, win.id)} title="Resize Window" />
+                  )}
+                </div>
+              );
+            })}
+
+            {}
+            {winComp && winComp.isOpen && !winComp.isMinimized && (
+              <div 
+                className={`xp-window ${(data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98') ? 'classic-win' : ''} ${winComp.isMaximized ? 'maximized' : ''}`} 
+                style={{ 
+                  left: winComp.isMaximized ? 0 : winComp.x, 
+                  top: winComp.isMaximized ? 0 : winComp.y, 
+                  width: winComp.isMaximized ? '100%' : winComp.width, 
+                  height: winComp.isMaximized ? 'calc(100vh - 40px)' : winComp.height, 
+                  zIndex: winComp.zIndex || 100 
+                }}
+                onClick={() => bringToFront('sys-computer')}
+              >
+                <div className="xp-titlebar" onMouseDown={(e) => handleMouseDown(e, 'sys-computer')}>
+                  <span className="flex items-center gap-1.5">🖥️ My Computer & Control Panel</span>
+                  <div className="xp-controls">
+                    <button onClick={(e) => { e.stopPropagation(); toggleMinimize('sys-computer'); }}>_</button>
+                    <button onClick={(e) => { e.stopPropagation(); toggleMaximize('sys-computer'); }}>□</button>
+                    <button className="close" onClick={(e) => { e.stopPropagation(); closeWindow('sys-computer'); }}>X</button>
+                  </div>
+                </div>
+
+                <div className="xp-menu-bar">
+                  <div className="flex gap-2"><span>File</span><span>Edit</span><span>View</span><span>Tools</span><span>Help</span></div>
+                </div>
+
+                <div className="xp-content bg-slate-50 space-y-3 p-3">
+                  <div className="flex gap-2 border-b pb-2">
+                    <button onClick={() => setMyComputerTab('drives')} className={`px-2.5 py-1 rounded border text-xs font-bold ${myComputerTab === 'drives' ? 'bg-blue-600 text-white' : 'bg-white text-slate-700'}`}>
+                      💾 System Drives
+                    </button>
+                    <button onClick={() => setMyComputerTab('control')} className={`px-2.5 py-1 rounded border text-xs font-bold ${myComputerTab === 'control' ? 'bg-blue-600 text-white' : 'bg-white text-slate-700'}`}>
+                      ⚙️ Visitor Settings
+                    </button>
+                    <button onClick={() => setMyComputerTab('admin')} className={`px-2.5 py-1 rounded border text-xs font-bold ${myComputerTab === 'admin' ? 'bg-amber-600 text-white' : 'bg-amber-100 text-amber-900 border-amber-300'}`}>
+                      🔒 Admin CMS Access
+                    </button>
+                  </div>
+
+                  {myComputerTab === 'drives' && (
+                    <div className="space-y-3">
+                      <div className="font-bold text-xs text-blue-800 border-b border-blue-800 pb-1">Files & Media Drives</div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white border p-2.5 rounded flex items-center gap-2.5">
+                          <span className="text-2xl">💾</span>
+                          <div>
+                            <div className="font-bold text-xs">Local Disk (C:)</div>
+                            <div className="text-[10px] text-slate-500">System Drive (NTFS)</div>
+                          </div>
+                        </div>
+                        <div className="bg-white border p-2.5 rounded flex items-center gap-2.5">
+                          <span className="text-2xl">🖼️</span>
+                          <div>
+                            <div className="font-bold text-xs">My Pictures (D:)</div>
+                            <div className="text-[10px] text-slate-500">{allPortfolioPhotos.length} Photos Stored</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {myComputerTab === 'control' && (
+                    <div className="bg-white border p-3 rounded space-y-3">
+                      <div className="font-bold text-xs text-blue-800 border-b pb-1">Visitor Settings & Themes</div>
+                      <div className="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">OS Theme</label>
+                          <select 
+                            value={data.settings.osTheme || 'xp'} 
+                            onChange={(e) => handleOSThemeChange(e.target.value)}
+                            className="w-full p-1.5 border rounded bg-white text-xs"
+                          >
+                            {OS_THEMES.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Color Scheme</label>
+                          <select 
+                            value={data.settings.subScheme || 'luna'} 
+                            onChange={(e) => updateSettings('subScheme', e.target.value)}
+                            className="w-full p-1.5 border rounded bg-white text-xs"
+                          >
+                            {currentThemeObj.subSchemes.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {myComputerTab === 'admin' && (
+                    <div className="space-y-3">
+                      {!isAdminUnlocked ? (
+                        <form onSubmit={handleAdminLogin} className="bg-white border border-amber-300 p-4 rounded space-y-3 max-w-md mx-auto my-4 shadow-sm">
+                          <div className="font-bold text-xs text-amber-900 border-b border-amber-200 pb-2 flex items-center gap-1">
+                            🔐 Admin Security Authentication
+                          </div>
+                          <p className="text-xs text-slate-600">Enter password to unlock portfolio upload, image management, and layout editing capabilities.</p>
+                          {adminAuthError && <div className="text-xs text-red-600 font-bold bg-red-50 p-2 border border-red-200 rounded">{adminAuthError}</div>}
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 mb-1">Admin Password</label>
+                            <input 
+                              type="password" 
+                              value={adminPasswordInput} 
+                              onChange={(e) => setAdminPasswordInput(e.target.value)}
+                              className="w-full p-2 border rounded text-xs outline-none focus:border-amber-500"
+                              placeholder="Enter password..."
+                            />
+                          </div>
+                          <button type="submit" className="w-full bg-amber-600 text-white font-bold py-2 rounded text-xs hover:bg-amber-700 transition-colors">
+                            Unlock Admin CMS
+                          </button>
+                        </form>
+                      ) : (
+                        <div className="bg-white border border-slate-300 p-3 rounded space-y-4">
+                          <div className="flex justify-between items-center border-b pb-2">
+                            <span className="font-bold text-xs text-emerald-700 flex items-center gap-1">
+                              🔓 Admin Management Mode {isSyncing && <span className="text-[10px] text-amber-600 font-normal animate-pulse">(Syncing Cloud...)</span>}
+                            </span>
+                            <div className="flex gap-2">
+                              <button onClick={() => setIsAdminUnlocked(false)} className="text-xs px-2 py-1 bg-red-100 text-red-700 border border-red-300 rounded hover:bg-red-200">Lock CMS</button>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2 border-b pb-2">
+                            <button onClick={() => setAdminTab('sections')} className={`px-2.5 py-1 rounded text-xs font-bold ${adminTab === 'sections' ? 'bg-blue-600 text-white' : 'bg-slate-100'}`}>
+                              📁 Manage Folders & Photos
+                            </button>
+                            <button onClick={() => setAdminTab('password')} className={`px-2.5 py-1 rounded text-xs font-bold ${adminTab === 'password' ? 'bg-blue-600 text-white' : 'bg-slate-100'}`}>
+                              🔑 Change Password
+                            </button>
+                          </div>
+
+                          {adminTab === 'sections' && (
+                            <div className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs font-bold text-slate-700">Portfolio Folders</span>
+                                <div className="flex gap-1.5">
+                                  <button onClick={() => addWindow('folder')} className="text-xs bg-blue-600 text-white px-2 py-1 rounded font-bold hover:bg-blue-700">+ Folder</button>
+                                  <button onClick={() => addWindow('txt')} className="text-xs bg-slate-800 text-white px-2 py-1 rounded font-bold hover:bg-slate-700">+ Text Doc</button>
+                                </div>
+                              </div>
+
+                              <select 
+                                value={selectedAdminWinId} 
+                                onChange={(e) => setSelectedAdminWinId(e.target.value)}
+                                className="w-full p-2 border rounded text-xs font-bold bg-slate-50"
+                              >
+                                {userSections.map(w => <option key={w.id} value={w.id}>{w.type === 'txt' ? '📝' : '📁'} {w.title}</option>)}
+                              </select>
+
+                              {selectedAdminWin && (
+                                <div className="space-y-3 border p-3 rounded bg-slate-50">
+                                  <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Folder Title</label>
+                                    <input 
+                                      type="text" 
+                                      value={selectedAdminWin.title} 
+                                      onChange={(e) => updateWindow(selectedAdminWin.id, { title: e.target.value })}
+                                      className="w-full p-1.5 border rounded text-xs font-medium bg-white"
+                                    />
+                                  </div>
+
+                                  {selectedAdminWin.type !== 'txt' && (
+                                    <div className="space-y-3">
+                                      <div className="flex justify-between items-center pt-2 border-t">
+                                        <span className="text-xs font-bold text-slate-700">Folder Photos ({selectedAdminWin.photos ? selectedAdminWin.photos.length : 0})</span>
+                                        <button 
+                                          onClick={() => triggerDirectPhotoUpload(selectedAdminWin.id)} 
+                                          className="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded font-bold hover:bg-emerald-700 shadow-xs flex items-center gap-1"
+                                        >
+                                          + Add Photo
+                                        </button>
+                                      </div>
+
+                                      <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                                        {(selectedAdminWin.photos || []).map((photo, idx) => (
+                                          <div key={photo.id} className="bg-white border rounded p-2 text-xs space-y-2">
+                                            <div className="flex justify-between items-center">
+                                              <span className="font-bold text-slate-500 text-[10px]">PHOTO #{idx + 1}</span>
+                                              <button onClick={() => deletePhotoFromAdminWin(selectedAdminWin.id, photo.id)} className="text-red-500 font-bold hover:underline">Delete</button>
+                                            </div>
+                                            <div className="flex gap-2">
+                                              <img src={photo.url} className="w-12 h-12 object-cover rounded border" alt="" />
+                                              <div className="flex-1 space-y-1">
+                                                <div className="flex gap-1">
+                                                  <input 
+                                                    type="text" 
+                                                    value={photo.url} 
+                                                    onChange={(e) => updatePhotoInAdminWin(selectedAdminWin.id, photo.id, 'url', e.target.value)}
+                                                    className="w-full p-1 border rounded text-[11px]"
+                                                    placeholder="Image URL..."
+                                                  />
+                                                  <label className="cursor-pointer bg-slate-100 border rounded px-2 flex items-center text-[10px] font-bold hover:bg-slate-200">
+                                                    Replace
+                                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, selectedAdminWin.id, photo.id)} />
+                                                  </label>
+                                                </div>
+                                                <input 
+                                                  type="text" 
+                                                  value={photo.caption || ''} 
+                                                  onChange={(e) => updatePhotoInAdminWin(selectedAdminWin.id, photo.id, 'caption', e.target.value)}
+                                                  className="w-full p-1 border rounded text-[11px]"
+                                                  placeholder="Caption..."
+                                                />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {adminTab === 'password' && (
+                            <div className="space-y-3 max-w-sm">
+                              <label className="block text-xs font-bold text-slate-700">Set New Admin Password</label>
+                              <input 
+                                type="text" 
+                                value={data.settings.adminPassword || 'admin'} 
+                                onChange={(e) => updateSettings('adminPassword', e.target.value)}
+                                className="w-full p-2 border rounded text-xs font-mono"
+                              />
+                              <p className="text-[10px] text-slate-500">This password protects your portfolio uploading and file controls inside the Control Panel.</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                </div>
+
+                {!winComp.isMaximized && (
+                  <div className="xp-resize-handle" onMouseDown={(e) => handleResizeDown(e, 'sys-computer')} />
+                )}
+              </div>
+            )}
+
+            {}
+            {winRecycle && winRecycle.isOpen && !winRecycle.isMinimized && (
+              <div 
+                className={`xp-window ${(data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98') ? 'classic-win' : ''} ${winRecycle.isMaximized ? 'maximized' : ''}`}
+                style={{ 
+                  left: winRecycle.isMaximized ? 0 : winRecycle.x, 
+                  top: winRecycle.isMaximized ? 0 : winRecycle.y, 
+                  width: winRecycle.isMaximized ? '100%' : winRecycle.width, 
+                  height: winRecycle.isMaximized ? 'calc(100vh - 40px)' : winRecycle.height, 
+                  zIndex: winRecycle.zIndex || 100 
+                }}
+                onClick={() => bringToFront('sys-recyclebin')}
+              >
+                <div className="xp-titlebar" onMouseDown={(e) => handleMouseDown(e, 'sys-recyclebin')}>
+                  <span className="flex items-center gap-1.5">🗑️ Recycle Bin</span>
+                  <div className="xp-controls">
+                    <button onClick={(e) => { e.stopPropagation(); toggleMinimize('sys-recyclebin'); }}>_</button>
+                    <button onClick={(e) => { e.stopPropagation(); toggleMaximize('sys-recyclebin'); }}>□</button>
+                    <button className="close" onClick={(e) => { e.stopPropagation(); closeWindow('sys-recyclebin'); }}>X</button>
+                  </div>
+                </div>
+                <div className="xp-menu-bar">
+                  <div className="flex gap-2"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
+                </div>
+                <div className="xp-content bg-white">
+                  {(data.recycleBin || []).length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-400 text-xs gap-2">
+                      <ThemeRecycleBinIcon theme={data.settings.osTheme} isFull={false} className="w-12 h-12" />
+                      <span>The Recycle Bin is empty.</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="text-xs font-bold text-slate-500 pb-1 border-b">Deleted Items ({(data.recycleBin || []).length})</div>
+                      {(data.recycleBin || []).map(item => (
+                        <div key={`rb-${item.id}`} className="flex justify-between items-center p-2 bg-slate-50 border rounded text-xs">
+                          <span className="font-bold truncate">{item.title}</span>
+                          <button onClick={() => {
+                            if (data.settings.enableSounds) playXpSound('notify');
+                            setData(prev => ({
+                              ...prev,
+                              desktopIcons: { ...(prev.desktopIcons || {}), [item.id]: { x: 15, y: 205 } },
+                              recycleBin: (prev.recycleBin || []).filter(r => r.id !== item.id),
+                              windows: [...prev.windows, { ...item, isOpen: false, isMinimized: false }]
+                            }));
+                          }} className="text-blue-600 hover:underline flex items-center gap-1 text-[11px] font-bold">Restore Item</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {!winRecycle.isMaximized && (
+                  <div className="xp-resize-handle" onMouseDown={(e) => handleResizeDown(e, 'sys-recyclebin')} />
+                )}
+              </div>
+            )}
+
+            {}
+            {viewerState.isOpen && !viewerState.isMinimized && (
+              <div 
+                className={`xp-window ${(data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98') ? 'classic-win' : ''} ${viewerState.isMaximized ? 'maximized' : ''}`}
+                style={{ 
+                  left: viewerState.isMaximized ? 0 : viewerState.x, 
+                  top: viewerState.isMaximized ? 0 : viewerState.y, 
+                  width: viewerState.isMaximized ? '100%' : viewerState.width, 
+                  height: viewerState.isMaximized ? 'calc(100vh - 40px)' : viewerState.height, 
+                  zIndex: viewerState.zIndex || 200 
+                }}
+                onClick={bringViewerToFront}
+              >
+                <div className="xp-titlebar" onMouseDown={handleViewerMouseDown}>
+                  <span className="flex items-center gap-1.5 truncate">
+                    🖼️ Picture and Fax Viewer - {viewerState.title}
+                  </span>
+                  <div className="xp-controls">
+                    <button onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, isMinimized: true })); if (data.settings.enableSounds) playXpSound('click'); }}>_</button>
+                    <button onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, isMaximized: !vs.isMaximized })); if (data.settings.enableSounds) playXpSound('click'); }}>□</button>
+                    <button className="close" onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, isOpen: false })); if (data.settings.enableSounds) playXpSound('click'); }}>X</button>
+                  </div>
+                </div>
+
+                <div className="xp-menu-bar">
+                  <div className="flex gap-2"><span>File</span><span>Edit</span><span>View</span><span>Image</span><span>Help</span></div>
+                  <div className="text-[10px] text-slate-500 pr-2">
+                    Image {viewerState.currentIndex + 1} of {viewerState.photos.length}
+                  </div>
+                </div>
+
+                <div className="xp-content bg-slate-900 flex flex-col items-center justify-center relative p-2 overflow-hidden">
+                  {currentPhoto.url && (
+                    <img src={currentPhoto.url} alt="" className="max-w-full max-h-[calc(100%-55px)] object-contain shadow-2xl border border-slate-700 select-none" />
+                  )}
+                  <div className="absolute bottom-3 bg-[#ece9d8] border-2 border-white rounded-full px-4 py-1.5 shadow-2xl flex items-center gap-3 border-t border-slate-300 text-xs">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setViewerState(prev => ({ ...prev, currentIndex: (prev.currentIndex - 1 + prev.photos.length) % prev.photos.length })); }}
+                      className="px-2 py-0.5 bg-white border rounded font-bold hover:bg-slate-100"
+                    >
+                      ← Prev
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setWallpaperForCurrentTheme(currentPhoto.url); playXpSound('notify'); }}
+                      className="px-2 py-0.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700"
+                    >
+                      🖼️ Set Background
+                    </button>
+                    <span className="font-mono text-xs">{viewerState.currentIndex + 1} / {viewerState.photos.length}</span>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setViewerState(prev => ({ ...prev, currentIndex: (prev.currentIndex + 1) % prev.photos.length })); }}
+                      className="px-2 py-0.5 bg-white border rounded font-bold hover:bg-slate-100"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+
+                {!viewerState.isMaximized && (
+                  <div className="xp-resize-handle" onMouseDown={handleViewerResizeDown} title="Resize Window" />
+                )}
+              </div>
+            )}
+
+            {}
+            {contextMenu.visible && (
+              <div 
+                className="fixed bg-white border-2 border-slate-400 shadow-2xl py-1 text-xs z-[300000] w-52 font-sans select-none rounded-xs"
+                style={{ top: contextMenu.y, left: contextMenu.x }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {contextMenu.type === 'desktop' ? (
+                  <>
+                    <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer font-bold" onClick={() => { addWindow('folder'); setContextMenu({ visible: false }); }}>📁 New Folder</div>
+                    <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer" onClick={() => { addWindow('txt'); setContextMenu({ visible: false }); }}>📝 New Text Document</div>
+                    <div className="my-1 border-t" />
+                    <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer" onClick={() => { openWindow('sys-computer'); setMyComputerTab('admin'); setContextMenu({ visible: false }); }}>🔐 Admin CMS Access</div>
+                  </>
+                ) : contextMenu.photo && (
+                  <>
+                    <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer font-bold" onClick={() => { setWallpaperForCurrentTheme(contextMenu.photo.url); setContextMenu({ visible: false }); }}>🖼️ Set as Desktop Background</div>
+                    <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer" onClick={() => { openPhotoViewer([contextMenu.photo], 0, 'Photo Viewer'); setContextMenu({ visible: false }); }}>🔍 View Full Photo</div>
+                  </>
+                )}
+              </div>
+            )}
+
+          </div>
+
+          {}
+          {isStartOpen && (
+            <div className="start-menu" onClick={(e) => e.stopPropagation()}>
+              <div className="start-menu-header">
+                <div className="w-8 h-8 bg-white rounded flex items-center justify-center font-bold text-blue-600">OS</div>
+                <span>{data.settings.username}</span>
+              </div>
+              <div className="start-menu-body">
+                <div className="start-menu-left">
+                  <div className="start-item font-bold" onClick={() => { openWindow('sys-computer'); setMyComputerTab('control'); setIsStartOpen(false); }}>⚙️ Control Panel</div>
+                  <div className="start-item font-bold text-amber-800" onClick={() => { openWindow('sys-computer'); setMyComputerTab('admin'); setIsStartOpen(false); }}>🔐 Admin CMS Access</div>
+                  <div className="my-1 border-t" />
+                  {userSections.map(w => (
+                    <div key={`start-${w.id}`} className="start-item" onClick={() => { openWindow(w.id); setIsStartOpen(false); }}>📁 {w.title}</div>
+                  ))}
+                </div>
+                <div className="start-menu-right">
+                  <div className="start-item" onClick={() => { openWindow('sys-computer'); setMyComputerTab('drives'); setIsStartOpen(false); }}>💻 My Computer</div>
+                  <div className="start-item" onClick={() => { openWindow('sys-recyclebin'); setIsStartOpen(false); }}>🗑️ Recycle Bin</div>
+                </div>
+              </div>
+              <div className="start-menu-footer">
+                <button className="start-footer-btn" onClick={() => { setIsStartOpen(false); setShowShutdownModal(true); }}>🔴 Turn Off Computer</button>
+              </div>
+            </div>
+          )}
+
+          {}
+          <div className="taskbar" onClick={(e) => e.stopPropagation()}>
+            <button className="start-btn" onClick={() => setIsStartOpen(!isStartOpen)}>start</button>
+            <div className="taskbar-items">
+              {data.windows.filter(win => win.isOpen).map(win => (
+                <div 
+                  key={`task-${win.id}`} 
+                  className={`taskbar-item ${!win.isMinimized && win.zIndex === highestZIndex && (!viewerState.isOpen || viewerState.isMinimized || viewerState.zIndex < win.zIndex) ? 'active' : ''}`}
+                  onClick={() => { if (!win.isMinimized && win.zIndex === highestZIndex && viewerState.zIndex <= win.zIndex) toggleMinimize(win.id); else openWindow(win.id); }}
+                >
+                  <span className="truncate">{win.title}</span>
+                </div>
+              ))}
+              {viewerState.isOpen && (
+                <div 
+                  className={`taskbar-item ${!viewerState.isMinimized && viewerState.zIndex === highestZIndex ? 'active' : ''}`}
+                  onClick={() => {
+                    if (!viewerState.isMinimized && viewerState.zIndex === highestZIndex) {
+                      setViewerState(vs => ({ ...vs, isMinimized: true }));
+                    } else {
+                      bringViewerToFront();
+                    }
+                  }}
+                >
+                  <span className="truncate">🖼️ {viewerState.title || 'Photo Viewer'}</span>
+                </div>
+              )}
+            </div>
+            <div className="system-tray">
+              <span>{sysTime}</span>
+            </div>
+          </div>
+
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
