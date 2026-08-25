@@ -30,49 +30,13 @@
       appId,
       firebaseConfig,
       initializeApp,
-      getAuth,
-      signInAnonymously,
-      signInWithCustomToken,
-      onAuthStateChanged,
-      getFirestore,
-      doc,
-      setDoc,
-      onSnapshot,
-      getDoc
-    };
-  </script>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
-
-    :root {
-      --xp-bg: #ece9d8;
-      --xp-blue: #0055e5;
-      --xp-title-gradient: linear-gradient(to bottom, #0058e6 0%, #3a93ff 4%, #288eff 6%, #127dff 8%, #036bfe 10%, #005ce3 14%, #003db3 100%);
-      --xp-title-text: #ffffff;
-      --xp-taskbar: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #1941a5 100%);
-      --xp-start-btn: linear-gradient(to bottom, #4c9900 0%, #53a600 10%, #3c8000 50%, #3c8000 90%, #295700 100%);
-    }
-
-    body {
-      font-family: 'Tahoma', sans-serif;
-      margin: 0; padding: 0; overflow: hidden;
-      height: 100vh; width: 100vw;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    .desktop {
-      width: 100%; height: calc(100vh - 40px);
-      position: relative; padding: 15px;
-    }
-
+        const [data, setData] = useState(() => JSON.parse(JSON.stringify(DEFAULT_DATA)));
     .desktop-icon {
       position: absolute;
       display: flex; flex-direction: column; align-items: center;
-      width: 84px; cursor: move; color: white;
+      box-sizing: border-box; width: 84px; height: 80px; cursor: move; color: white;
       text-shadow: 1px 1px 2px black; font-size: 11px; text-align: center;
-      padding: 6px 4px; border: 1px dashed transparent; border-radius: 3px;
+      padding: 8px 4px; border: 1px dashed transparent; border-radius: 3px;
       z-index: 5;
     }
     .desktop-icon:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
@@ -335,7 +299,7 @@
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-    const DESKTOP_GRID = { originX: 15, originY: 15, cellWidth: 90, cellHeight: 80, iconWidth: 84, iconHeight: 76 };
+    const DESKTOP_GRID = { originX: 15, originY: 15, cellWidth: 90, cellHeight: 84, iconWidth: 84, iconHeight: 80 };
 
     const playXpSound = (type) => {
       try {
@@ -550,10 +514,10 @@
       },
       desktopIcons: {
         "sys-computer": { x: 15, y: 15 },
-        "sys-recyclebin": { x: 15, y: 95 },
-        "win-readme": { x: 15, y: 175 },
-        "win-1": { x: 15, y: 255 },
-        "paint": { x: 15, y: 335 }
+        "sys-recyclebin": { x: 15, y: 99 },
+        "win-readme": { x: 15, y: 183 },
+        "win-1": { x: 15, y: 267 },
+        "paint": { x: 15, y: 351 }
       },
       recycleBin: [],
       windows: [
@@ -882,42 +846,7 @@
     }
 
     function App() {
-      const [data, setData] = useState(() => {
-        try {
-          const saved = localStorage.getItem('xp_portfolio_data_v2');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed.windows) {
-              parsed.windows = parsed.windows.filter(w => w.title !== 'About The Photographer').map(w => {
-                if (w.id === 'win-1' && (!w.photos || w.photos.length !== FEATURED_PHOTOS.length)) {
-                  return { ...w, photos: FEATURED_PHOTOS, layout: 'grid', viewMode: 'grid', thumbnailSize: 'medium' };
-                }
-                if (w.type === 'folder') {
-                  const legacyView = w.viewMode || w.defaultViewMode;
-                  return {
-                    ...w,
-                    layout: w.layout === 'list' || legacyView === 'list' ? 'list' : 'grid',
-                    thumbnailSize: w.thumbnailSize || (legacyView === 'compact' ? 'small' : legacyView === 'large' ? 'large' : 'medium'),
-                    viewMode: w.layout === 'list' || legacyView === 'list' ? 'list' : 'grid'
-                  };
-                }
-                return w;
-              });
-            }
-            parsed.settings = { ...DEFAULT_DATA.settings, ...(parsed.settings || {}) };
-            const legacyWallpaper = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80';
-            if (parsed.settings.desktopBg === legacyWallpaper) parsed.settings.desktopBg = 'images/bliss-xp.jpg';
-            if (parsed.settings.themeWallpapers?.xp === legacyWallpaper) {
-              parsed.settings.themeWallpapers = { ...parsed.settings.themeWallpapers, xp: 'images/bliss-xp.jpg' };
-            }
-            parsed.desktopIcons = normalizeDesktopIcons({ ...(DEFAULT_DATA.desktopIcons || {}), ...(parsed.desktopIcons || {}) });
-            return parsed;
-          }
-          return DEFAULT_DATA;
-        } catch (e) {
-          return DEFAULT_DATA;
-        }
-      });
+      const [data, setData] = useState(() => JSON.parse(JSON.stringify(DEFAULT_DATA)));
 
       const [firebaseUser, setFirebaseUser] = useState(null);
       const [isSyncing, setIsSyncing] = useState(false);
@@ -965,9 +894,17 @@
       const [showShutdownModal, setShowShutdownModal] = useState(false);
 
       useEffect(() => {
-        fetch('images.json', { cache: 'no-store' })
+        fetch('images.json')
           .then(response => response.ok ? response.json() : [])
-          .then(images => setImageManifest(Array.isArray(images) ? images : []))
+          .then(images => {
+            const manifest = Array.isArray(images) ? images : [];
+            setImageManifest(manifest);
+            manifest.slice(0, 12).forEach(photo => {
+              const image = new Image();
+              image.decoding = 'async';
+              image.src = photo.url;
+            });
+          })
           .catch(() => setImageManifest([]));
       }, []);
 
@@ -1029,17 +966,7 @@
 
               const docRef = FB.doc(db, 'artifacts', FB.appId, 'public', 'data');
 
-              FB.onSnapshot(docRef, (snapshot) => {
-                if (snapshot.exists()) {
-                  const remoteData = snapshot.data();
-                  const remoteIcons = Object.fromEntries(Object.entries(remoteData.desktopIcons || {}).filter(([id]) => id !== 'win-2'));
-                  setData({
-                    ...remoteData,
-                    desktopIcons: normalizeDesktopIcons({ ...(DEFAULT_DATA.desktopIcons || {}), ...remoteIcons }),
-                    windows: (remoteData.windows || []).filter(window => window.title !== 'About The Photographer')
-                  });
-                }
-              }, (err) => {
+              FB.onSnapshot(docRef, () => {}, (err) => {
                 console.warn("Firestore Snapshot error:", err);
               });
             });
@@ -1052,10 +979,6 @@
       }, []);
 
       useEffect(() => {
-        try {
-          localStorage.setItem('xp_portfolio_data_v2', JSON.stringify(data));
-        } catch (e) {}
-
         const FB = window.FirebaseBridge;
         if (FB && firebaseUser) {
           setIsSyncing(true);
@@ -1910,7 +1833,7 @@
 
             <div 
               className={`desktop-icon ${selectedIconId === 'sys-recyclebin' ? 'selected' : ''}`}
-              style={{ left: data.desktopIcons?.['sys-recyclebin']?.x ?? 15, top: data.desktopIcons?.['sys-recyclebin']?.y ?? 110 }}
+              style={{ left: data.desktopIcons?.['sys-recyclebin']?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.['sys-recyclebin']?.y ?? (DESKTOP_GRID.originY + DESKTOP_GRID.cellHeight) }}
               onDoubleClick={() => openWindow('sys-recyclebin')}
               onClick={(e) => e.stopPropagation()}
               onMouseDown={(e) => handleIconMouseDown(e, 'sys-recyclebin')}
@@ -1920,7 +1843,7 @@
             </div>
             <div
               className={`desktop-icon ${selectedIconId === 'paint' ? 'selected' : ''}`}
-              style={{ left: data.desktopIcons?.paint?.x ?? 15, top: data.desktopIcons?.paint?.y ?? 395 }}
+              style={{ left: data.desktopIcons?.paint?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.paint?.y ?? (DESKTOP_GRID.originY + (DESKTOP_GRID.cellHeight * 4)) }}
               onDoubleClick={openPaint}
               onClick={(e) => e.stopPropagation()}
               onMouseDown={(e) => handleIconMouseDown(e, 'paint')}
