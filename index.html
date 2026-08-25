@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Retro OS Portfolio & CMS</title>
   
   <!-- Tailwind CSS -->
@@ -339,17 +342,23 @@
     const { useState, useEffect, useRef } = React;
     const DESKTOP_GRID = { originX: 15, originY: 15, cellWidth: 108, cellHeight: 108, iconWidth: 104, iconHeight: 104 };
     const imageCache = new Map();
+    const assetCacheVersion = Date.now().toString(36);
+
+    const getAssetUrl = (url) => {
+      if (!url || !url.startsWith('images/')) return url;
+      return `${url}${url.includes('?') ? '&' : '?'}v=${assetCacheVersion}`;
+    };
 
     const preloadImage = (url) => {
       if (!url || imageCache.has(url)) return imageCache.get(url);
       const image = new Image();
       image.decoding = 'async';
-      image.src = url;
+      image.src = getAssetUrl(url);
       imageCache.set(url, image);
       return image;
     };
 
-    const imageManifestPromise = fetch('images.json')
+    const imageManifestPromise = fetch(`images.json?v=${assetCacheVersion}`, { cache: 'no-store' })
       .then(response => response.ok ? response.json() : [])
       .then(images => Array.isArray(images) ? images : [])
       .then(manifest => {
@@ -1648,7 +1657,7 @@
             if (data.settings.enableSounds) playXpSound('notify');
           }
         };
-        img.src = currentPhoto.url;
+        img.src = getAssetUrl(currentPhoto.url);
       };
 
       useEffect(() => {
@@ -1896,7 +1905,7 @@
           <style>{generateXPCss(data.settings)}</style>
 
           <div className="image-cache-preload" aria-hidden="true">
-            {cachedImageUrls.map(url => <img key={url} src={url} alt="" decoding="async" />)}
+            {cachedImageUrls.map(url => <img key={url} src={getAssetUrl(url)} alt="" decoding="async" />)}
           </div>
 
           <input 
@@ -2215,7 +2224,7 @@
                       <div className="layout-list">
                         {(win.photos || []).map((p, idx) => (
                           <div key={p.id} className={`photo-item-list ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`} onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))} onDoubleClick={() => openPhotoViewer(win.photos, idx, win.title)} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
-                            <img src={p.url} alt="" loading="eager" decoding="async" />
+                            <img src={getAssetUrl(p.url)} alt="" loading="eager" decoding="async" />
                             <div className="flex-1 min-w-0">
                               <div className="font-bold text-xs truncate">{p.caption || 'Photo'}</div>
                               <div className="text-[10px] text-slate-400">{p.date || '2024'} • {p.size || '3.2 MB'}</div>
@@ -2237,7 +2246,7 @@
                             onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}
                           >
                             <div className="photo-item-clean-wrap">
-                              <img src={p.url || 'https://placehold.co/400x300?text=Empty'} alt="" loading="eager" decoding="async" />
+                              <img src={getAssetUrl(p.url || 'https://placehold.co/400x300?text=Empty')} alt="" loading="eager" decoding="async" />
                             </div>
                           </div>
                         ))}
@@ -2515,7 +2524,7 @@
                                               <button onClick={() => deletePhotoFromAdminWin(selectedAdminWin.id, photo.id)} className="text-red-500 font-bold hover:underline">Delete</button>
                                             </div>
                                             <div className="flex gap-2">
-                                              <img src={photo.url} className="w-12 h-12 object-cover rounded border" alt="" />
+                                              <img src={getAssetUrl(photo.url)} className="w-12 h-12 object-cover rounded border" alt="" />
                                               <div className="flex-1 space-y-1">
                                                 <div className="flex gap-1">
                                                   <input 
@@ -3066,7 +3075,7 @@
                         }}
                       >
                         <img
-                          src={currentPhoto.url}
+                          src={getAssetUrl(currentPhoto.url)}
                           alt=""
                           className="max-w-full max-h-[calc(100vh-230px)] object-contain shadow-2xl border border-slate-700 select-none pointer-events-none"
                         />
