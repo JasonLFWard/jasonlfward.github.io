@@ -1,762 +1,755 @@
 [
   {
     "id": "image-1",
-    "url": "images/compressed_image.jpeg",
-    "caption": "compressed image",
-    "date": "",
-    "size": ""
-  },
-  {
-    "id": "image-2",
     "url": "images/DSC04207.jpg",
     "caption": "DSC04207",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-3",
+    "id": "image-2",
     "url": "images/pictonday1-2026-1.jpg",
     "caption": "pictonday1 2026 1",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-4",
+    "id": "image-3",
     "url": "images/pictonday1-2026-2.jpg",
     "caption": "pictonday1 2026 2",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-5",
+    "id": "image-4",
     "url": "images/pictonday1-2026-3.jpg",
     "caption": "pictonday1 2026 3",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-6",
+    "id": "image-5",
     "url": "images/pictonday1-2026-4.jpg",
     "caption": "pictonday1 2026 4",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-7",
+    "id": "image-6",
     "url": "images/pictonday1-2026-5.jpg",
     "caption": "pictonday1 2026 5",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-8",
+    "id": "image-7",
     "url": "images/pictonday1-2026-6.jpg",
     "caption": "pictonday1 2026 6",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-9",
+    "id": "image-8",
     "url": "images/pictonday1-2026-7.jpg",
     "caption": "pictonday1 2026 7",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-10",
+    "id": "image-9",
     "url": "images/pictonday1-2026-8.jpg",
     "caption": "pictonday1 2026 8",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-11",
+    "id": "image-10",
     "url": "images/pictonday1-2026-9.jpg",
     "caption": "pictonday1 2026 9",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-12",
+    "id": "image-11",
     "url": "images/pictonday1-2026-10.jpg",
     "caption": "pictonday1 2026 10",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-13",
+    "id": "image-12",
     "url": "images/pictonday1-2026-11.jpg",
     "caption": "pictonday1 2026 11",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-14",
+    "id": "image-13",
     "url": "images/pictonday1-2026-12.jpg",
     "caption": "pictonday1 2026 12",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-15",
+    "id": "image-14",
     "url": "images/pictonday1-2026-13.jpg",
     "caption": "pictonday1 2026 13",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-16",
+    "id": "image-15",
     "url": "images/pictonday1-2026-14.jpg",
     "caption": "pictonday1 2026 14",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-17",
+    "id": "image-16",
     "url": "images/pictonday1-2026-15.jpg",
     "caption": "pictonday1 2026 15",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-18",
+    "id": "image-17",
     "url": "images/pictonday1-2026-16.jpg",
     "caption": "pictonday1 2026 16",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-19",
+    "id": "image-18",
     "url": "images/pictonday1-2026-17.jpg",
     "caption": "pictonday1 2026 17",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-20",
+    "id": "image-19",
     "url": "images/pictonday1-2026-18.jpg",
     "caption": "pictonday1 2026 18",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-21",
+    "id": "image-20",
     "url": "images/pictonday1-2026-19.jpg",
     "caption": "pictonday1 2026 19",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-22",
+    "id": "image-21",
     "url": "images/pictonday1-2026-20.jpg",
     "caption": "pictonday1 2026 20",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-23",
+    "id": "image-22",
     "url": "images/pictonday1-2026-21.jpg",
     "caption": "pictonday1 2026 21",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-24",
+    "id": "image-23",
     "url": "images/pictonday1-2026-22.jpg",
     "caption": "pictonday1 2026 22",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-25",
+    "id": "image-24",
     "url": "images/pictonday1-2026-23.jpg",
     "caption": "pictonday1 2026 23",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-26",
+    "id": "image-25",
     "url": "images/pictonday1-2026-24.jpg",
     "caption": "pictonday1 2026 24",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-27",
+    "id": "image-26",
     "url": "images/pictonday1-2026-25.jpg",
     "caption": "pictonday1 2026 25",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-28",
+    "id": "image-27",
     "url": "images/pictonday1-2026-26.jpg",
     "caption": "pictonday1 2026 26",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-29",
+    "id": "image-28",
     "url": "images/pictonday1-2026-27.jpg",
     "caption": "pictonday1 2026 27",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-30",
+    "id": "image-29",
     "url": "images/pictonday1-2026-28.jpg",
     "caption": "pictonday1 2026 28",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-31",
+    "id": "image-30",
     "url": "images/pictonday1-2026-29.jpg",
     "caption": "pictonday1 2026 29",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-32",
+    "id": "image-31",
     "url": "images/pictonday1-2026-30.jpg",
     "caption": "pictonday1 2026 30",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-33",
+    "id": "image-32",
     "url": "images/pictonday1-2026-31.jpg",
     "caption": "pictonday1 2026 31",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-34",
+    "id": "image-33",
     "url": "images/pictonday1-2026-32.jpg",
     "caption": "pictonday1 2026 32",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-35",
+    "id": "image-34",
     "url": "images/pictonday1-2026-33.jpg",
     "caption": "pictonday1 2026 33",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-36",
+    "id": "image-35",
     "url": "images/pictonday1-2026-34.jpg",
     "caption": "pictonday1 2026 34",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-37",
+    "id": "image-36",
     "url": "images/pictonday1-2026-35.jpg",
     "caption": "pictonday1 2026 35",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-38",
+    "id": "image-37",
     "url": "images/pictonday1-2026-36.jpg",
     "caption": "pictonday1 2026 36",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-39",
+    "id": "image-38",
     "url": "images/pictonday1-2026-37.jpg",
     "caption": "pictonday1 2026 37",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-40",
+    "id": "image-39",
     "url": "images/pictonday1-2026-38.jpg",
     "caption": "pictonday1 2026 38",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-41",
+    "id": "image-40",
     "url": "images/pictonday1-2026-39.jpg",
     "caption": "pictonday1 2026 39",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-42",
+    "id": "image-41",
     "url": "images/pictonday1-2026-40.jpg",
     "caption": "pictonday1 2026 40",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-43",
+    "id": "image-42",
     "url": "images/pictonday1-2026-41.jpg",
     "caption": "pictonday1 2026 41",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-44",
+    "id": "image-43",
     "url": "images/pictonday1-2026-42.jpg",
     "caption": "pictonday1 2026 42",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-45",
+    "id": "image-44",
     "url": "images/pictonday1-2026-43.jpg",
     "caption": "pictonday1 2026 43",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-46",
+    "id": "image-45",
     "url": "images/pictonday1-2026-44.jpg",
     "caption": "pictonday1 2026 44",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-47",
+    "id": "image-46",
     "url": "images/pictonday1-2026-45.jpg",
     "caption": "pictonday1 2026 45",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-48",
+    "id": "image-47",
     "url": "images/pictonday1-2026-46.jpg",
     "caption": "pictonday1 2026 46",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-49",
+    "id": "image-48",
     "url": "images/pictonday1-2026-47.jpg",
     "caption": "pictonday1 2026 47",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-50",
+    "id": "image-49",
     "url": "images/pictonday1-2026-48.jpg",
     "caption": "pictonday1 2026 48",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-51",
+    "id": "image-50",
     "url": "images/pictonday1-2026-49.jpg",
     "caption": "pictonday1 2026 49",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-52",
+    "id": "image-51",
     "url": "images/pictonday1-2026-50.jpg",
     "caption": "pictonday1 2026 50",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-53",
+    "id": "image-52",
     "url": "images/pictonday1-2026-51.jpg",
     "caption": "pictonday1 2026 51",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-54",
+    "id": "image-53",
     "url": "images/pictonday1-2026-52.jpg",
     "caption": "pictonday1 2026 52",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-55",
+    "id": "image-54",
     "url": "images/pictonday1-2026-53.jpg",
     "caption": "pictonday1 2026 53",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-56",
+    "id": "image-55",
     "url": "images/pictonday1-2026-54.jpg",
     "caption": "pictonday1 2026 54",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-57",
+    "id": "image-56",
     "url": "images/pictonday1-2026-55.jpg",
     "caption": "pictonday1 2026 55",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-58",
+    "id": "image-57",
     "url": "images/pictonday1-2026-56.jpg",
     "caption": "pictonday1 2026 56",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-59",
+    "id": "image-58",
     "url": "images/pictonday1-2026-57.jpg",
     "caption": "pictonday1 2026 57",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-60",
+    "id": "image-59",
     "url": "images/pictonday1-2026-58.jpg",
     "caption": "pictonday1 2026 58",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-61",
+    "id": "image-60",
     "url": "images/pictonday1-2026-59.jpg",
     "caption": "pictonday1 2026 59",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-62",
+    "id": "image-61",
     "url": "images/pictonday1-2026-60.jpg",
     "caption": "pictonday1 2026 60",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-63",
+    "id": "image-62",
     "url": "images/pictonday1-2026-61.jpg",
     "caption": "pictonday1 2026 61",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-64",
+    "id": "image-63",
     "url": "images/pictonday1-2026-62.jpg",
     "caption": "pictonday1 2026 62",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-65",
+    "id": "image-64",
     "url": "images/pictonday1-2026-63.jpg",
     "caption": "pictonday1 2026 63",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-66",
+    "id": "image-65",
     "url": "images/pictonday1-2026-64.jpg",
     "caption": "pictonday1 2026 64",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-67",
+    "id": "image-66",
     "url": "images/pictonday1-2026-65.jpg",
     "caption": "pictonday1 2026 65",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-68",
+    "id": "image-67",
     "url": "images/pictonday1-2026-66.jpg",
     "caption": "pictonday1 2026 66",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-69",
+    "id": "image-68",
     "url": "images/pictonday1-2026-67.jpg",
     "caption": "pictonday1 2026 67",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-70",
+    "id": "image-69",
     "url": "images/pictonday1-2026-68.jpg",
     "caption": "pictonday1 2026 68",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-71",
+    "id": "image-70",
     "url": "images/pictonday1-2026-69.jpg",
     "caption": "pictonday1 2026 69",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-72",
+    "id": "image-71",
     "url": "images/pictonday1-2026-70.jpg",
     "caption": "pictonday1 2026 70",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-73",
+    "id": "image-72",
     "url": "images/pictonday1-2026-71.jpg",
     "caption": "pictonday1 2026 71",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-74",
+    "id": "image-73",
     "url": "images/pictonday1-2026-72.jpg",
     "caption": "pictonday1 2026 72",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-75",
+    "id": "image-74",
     "url": "images/pictonday1-2026-73.jpg",
     "caption": "pictonday1 2026 73",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-76",
+    "id": "image-75",
     "url": "images/pictonday1-2026-74.jpg",
     "caption": "pictonday1 2026 74",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-77",
+    "id": "image-76",
     "url": "images/pictonday1-2026-75.jpg",
     "caption": "pictonday1 2026 75",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-78",
+    "id": "image-77",
     "url": "images/pictonday1-2026-76.jpg",
     "caption": "pictonday1 2026 76",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-79",
+    "id": "image-78",
     "url": "images/pictonday1-2026-77.jpg",
     "caption": "pictonday1 2026 77",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-80",
+    "id": "image-79",
     "url": "images/pictonday1-2026-78.jpg",
     "caption": "pictonday1 2026 78",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-81",
+    "id": "image-80",
     "url": "images/pictonday1-2026-79.jpg",
     "caption": "pictonday1 2026 79",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-82",
+    "id": "image-81",
     "url": "images/pictonday1-2026-80.jpg",
     "caption": "pictonday1 2026 80",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-83",
+    "id": "image-82",
     "url": "images/pictonday1-2026-81.jpg",
     "caption": "pictonday1 2026 81",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-84",
+    "id": "image-83",
     "url": "images/pictonday1-2026-82.jpg",
     "caption": "pictonday1 2026 82",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-85",
+    "id": "image-84",
     "url": "images/pictonday1-2026-83.jpg",
     "caption": "pictonday1 2026 83",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-86",
+    "id": "image-85",
     "url": "images/pictonday1-2026-84.jpg",
     "caption": "pictonday1 2026 84",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-87",
+    "id": "image-86",
     "url": "images/pictonday1-2026-85.jpg",
     "caption": "pictonday1 2026 85",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-88",
+    "id": "image-87",
     "url": "images/pictonday1-2026-86.jpg",
     "caption": "pictonday1 2026 86",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-89",
+    "id": "image-88",
     "url": "images/pictonday1-2026-87.jpg",
     "caption": "pictonday1 2026 87",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-90",
+    "id": "image-89",
     "url": "images/pictonday1-2026-88.jpg",
     "caption": "pictonday1 2026 88",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-91",
+    "id": "image-90",
     "url": "images/pictonday1-2026-89.jpg",
     "caption": "pictonday1 2026 89",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-92",
+    "id": "image-91",
     "url": "images/pictonday1-2026-90.jpg",
     "caption": "pictonday1 2026 90",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-93",
+    "id": "image-92",
     "url": "images/pictonday1-2026-91.jpg",
     "caption": "pictonday1 2026 91",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-94",
+    "id": "image-93",
     "url": "images/pictonday1-2026-92.jpg",
     "caption": "pictonday1 2026 92",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-95",
+    "id": "image-94",
     "url": "images/pictonday1-2026-93.jpg",
     "caption": "pictonday1 2026 93",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-96",
+    "id": "image-95",
     "url": "images/pictonday1-2026-94.jpg",
     "caption": "pictonday1 2026 94",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-97",
+    "id": "image-96",
     "url": "images/pictonday1-2026-95.jpg",
     "caption": "pictonday1 2026 95",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-98",
+    "id": "image-97",
     "url": "images/pictonday1-2026-96.jpg",
     "caption": "pictonday1 2026 96",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-99",
+    "id": "image-98",
     "url": "images/pictonday1-2026-97.jpg",
     "caption": "pictonday1 2026 97",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-100",
+    "id": "image-99",
     "url": "images/pictonday1-2026-98.jpg",
     "caption": "pictonday1 2026 98",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-101",
+    "id": "image-100",
     "url": "images/pictonday1-2026-99.jpg",
     "caption": "pictonday1 2026 99",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-102",
+    "id": "image-101",
     "url": "images/pictonday1-2026-100.jpg",
     "caption": "pictonday1 2026 100",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-103",
+    "id": "image-102",
     "url": "images/pictonday1-2026-101.jpg",
     "caption": "pictonday1 2026 101",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-104",
+    "id": "image-103",
     "url": "images/pictonday1-2026-102.jpg",
     "caption": "pictonday1 2026 102",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-105",
+    "id": "image-104",
     "url": "images/pictonday1-2026-103.jpg",
     "caption": "pictonday1 2026 103",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-106",
+    "id": "image-105",
     "url": "images/pictonday1-2026-104.jpg",
     "caption": "pictonday1 2026 104",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-107",
+    "id": "image-106",
     "url": "images/pictonday1-2026-105.jpg",
     "caption": "pictonday1 2026 105",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-108",
+    "id": "image-107",
     "url": "images/pictonday1-2026-106.jpg",
     "caption": "pictonday1 2026 106",
     "date": "",
     "size": ""
   },
   {
-    "id": "image-109",
+    "id": "image-108",
     "url": "images/pictonday1-2026-107.jpg",
     "caption": "pictonday1 2026 107",
     "date": "",
