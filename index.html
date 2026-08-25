@@ -63,6 +63,7 @@
       height: 100vh; width: 100vw;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .desktop {
@@ -110,6 +111,7 @@
       padding: 3px 6px; font-weight: bold; font-size: 12px;
       display: flex; justify-content: space-between; align-items: center;
       cursor: move;
+      touch-action: none;
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
       flex-shrink: 0;
@@ -155,8 +157,24 @@
     .xp-content { flex-grow: 1; min-height: 0; background: #fff; margin: 2px; border: 1px solid #7f9db9; padding: 10px; overflow-y: auto; }
     .text-document-content { overflow: hidden; }
     .xp-resize-handle {
-      position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; cursor: se-resize; z-index: 50;
+      position: absolute; z-index: 50;
+    }
+    .xp-resize-handle.n, .xp-resize-handle.s { left: 10px; right: 10px; height: 8px; }
+    .xp-resize-handle.n { top: -4px; cursor: n-resize; }
+    .xp-resize-handle.s { bottom: -4px; cursor: s-resize; }
+    .xp-resize-handle.e, .xp-resize-handle.w { top: 10px; bottom: 10px; width: 8px; }
+    .xp-resize-handle.e { right: -4px; cursor: e-resize; }
+    .xp-resize-handle.w { left: -4px; cursor: w-resize; }
+    .xp-resize-handle.ne, .xp-resize-handle.nw, .xp-resize-handle.se, .xp-resize-handle.sw {
+      width: 12px; height: 12px;
+    }
+    .xp-resize-handle.ne { top: -4px; right: -4px; cursor: ne-resize; }
+    .xp-resize-handle.nw { top: -4px; left: -4px; cursor: nw-resize; }
+    .xp-resize-handle.se { right: -4px; bottom: -4px; cursor: se-resize;
       background: linear-gradient(135deg, transparent 50%, #888 50%, #888 60%, transparent 60%, transparent 75%, #888 75%);
+    }
+    .xp-resize-handle.sw { bottom: -4px; left: -4px; cursor: sw-resize;
+      background: linear-gradient(45deg, transparent 50%, #888 50%, #888 60%, transparent 60%, transparent 75%, #888 75%);
     }
 
     .layout-grid-thumbnails {
@@ -186,18 +204,16 @@
     }
     .photo-item-card-img-wrap {
       width: 100%;
-      height: 92px;
       background: #1a1a1a;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
       border-radius: 1px;
     }
     .photo-item-card-img-wrap img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      object-fit: contain;
       display: block;
     }
     .photo-item-card-caption {
@@ -235,38 +251,40 @@
     .photo-item-list.selected { background: #d7e8fb; border-color: #316ac5; }
     .photo-item-list img {
       width: 44px;
-      height: 32px;
-      object-fit: cover;
+      height: auto;
+      max-height: 44px;
+      object-fit: contain;
       border-radius: 1px;
       flex-shrink: 0;
       background: #222;
     }
 
     .photo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(var(--photo-tile-width), 1fr));
-      gap: 10px;
-      align-items: start;
+      column-width: var(--photo-tile-width);
+      column-gap: 4px;
     }
     .photo-grid-small { --photo-tile-width: 104px; --photo-image-height: 72px; }
     .photo-grid-medium { --photo-tile-width: 148px; --photo-image-height: 108px; }
     .photo-grid-large { --photo-tile-width: 216px; --photo-image-height: 156px; }
     .photo-grid .photo-item-clean {
       min-width: 0;
-      padding: 4px;
+      display: inline-block;
+      width: 100%;
+      margin: 0 0 4px;
+      padding: 1px;
       border: 1px solid transparent;
       background: transparent;
       cursor: pointer;
+      break-inside: avoid;
     }
     .photo-grid .photo-item-clean:hover,
     .photo-grid .photo-item-clean.selected { background: rgba(49, 106, 197, 0.12); border-color: #316ac5; }
     .photo-item-clean-wrap {
-      width: 100%; height: var(--photo-image-height); background: #1a1a1a;
-      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      width: 100%; background: #1a1a1a;
+      display: flex; align-items: center; justify-content: center;
     }
-    .photo-item-clean-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .photo-grid-mosaic { grid-template-columns: repeat(auto-fill, minmax(var(--photo-tile-width), 1fr)); gap: 6px; }
-    .photo-grid-mosaic .photo-item-clean-wrap { height: var(--photo-image-height); }
+    .photo-item-clean-wrap img { width: 100%; height: auto; object-fit: contain; display: block; }
+    .photo-grid-mosaic { column-gap: 4px; }
     .image-cache-preload {
       position: fixed; width: 1px; height: 1px; left: -10px; top: -10px;
       opacity: 0; pointer-events: none; overflow: hidden;
@@ -331,6 +349,45 @@
     .xp-dialog-box {
       width: 400px; background: var(--xp-bg); border: 3px solid var(--xp-blue);
       border-radius: 6px; box-shadow: 4px 4px 20px rgba(0,0,0,0.5); overflow: hidden;
+    }
+
+    button, input, select, textarea, [role="button"] { touch-action: manipulation; }
+
+    @media (max-width: 640px) {
+      body { height: 100dvh; width: 100%; }
+      .desktop { height: calc(100dvh - 52px); padding: 8px; }
+      .desktop-icon { width: 82px; height: 82px; padding: 7px 4px; font-size: 10px; }
+      .desktop-icon svg, .desktop-icon img { width: 32px; height: 32px; }
+      .xp-window {
+        left: 4px !important; top: 4px !important;
+        width: calc(100vw - 8px) !important; height: calc(100dvh - 60px) !important;
+        min-width: 0; min-height: 0; border-width: 2px;
+      }
+      .xp-window.maximized { height: calc(100dvh - 52px) !important; }
+      .xp-titlebar { min-height: 32px; padding: 4px 5px; font-size: 11px; }
+      .xp-controls { gap: 3px; }
+      .xp-controls button { width: 30px; height: 28px; font-size: 13px; }
+      .xp-menu-bar { overflow-x: auto; min-height: 32px; padding: 2px; }
+      .xp-menu-item { padding: 7px 10px; flex-shrink: 0; }
+      .xp-menu-dropdown { position: fixed; top: auto; left: 4px; right: 4px; width: auto; min-width: 0; max-height: 60dvh; overflow-y: auto; }
+      .xp-menu-dropdown-item { min-height: 42px; padding: 8px 10px; font-size: 12px; }
+      .xp-content { padding: 7px; margin: 1px; }
+      .layout-grid-thumbnails { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .photo-grid { column-width: 104px !important; }
+      .photo-item-list { min-height: 52px; padding: 4px; }
+      .taskbar { height: 52px; }
+      .start-btn { min-width: 76px; padding: 0 10px 0 7px; font-size: 13px; }
+      .taskbar-items { padding: 0 4px; gap: 3px; }
+      .taskbar-item { min-width: 88px; max-width: 130px; min-height: 36px; padding: 5px 7px; }
+      .system-tray { padding: 0 7px; gap: 5px; font-size: 10px; }
+      .start-menu { bottom: 52px; width: calc(100vw - 8px); max-width: 360px; }
+      .start-menu-body { height: 240px; }
+      .start-item { min-height: 38px; padding: 8px; }
+      .xp-dialog-box { width: calc(100vw - 24px); max-height: calc(100dvh - 32px); overflow-y: auto; }
+      .xp-paint-toolbar { width: 54px; }
+      .xp-paint-btn { width: 40px; height: 40px; }
+      .xp-color-swatch { width: 22px; height: 22px; }
+      .xp-resize-handle { display: none; }
     }
   </style>
 </head>
@@ -825,6 +882,9 @@
                 <div
                   key={menu.title}
                   className={`xp-menu-item select-none text-xs ${isOpen ? 'active' : ''}`}
+                  onMouseLeave={() => {
+                    if (isOpen) setActiveMenu(null);
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     setActiveMenu(isOpen ? null : { winId, menu: menu.title });
@@ -845,11 +905,11 @@
                         if (item.control) {
                           return (
                             <div
-                              key={item.label || idx}
+                              key={`control-${idx}`}
                               className="xp-menu-dropdown-item flex items-center gap-2"
                               onClick={(e) => e.stopPropagation()}
-                              onMouseDown={(e) => e.stopPropagation()}
-                              onMouseMove={(e) => e.stopPropagation()}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              onPointerMove={(e) => e.stopPropagation()}
                             >
                               <span className="flex items-center gap-2">
                                 <span className="w-4 text-center">{item.icon || ''}</span>
@@ -1014,6 +1074,7 @@
 
       const [draggingWin, setDraggingWin] = useState(null);
       const [resizingWin, setResizingWin] = useState(null);
+      const [resizeDirection, setResizeDirection] = useState('se');
       const [draggingIconId, setDraggingIconId] = useState(null);
       const draggingIconIdRef = useRef(null);
       const dragStartPos = useRef({ x: 0, y: 0, winX: 0, winY: 0, winW: 0, winH: 0, iconX: 0, iconY: 0 });
@@ -1708,12 +1769,13 @@
         dragStartPos.current = { x: e.clientX, y: e.clientY, winX: viewerState.x, winY: viewerState.y };
       };
 
-      const handleViewerResizeDown = (e) => {
+      const handleViewerResizeDown = (e, direction = 'se') => {
         e.preventDefault(); e.stopPropagation();
         bringViewerToFront();
         if (viewerState.isMaximized) return;
         setResizingWin('sys-viewer');
-        dragStartPos.current = { x: e.clientX, y: e.clientY, winW: viewerState.width, winH: viewerState.height };
+        setResizeDirection(direction);
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winX: viewerState.x, winY: viewerState.y, winW: viewerState.width, winH: viewerState.height };
       };
 
       const handleMouseDown = (e, winId) => {
@@ -1728,7 +1790,20 @@
         dragStartPos.current = { x: e.clientX, y: e.clientY, winX: win.x, winY: win.y };
       };
 
-      const handleResizeDown = (e, winId) => {
+      const handleThumbnailSliderPointerDown = (e, winId) => {
+        e.stopPropagation();
+        e.currentTarget.setPointerCapture(e.pointerId);
+      };
+
+      const handleThumbnailSliderPointerUp = (e, winId) => {
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+        updateWindow(winId, { thumbnailSize: Number(e.currentTarget.value) });
+        e.stopPropagation();
+      };
+
+      const handleResizeDown = (e, winId, direction = 'se') => {
         e.preventDefault(); e.stopPropagation();
         bringToFront(winId);
         setSelectedWindowId(winId);
@@ -1737,7 +1812,30 @@
         if (!win || win.isMaximized) return;
 
         setResizingWin(winId);
-        dragStartPos.current = { x: e.clientX, y: e.clientY, winW: win.width, winH: win.height };
+        setResizeDirection(direction);
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winX: win.x, winY: win.y, winW: win.width, winH: win.height };
+      };
+
+      const getResizedBounds = (minWidth, minHeight, clientX, clientY) => {
+        const { x: startX, y: startY, winX: startWindowX, winY: startWindowY, winW: startWidth, winH: startHeight } = dragStartPos.current;
+        const horizontalDelta = clientX - startX;
+        const verticalDelta = clientY - startY;
+        const resizesWest = resizeDirection.includes('w');
+        const resizesNorth = resizeDirection.includes('n');
+        const resizesHorizontal = resizeDirection.includes('e') || resizesWest;
+        const resizesVertical = resizeDirection.includes('s') || resizesNorth;
+        const width = resizesHorizontal
+          ? Math.max(minWidth, startWidth + (resizesWest ? -horizontalDelta : horizontalDelta))
+          : startWidth;
+        const height = resizesVertical
+          ? Math.max(minHeight, startHeight + (resizesNorth ? -verticalDelta : verticalDelta))
+          : startHeight;
+        return {
+          x: resizesWest ? startWindowX + startWidth - width : undefined,
+          y: resizesNorth ? startWindowY + startHeight - height : undefined,
+          width,
+          height
+        };
       };
 
       const handleIconMouseDown = (e, iconId) => {
@@ -1782,21 +1880,26 @@
             y: Math.max(0, dragStartPos.current.winY + dy)
           }));
         } else if (resizingWin === 'sys-viewer') {
-          const dx = e.clientX - dragStartPos.current.x;
-          const dy = e.clientY - dragStartPos.current.y;
+          const bounds = getResizedBounds(340, 240, e.clientX, e.clientY);
           setViewerState(prev => ({
             ...prev,
-            width: Math.max(340, dragStartPos.current.winW + dx),
-            height: Math.max(240, dragStartPos.current.winH + dy)
+            ...(bounds.x === undefined ? {} : { x: bounds.x }),
+            ...(bounds.y === undefined ? {} : { y: bounds.y }),
+            width: bounds.width,
+            height: bounds.height
           }));
         } else if (draggingWin) {
           const dx = e.clientX - dragStartPos.current.x;
           const dy = e.clientY - dragStartPos.current.y;
           updateWindow(draggingWin, { x: Math.max(0, dragStartPos.current.winX + dx), y: Math.max(0, dragStartPos.current.winY + dy) });
         } else if (resizingWin) {
-          const dx = e.clientX - dragStartPos.current.x;
-          const dy = e.clientY - dragStartPos.current.y;
-          updateWindow(resizingWin, { width: Math.max(280, dragStartPos.current.winW + dx), height: Math.max(180, dragStartPos.current.winH + dy) });
+          const bounds = getResizedBounds(280, 180, e.clientX, e.clientY);
+          updateWindow(resizingWin, {
+            ...(bounds.x === undefined ? {} : { x: bounds.x }),
+            ...(bounds.y === undefined ? {} : { y: bounds.y }),
+            width: bounds.width,
+            height: bounds.height
+          });
         } else if (draggingIconId || draggingIconIdRef.current) {
           lastPointerPosition.current = { x: e.clientX, y: e.clientY };
           const dx = e.clientX - dragStartPos.current.x;
@@ -1831,7 +1934,7 @@
           }
         }
         draggingIconIdRef.current = null;
-        setDraggingWin(null); setResizingWin(null); setDraggingIconId(null);
+        setDraggingWin(null); setResizingWin(null); setResizeDirection('se'); setDraggingIconId(null);
       };
 
       const handlePhotoContextMenu = (e, photo, sourceWinId) => {
@@ -1893,8 +1996,8 @@
               ? { backgroundColor: data.settings.desktopBg } 
               : { backgroundImage: `url(${data.settings.desktopBg})`, backgroundSize: 'cover', backgroundPosition: 'center' })
           }}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
+          onPointerMove={handleMouseMove}
+          onPointerUp={handleMouseUp}
           onContextMenu={handleDesktopContextMenu}
           onClick={() => {
             setSelectedIconId(null);
@@ -1922,7 +2025,7 @@
               style={{ left: data.desktopIcons?.['sys-computer']?.x ?? 15, top: data.desktopIcons?.['sys-computer']?.y ?? 15 }}
               onDoubleClick={() => openWindow('sys-computer')}
               onClick={(e) => e.stopPropagation()}
-              onMouseDown={(e) => handleIconMouseDown(e, 'sys-computer')}
+              onPointerDown={(e) => handleIconMouseDown(e, 'sys-computer')}
             >
               <ThemeComputerIcon theme={data.settings.osTheme} />
               <span>My Computer</span>
@@ -1933,7 +2036,7 @@
               style={{ left: data.desktopIcons?.['sys-recyclebin']?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.['sys-recyclebin']?.y ?? (DESKTOP_GRID.originY + DESKTOP_GRID.cellHeight) }}
               onDoubleClick={() => openWindow('sys-recyclebin')}
               onClick={(e) => e.stopPropagation()}
-              onMouseDown={(e) => handleIconMouseDown(e, 'sys-recyclebin')}
+              onPointerDown={(e) => handleIconMouseDown(e, 'sys-recyclebin')}
             >
               <ThemeRecycleBinIcon theme={data.settings.osTheme} isFull={(data.recycleBin || []).length > 0} />
               <span>Recycle Bin</span>
@@ -1943,7 +2046,7 @@
               style={{ left: data.desktopIcons?.paint?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.paint?.y ?? (DESKTOP_GRID.originY + (DESKTOP_GRID.cellHeight * 4)) }}
               onDoubleClick={openPaint}
               onClick={(e) => e.stopPropagation()}
-              onMouseDown={(e) => handleIconMouseDown(e, 'paint')}
+              onPointerDown={(e) => handleIconMouseDown(e, 'paint')}
             >
               <ThemePaintIcon />
               <span>Paint</span>
@@ -1959,7 +2062,7 @@
                   style={{ left: iconPos.x, top: iconPos.y }}
                   onDoubleClick={() => openWindow(win.id)}
                   onClick={(e) => e.stopPropagation()}
-                  onMouseDown={(e) => handleIconMouseDown(e, win.id)}
+                  onPointerDown={(e) => handleIconMouseDown(e, win.id)}
                 >
                   {isText ? <ThemeNotepadIcon theme={data.settings.osTheme} /> : <ThemeFolderIcon theme={data.settings.osTheme} />}
                   <span>{win.title}</span>
@@ -2137,11 +2240,12 @@
                           onChange={(e) => {
                             const nextSize = Number(e.currentTarget.value);
                             setThumbnailSliderValues(prev => ({ ...prev, [win.id]: nextSize }));
-                            updateWindow(win.id, { thumbnailSize: nextSize });
                           }}
+                          onPointerDown={(e) => handleThumbnailSliderPointerDown(e, win.id)}
+                          onPointerUp={(e) => handleThumbnailSliderPointerUp(e, win.id)}
+                          onPointerCancel={(e) => handleThumbnailSliderPointerUp(e, win.id)}
                           onKeyUp={(e) => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') updateWindow(win.id, { thumbnailSize: Number(e.currentTarget.value) }); }}
                           onClick={(e) => e.stopPropagation()}
-                          onMouseDown={(e) => e.stopPropagation()}
                         />
                       )
                     }
@@ -2193,7 +2297,7 @@
                   }}
                   onClick={() => bringToFront(win.id)}
                 >
-                  <div className="xp-titlebar" onMouseDown={(e) => handleMouseDown(e, win.id)}>
+                  <div className="xp-titlebar" onPointerDown={(e) => handleMouseDown(e, win.id)}>
                     <span className="flex items-center gap-1.5 truncate">
                       {isText ? '📝' : '📁'} {win.title}
                     </span>
@@ -2255,7 +2359,9 @@
                   </div>
 
                   {!win.isMaximized && (
-                    <div className="xp-resize-handle" onMouseDown={(e) => handleResizeDown(e, win.id)} title="Resize Window" />
+                    ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'].map(direction => (
+                      <div key={direction} className={`xp-resize-handle ${direction}`} onMouseDown={(e) => handleResizeDown(e, win.id, direction)} title="Resize Window" />
+                    ))
                   )}
                 </div>
               );
@@ -2274,7 +2380,7 @@
                 }}
                 onClick={() => bringToFront('sys-computer')}
               >
-                <div className="xp-titlebar" onMouseDown={(e) => handleMouseDown(e, 'sys-computer')}>
+                <div className="xp-titlebar" onPointerDown={(e) => handleMouseDown(e, 'sys-computer')}>
                   <span className="flex items-center gap-1.5">🖥️ My Computer & Control Panel</span>
                   <div className="xp-controls">
                     <button onClick={(e) => { e.stopPropagation(); toggleMinimize('sys-computer'); }}>_</button>
@@ -2524,7 +2630,7 @@
                                               <button onClick={() => deletePhotoFromAdminWin(selectedAdminWin.id, photo.id)} className="text-red-500 font-bold hover:underline">Delete</button>
                                             </div>
                                             <div className="flex gap-2">
-                                              <img src={getAssetUrl(photo.url)} className="w-12 h-12 object-cover rounded border" alt="" />
+                                              <img src={getAssetUrl(photo.url)} className="w-12 h-12 object-contain rounded border" alt="" />
                                               <div className="flex-1 space-y-1">
                                                 <div className="flex gap-1">
                                                   <input 
@@ -2578,7 +2684,9 @@
                 </div>
 
                 {!winComp.isMaximized && (
-                  <div className="xp-resize-handle" onMouseDown={(e) => handleResizeDown(e, 'sys-computer')} />
+                  ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'].map(direction => (
+                    <div key={direction} className={`xp-resize-handle ${direction}`} onMouseDown={(e) => handleResizeDown(e, 'sys-computer', direction)} title="Resize Window" />
+                  ))
                 )}
               </div>
             )}
@@ -2596,7 +2704,7 @@
                 }}
                 onClick={() => bringToFront('sys-recyclebin')}
               >
-                <div className="xp-titlebar" onMouseDown={(e) => handleMouseDown(e, 'sys-recyclebin')}>
+                <div className="xp-titlebar" onPointerDown={(e) => handleMouseDown(e, 'sys-recyclebin')}>
                   <span className="flex items-center gap-1.5">🗑️ Recycle Bin</span>
                   <div className="xp-controls">
                     <button onClick={(e) => { e.stopPropagation(); toggleMinimize('sys-recyclebin'); }}>_</button>
@@ -2719,7 +2827,9 @@
                   )}
                 </div>
                 {!winRecycle.isMaximized && (
-                  <div className="xp-resize-handle" onMouseDown={(e) => handleResizeDown(e, 'sys-recyclebin')} />
+                  ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'].map(direction => (
+                    <div key={direction} className={`xp-resize-handle ${direction}`} onMouseDown={(e) => handleResizeDown(e, 'sys-recyclebin', direction)} title="Resize Window" />
+                  ))
                 )}
               </div>
             )}
@@ -2737,7 +2847,7 @@
                 }}
                 onClick={bringViewerToFront}
               >
-                <div className="xp-titlebar" onMouseDown={handleViewerMouseDown}>
+                <div className="xp-titlebar" onPointerDown={handleViewerMouseDown}>
                   <span className="flex items-center gap-1.5 truncate">
                     🖼️ Picture and Fax Viewer & MS Paint - {viewerState.title}
                   </span>
@@ -3084,9 +3194,9 @@
                           width={1200}
                           height={800}
                           className={`absolute inset-0 w-full h-full ${viewerState.isPaintOpen ? 'cursor-crosshair' : 'pointer-events-none'} z-10 touch-none`}
-                          onMouseDown={viewerState.isPaintOpen ? startPaint : undefined}
-                          onMouseMove={viewerState.isPaintOpen ? doPaint : undefined}
-                          onMouseUp={viewerState.isPaintOpen ? endPaint : undefined}
+                          onPointerDown={viewerState.isPaintOpen ? startPaint : undefined}
+                          onPointerMove={viewerState.isPaintOpen ? doPaint : undefined}
+                          onPointerUp={viewerState.isPaintOpen ? endPaint : undefined}
                           onMouseLeave={viewerState.isPaintOpen ? endPaint : undefined}
                         />
                       </div>
@@ -3097,9 +3207,9 @@
                           width={1200}
                           height={800}
                           className="absolute inset-0 w-full h-full cursor-crosshair touch-none"
-                          onMouseDown={startPaint}
-                          onMouseMove={doPaint}
-                          onMouseUp={endPaint}
+                          onPointerDown={startPaint}
+                          onPointerMove={doPaint}
+                          onPointerUp={endPaint}
                           onMouseLeave={endPaint}
                         />
                       </div>
@@ -3198,7 +3308,9 @@
                 </div>
 
                 {!viewerState.isMaximized && (
-                  <div className="xp-resize-handle" onMouseDown={handleViewerResizeDown} title="Resize Window" />
+                  ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'].map(direction => (
+                    <div key={direction} className={`xp-resize-handle ${direction}`} onMouseDown={(e) => handleViewerResizeDown(e, direction)} title="Resize Window" />
+                  ))
                 )}
               </div>
             )}
