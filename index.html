@@ -300,6 +300,16 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
     const DESKTOP_GRID = { originX: 15, originY: 15, cellWidth: 90, cellHeight: 84, iconWidth: 84, iconHeight: 80 };
+    const imageCache = new Map();
+
+    const preloadImage = (url) => {
+      if (!url || imageCache.has(url)) return imageCache.get(url);
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = url;
+      imageCache.set(url, image);
+      return image;
+    };
 
     const playXpSound = (type) => {
       try {
@@ -894,19 +904,20 @@
       const [showShutdownModal, setShowShutdownModal] = useState(false);
 
       useEffect(() => {
+        FEATURED_PHOTOS.forEach(photo => preloadImage(photo.url));
         fetch('images.json')
           .then(response => response.ok ? response.json() : [])
           .then(images => {
             const manifest = Array.isArray(images) ? images : [];
             setImageManifest(manifest);
-            manifest.slice(0, 12).forEach(photo => {
-              const image = new Image();
-              image.decoding = 'async';
-              image.src = photo.url;
-            });
+            [...FEATURED_PHOTOS, ...manifest].forEach(photo => preloadImage(photo.url));
           })
           .catch(() => setImageManifest([]));
       }, []);
+
+      useEffect(() => {
+        data.windows.flatMap(window => window.photos || []).forEach(photo => preloadImage(photo.url));
+      }, [data.windows]);
 
       useEffect(() => {
         if (imageManifest.length === 0) return;
@@ -2102,7 +2113,7 @@
                       <div className="layout-list">
                         {(win.photos || []).map((p, idx) => (
                           <div key={p.id} className={`photo-item-list ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`} onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))} onDoubleClick={() => openPhotoViewer(win.photos, idx, win.title)} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
-                            <img src={p.url} alt="" loading="lazy" decoding="async" />
+                            <img src={p.url} alt="" loading="eager" decoding="async" />
                             <div className="flex-1 min-w-0">
                               <div className="font-bold text-xs truncate">{p.caption || 'Photo'}</div>
                               <div className="text-[10px] text-slate-400">{p.date || '2024'} • {p.size || '3.2 MB'}</div>
@@ -2121,7 +2132,7 @@
                             onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}
                           >
                             <div className="photo-item-clean-wrap">
-                              <img src={p.url || 'https://placehold.co/400x300?text=Empty'} alt="" loading="lazy" decoding="async" />
+                              <img src={p.url || 'https://placehold.co/400x300?text=Empty'} alt="" loading="eager" decoding="async" />
                             </div>
                           </div>
                         ))}
