@@ -355,8 +355,11 @@
       .then(response => response.ok ? response.json() : [])
       .then(images => Array.isArray(images) ? images : [])
       .then(manifest => {
-        [...FEATURED_PHOTOS, ...manifest].forEach(photo => preloadImage(photo.url));
-        return manifest;
+        const urls = [...new Set([...FEATURED_PHOTOS, ...manifest].map(photo => photo.url).filter(Boolean))];
+        return Promise.all(urls.map(url => {
+          const image = preloadImage(url);
+          return image.decode ? image.decode().catch(() => undefined) : Promise.resolve();
+        })).then(() => manifest);
       })
       .catch(() => []);
 
@@ -3237,7 +3240,7 @@
     }
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    imageManifestPromise.then(() => root.render(<App />));
   </script>
 </body>
 </html>
