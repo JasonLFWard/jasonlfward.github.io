@@ -231,6 +231,11 @@
     .photo-grid-mosaic .photo-item-clean:nth-child(5n + 1) { grid-column: span 2; grid-row: span 2; }
     .photo-grid-mosaic .photo-item-clean:nth-child(7n + 3) { grid-column: span 2; }
     .photo-grid-mosaic .photo-item-clean-wrap { height: 100%; }
+    .image-cache-preload {
+      position: fixed; width: 1px; height: 1px; left: -10px; top: -10px;
+      opacity: 0; pointer-events: none; overflow: hidden;
+    }
+    .image-cache-preload img { width: 1px; height: 1px; }
 
     .taskbar {
       background: var(--xp-taskbar); height: 40px; width: 100%;
@@ -1802,6 +1807,11 @@
 
       const currentThemeObj = OS_THEMES.find(t => t.id === (data.settings.osTheme || 'xp')) || OS_THEMES[0];
       const selectedAdminWin = data.windows.find(w => w.id === selectedAdminWinId);
+      const cachedImageUrls = [...new Set([
+        ...FEATURED_PHOTOS.map(photo => photo.url),
+        ...imageManifest.map(photo => photo.url),
+        ...allPortfolioPhotos.map(photo => photo.url)
+      ].filter(Boolean))];
 
       return (
         <div 
@@ -1821,6 +1831,10 @@
           }}
         >
           <style>{generateXPCss(data.settings)}</style>
+
+          <div className="image-cache-preload" aria-hidden="true">
+            {cachedImageUrls.map(url => <img key={url} src={url} alt="" decoding="async" />)}
+          </div>
 
           <input 
             type="file" 
