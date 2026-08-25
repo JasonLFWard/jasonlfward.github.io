@@ -18,7 +18,7 @@ for (const folder of folders) {
 
   manifest.push({
     id: folder.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-    title: folder.name.replace(/[-_]+/g, ' '),
+    title: folder.name,
     photos: files.map((file, index) => ({
       id: `${folder.name}-${index + 1}`,
       url: `images/${encodeURIComponent(folder.name)}/${encodeURIComponent(file)}`,
