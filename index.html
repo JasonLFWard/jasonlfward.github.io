@@ -69,9 +69,9 @@
     .desktop-icon {
       position: absolute;
       display: flex; flex-direction: column; align-items: center;
-      box-sizing: border-box; width: 84px; height: 80px; cursor: move; color: white;
+      box-sizing: border-box; width: 104px; height: 104px; cursor: move; color: white;
       text-shadow: 1px 1px 2px black; font-size: 11px; text-align: center;
-      padding: 8px 4px; border: 1px dashed transparent; border-radius: 3px;
+      padding: 12px 6px; border: 1px dashed transparent; border-radius: 3px;
       z-index: 5;
     }
     .desktop-icon:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
@@ -149,7 +149,8 @@
     .xp-menu-dropdown-item { padding: 5px 10px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     .xp-menu-dropdown-item:hover { background: #316ac5; color: white; }
 
-    .xp-content { flex-grow: 1; background: #fff; margin: 2px; border: 1px solid #7f9db9; padding: 10px; overflow-y: auto; }
+    .xp-content { flex-grow: 1; min-height: 0; background: #fff; margin: 2px; border: 1px solid #7f9db9; padding: 10px; overflow-y: auto; }
+    .text-document-content { overflow: hidden; }
     .xp-resize-handle {
       position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; cursor: se-resize; z-index: 50;
       background: linear-gradient(135deg, transparent 50%, #888 50%, #888 60%, transparent 60%, transparent 75%, #888 75%);
@@ -261,11 +262,8 @@
       display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
     .photo-item-clean-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .photo-grid-mosaic { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: 54px; gap: 6px; }
-    .photo-grid-mosaic .photo-item-clean { height: 100%; }
-    .photo-grid-mosaic .photo-item-clean:nth-child(5n + 1) { grid-column: span 2; grid-row: span 2; }
-    .photo-grid-mosaic .photo-item-clean:nth-child(7n + 3) { grid-column: span 2; }
-    .photo-grid-mosaic .photo-item-clean-wrap { height: 100%; }
+    .photo-grid-mosaic { grid-template-columns: repeat(auto-fill, minmax(var(--photo-tile-width), 1fr)); gap: 6px; }
+    .photo-grid-mosaic .photo-item-clean-wrap { height: var(--photo-image-height); }
     .image-cache-preload {
       position: fixed; width: 1px; height: 1px; left: -10px; top: -10px;
       opacity: 0; pointer-events: none; overflow: hidden;
@@ -339,7 +337,7 @@
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-    const DESKTOP_GRID = { originX: 15, originY: 15, cellWidth: 90, cellHeight: 84, iconWidth: 84, iconHeight: 80 };
+    const DESKTOP_GRID = { originX: 15, originY: 15, cellWidth: 108, cellHeight: 108, iconWidth: 104, iconHeight: 104 };
     const imageCache = new Map();
 
     const preloadImage = (url) => {
@@ -835,6 +833,23 @@
                         if (item.separator) {
                           return <div key={`sep-${idx}`} className="xp-menu-separator" />;
                         }
+                        if (item.control) {
+                          return (
+                            <div
+                              key={item.label || idx}
+                              className="xp-menu-dropdown-item flex items-center gap-2"
+                              onClick={(e) => e.stopPropagation()}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onMouseMove={(e) => e.stopPropagation()}
+                            >
+                              <span className="flex items-center gap-2">
+                                <span className="w-4 text-center">{item.icon || ''}</span>
+                                <span className={item.bold ? 'font-bold' : ''}>{item.label}</span>
+                              </span>
+                              {item.control}
+                            </div>
+                          );
+                        }
                         return (
                           <div
                             key={item.label || idx}
@@ -949,6 +964,7 @@
       const [activeMenu, setActiveMenu] = useState(null);
       const [dialogModal, setDialogModal] = useState({ isOpen: false, title: '', icon: 'ℹ️', message: '', details: '' });
       const [textDocFontSizes, setTextDocFontSizes] = useState({});
+      const [thumbnailSliderValues, setThumbnailSliderValues] = useState({});
 
       const [highestZIndex, setHighestZIndex] = useState(120);
       const [sysTime, setSysTime] = useState('');
@@ -990,6 +1006,7 @@
       const [draggingWin, setDraggingWin] = useState(null);
       const [resizingWin, setResizingWin] = useState(null);
       const [draggingIconId, setDraggingIconId] = useState(null);
+      const draggingIconIdRef = useRef(null);
       const dragStartPos = useRef({ x: 0, y: 0, winX: 0, winY: 0, winW: 0, winH: 0, iconX: 0, iconY: 0 });
       const lastPointerPosition = useRef({ x: 0, y: 0 });
 
@@ -1717,7 +1734,7 @@
       const handleIconMouseDown = (e, iconId) => {
         e.preventDefault(); e.stopPropagation();
         setSelectedIconId(iconId);
-        setDraggingIconId(iconId);
+        draggingIconIdRef.current = null;
         
         const iconPos = data.desktopIcons?.[iconId] || { x: 15, y: 15 };
         dragStartPos.current = { x: e.clientX, y: e.clientY, iconX: iconPos.x, iconY: iconPos.y };
@@ -1771,34 +1788,40 @@
           const dx = e.clientX - dragStartPos.current.x;
           const dy = e.clientY - dragStartPos.current.y;
           updateWindow(resizingWin, { width: Math.max(280, dragStartPos.current.winW + dx), height: Math.max(180, dragStartPos.current.winH + dy) });
-        } else if (draggingIconId) {
+        } else if (draggingIconId || draggingIconIdRef.current) {
           lastPointerPosition.current = { x: e.clientX, y: e.clientY };
           const dx = e.clientX - dragStartPos.current.x;
           const dy = e.clientY - dragStartPos.current.y;
+          if (!draggingIconIdRef.current && Math.hypot(dx, dy) < 4) return;
+          const activeIconId = draggingIconId || draggingIconIdRef.current;
+          draggingIconIdRef.current = activeIconId;
+          setDraggingIconId(activeIconId);
           const newX = Math.max(0, dragStartPos.current.iconX + dx);
           const newY = Math.max(0, dragStartPos.current.iconY + dy);
 
           setData(prev => ({
             ...prev,
-            desktopIcons: { ...(prev.desktopIcons || {}), [draggingIconId]: { x: newX, y: newY } }
+            desktopIcons: { ...(prev.desktopIcons || {}), [activeIconId]: { x: newX, y: newY } }
           }));
         }
       };
 
       const handleMouseUp = () => {
-        if (draggingIconId) {
+        const activeIconId = draggingIconIdRef.current || draggingIconId;
+        if (activeIconId) {
           const requestedX = dragStartPos.current.iconX + lastPointerPosition.current.x - dragStartPos.current.x;
           const requestedY = dragStartPos.current.iconY + lastPointerPosition.current.y - dragStartPos.current.y;
-          if (data.desktopIcons?.[draggingIconId]) {
+          if (data.desktopIcons?.[activeIconId]) {
             setData(prev => ({
               ...prev,
               desktopIcons: {
                 ...(prev.desktopIcons || {}),
-                [draggingIconId]: getFreeDesktopPosition(prev.desktopIcons, draggingIconId, requestedX, requestedY)
+                [activeIconId]: getFreeDesktopPosition(prev.desktopIcons, activeIconId, requestedX, requestedY)
               }
             }));
           }
         }
+        draggingIconIdRef.current = null;
         setDraggingWin(null); setResizingWin(null); setDraggingIconId(null);
       };
 
@@ -1940,7 +1963,13 @@
               if (!win.isOpen || win.isMinimized) return null;
               const isText = win.layout === 'text' || win.type === 'txt';
               const layoutMode = win.layout === 'mosaic' || win.viewMode === 'mosaic' ? 'mosaic' : (win.layout === 'list' || win.viewMode === 'list' ? 'list' : 'grid');
-              const thumbnailSize = win.thumbnailSize || (win.viewMode === 'compact' ? 'small' : win.viewMode === 'large' ? 'large' : 'medium');
+              const thumbnailSize = typeof win.thumbnailSize === 'number'
+                ? win.thumbnailSize
+                : win.thumbnailSize === 'small' || win.viewMode === 'compact' ? 104
+                : win.thumbnailSize === 'large' || win.viewMode === 'large' ? 216
+                : 148;
+              const sliderSize = thumbnailSliderValues[win.id] ?? thumbnailSize;
+              const thumbnailHeight = Math.round(sliderSize * 0.72);
               const isClassic = data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98';
               const textFontSize = textDocFontSizes[win.id] || 12;
 
@@ -2085,9 +2114,28 @@
                     { icon: '🧩', label: 'Mosaic Grid', bold: layoutMode === 'mosaic', action: () => updateWindow(win.id, { layout: 'mosaic', viewMode: 'mosaic' }) },
                     { icon: '📋', label: 'List Layout', bold: layoutMode === 'list', action: () => updateWindow(win.id, { layout: 'list', viewMode: 'list' }) },
                     { separator: true },
-                    { icon: '▪', label: 'Small Thumbnails', bold: thumbnailSize === 'small', action: () => updateWindow(win.id, { thumbnailSize: 'small' }) },
-                    { icon: '▪', label: 'Medium Thumbnails', bold: thumbnailSize === 'medium', action: () => updateWindow(win.id, { thumbnailSize: 'medium' }) },
-                    { icon: '▪', label: 'Large Thumbnails', bold: thumbnailSize === 'large', action: () => updateWindow(win.id, { thumbnailSize: 'large' }) }
+                    {
+                      icon: '▪',
+                      label: `Thumbnail Size: ${sliderSize}px`,
+                      control: (
+                        <input
+                          type="range"
+                          min="104"
+                          max="720"
+                          step="8"
+                          value={sliderSize}
+                          aria-label="Thumbnail size"
+                          onChange={(e) => {
+                            const nextSize = Number(e.currentTarget.value);
+                            setThumbnailSliderValues(prev => ({ ...prev, [win.id]: nextSize }));
+                            updateWindow(win.id, { thumbnailSize: nextSize });
+                          }}
+                          onKeyUp={(e) => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') updateWindow(win.id, { thumbnailSize: Number(e.currentTarget.value) }); }}
+                          onClick={(e) => e.stopPropagation()}
+                          onMouseDown={(e) => e.stopPropagation()}
+                        />
+                      )
+                    }
                   ]
                 },
                 {
@@ -2154,7 +2202,7 @@
                     menuConfig={isText ? textMenuConfig : folderMenuConfig} 
                   />
 
-                  <div className="xp-content">
+                  <div className={`xp-content ${isText ? 'text-document-content' : ''}`}>
                     {isText ? (
                       <textarea
                         value={win.content || ''}
@@ -2176,7 +2224,10 @@
                         ))}
                       </div>
                     ) : (
-                      <div className={`photo-grid photo-grid-${thumbnailSize} ${layoutMode === 'mosaic' ? 'photo-grid-mosaic' : ''}`}>
+                      <div
+                        className={`photo-grid ${layoutMode === 'mosaic' ? 'photo-grid-mosaic' : ''}`}
+                        style={{ '--photo-tile-width': `${sliderSize}px`, '--photo-image-height': `${thumbnailHeight}px` }}
+                      >
                         {(win.photos || []).map((p, idx) => (
                           <div 
                             key={p.id} 
