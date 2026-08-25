@@ -418,7 +418,8 @@
       .then(response => response.ok ? response.json() : [])
       .then(images => Array.isArray(images) ? images : [])
       .then(manifest => {
-        const urls = [...new Set([...FEATURED_PHOTOS, ...manifest].map(photo => photo.url).filter(Boolean))];
+        const manifestPhotos = manifest.flatMap(folder => Array.isArray(folder.photos) ? folder.photos : [folder]);
+        const urls = [...new Set([...FEATURED_PHOTOS, ...manifestPhotos].map(photo => photo.url).filter(Boolean))];
         return Promise.all(urls.map(url => {
           const image = preloadImage(url);
           return image.decode ? image.decode().catch(() => undefined) : Promise.resolve();
@@ -479,7 +480,7 @@
       { 
         id: "xp", 
         name: "Windows XP Professional",
-        defaultBg: "images/bliss-xp.jpg",
+        defaultBg: "images/backgrounds/bliss-xp.jpg",
         subSchemes: [
           { id: "luna", name: "Luna (Classic Blue)", primary: "#0055e5" },
           { id: "olive", name: "Homestead (Olive Green)", primary: "#839b5c" },
@@ -629,9 +630,9 @@
         adminPassword: "admin",
         osTheme: "xp",
         subScheme: "luna",
-        desktopBg: "images/bliss-xp.jpg",
+        desktopBg: "images/backgrounds/bliss-xp.jpg",
         themeWallpapers: {
-          xp: "images/bliss-xp.jpg",
+          xp: "images/backgrounds/bliss-xp.jpg",
           w2k: "#3A6EA5",
           w98: "#008080"
         },
@@ -1051,14 +1052,54 @@
       useEffect(() => {
         if (imageManifest.length === 0) return;
         setData(prev => {
-          const featured = prev.windows.find(w => w.id === 'win-1');
-          if (!featured) return prev;
-          const existingUrls = new Set((featured.photos || []).map(photo => photo.url));
-          const newPhotos = imageManifest.filter(photo => !existingUrls.has(photo.url));
-          if (newPhotos.length === 0) return prev;
+          const groupedManifest = imageManifest.filter(folder => Array.isArray(folder.photos));
+          if (groupedManifest.length === 0) return prev;
+          const manifestById = new Map(groupedManifest.map(folder => [folder.id, folder]));
+          const windows = [...prev.windows];
+          const legacyGallery = windows.find(window => window.id === 'win-1');
+          const legacyFolder = manifestById.get('rockandgem2026') || groupedManifest[0];
+
+          if (legacyGallery && !legacyGallery.manifestId) {
+            Object.assign(legacyGallery, {
+              title: legacyFolder.title,
+              photos: legacyFolder.photos,
+              manifestId: legacyFolder.id
+            });
+          }
+
+          groupedManifest.forEach((folder, index) => {
+            if (folder.id === legacyFolder.id && legacyGallery) return;
+            const existing = windows.find(window => window.manifestId === folder.id);
+            if (existing) {
+              existing.title = folder.title;
+              existing.photos = folder.photos;
+              return;
+            }
+            windows.push({
+              id: `manifest-${folder.id}`,
+              manifestId: folder.id,
+              title: folder.title,
+              type: 'folder',
+              x: 60 + ((index + 1) % 4) * 30,
+              y: 30 + ((index + 1) % 4) * 30,
+              width: 820,
+              height: 540,
+              layout: 'grid',
+              thumbnailSize: 'medium',
+              defaultViewMode: 'grid',
+              viewMode: 'grid',
+              isOpen: false,
+              isOpenOnStart: false,
+              isMinimized: false,
+              isMaximized: false,
+              zIndex: 10,
+              photos: folder.photos
+            });
+          });
+
           return {
             ...prev,
-            windows: prev.windows.map(w => w.id === 'win-1' ? { ...w, photos: [...(w.photos || []), ...newPhotos] } : w)
+            windows
           };
         });
       }, [imageManifest]);
