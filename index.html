@@ -19,7 +19,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'xp-portfolio-app';
     let firebaseConfig = null;
@@ -40,8 +40,7 @@
       getFirestore,
       doc,
       setDoc,
-      onSnapshot,
-      getDoc
+      setDoc
     };
   </script>
 
@@ -295,12 +294,6 @@
     .photo-justified .photo-item-clean:hover,
     .photo-justified .photo-item-clean.selected { background: rgba(49, 106, 197, 0.12); }
     .photo-justified .photo-item-clean-wrap img { border: none; }
-    .image-cache-preload {
-      position: fixed; width: 1px; height: 1px; left: -10px; top: -10px;
-      opacity: 0; pointer-events: none; overflow: hidden;
-    }
-    .image-cache-preload img { width: 1px; height: 1px; }
-
     .taskbar {
       background: var(--xp-taskbar); height: 40px; width: 100%;
       position: absolute; bottom: 0; left: 0; display: flex; align-items: center; z-index: 99999;
@@ -407,21 +400,33 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
     const DESKTOP_GRID = { originX: 15, originY: 15, cellSize: 108, iconSize: 104 };
-    const imageCache = new Map();
     const assetCacheVersion = Date.now().toString(36);
+    const photoDimensionCache = new Map();
+    const photoDimensionValues = new Map();
 
     const getAssetUrl = (url) => {
       if (!url || !url.startsWith('images/')) return url;
       return `${url}${url.includes('?') ? '&' : '?'}v=${assetCacheVersion}`;
     };
 
-    const preloadImage = (url) => {
-      if (!url || imageCache.has(url)) return imageCache.get(url);
-      const image = new Image();
-      image.decoding = 'async';
-      image.src = getAssetUrl(url);
-      imageCache.set(url, image);
-      return image;
+    // The gallery needs image proportions before it can place justified rows.
+    // Probe dimensions when a folder opens, while the real gallery images stay lazy.
+    const getPhotoDimensions = (photo) => {
+      if (!photo?.url) return Promise.resolve(null);
+      if (photoDimensionCache.has(photo.url)) return photoDimensionCache.get(photo.url);
+
+      const dimensionsPromise = new Promise(resolve => {
+        const image = new Image();
+        image.onload = () => {
+          const dimensions = { width: image.naturalWidth, height: image.naturalHeight };
+          photoDimensionValues.set(photo.url, dimensions);
+          resolve(dimensions);
+        };
+        image.onerror = () => resolve(null);
+        image.src = getAssetUrl(photo.url);
+      });
+      photoDimensionCache.set(photo.url, dimensionsPromise);
+      return dimensionsPromise;
     };
 
     const fetchFreshManifest = (url) => fetch(`${url}${url.includes('?') ? '&' : '?'}v=${assetCacheVersion}`, { cache: 'no-store' })
@@ -445,6 +450,8 @@
       }
     };
 
+    // GitHub is the source of truth for folders and photos. The local file keeps
+    // the portfolio usable when the raw GitHub request is unavailable.
     const imageManifestPromise = fetchFreshManifest('https://raw.githubusercontent.com/jasonlfward/jasonlfward.github.io/main/images.json')
       .then(manifestText => {
         const remoteManifest = parseManifest(manifestText);
@@ -453,12 +460,10 @@
       .then(images => Array.isArray(images) ? images : [])
       .then(manifest => {
         const manifestPhotos = manifest.flatMap(folder => Array.isArray(folder.photos) ? folder.photos : [folder]);
-        FEATURED_PHOTOS = manifestPhotos;
-        const urls = [...new Set(manifestPhotos.map(photo => photo.url).filter(Boolean))];
-        return Promise.all(urls.map(url => {
-          const image = preloadImage(url);
-          return image.decode ? image.decode().catch(() => undefined) : Promise.resolve();
-        })).then(() => manifest);
+        // Warm the proportion cache during startup so opening a folder does
+        // not begin with guessed 4:3 positions.
+        manifestPhotos.forEach(photo => getPhotoDimensions(photo));
+        return manifest;
       })
       .catch(() => []);
 
@@ -658,8 +663,6 @@
       { id: "p108", url: "images/DSC04207.jpg", caption: "Picton - DSC04207", date: "2026-08-24", size: "2.2 MB" },
       { id: "p109", url: "images/compressed_image.jpeg", caption: "compressed_image", date: "2026-08-24", size: "3.8 MB" }
     ]; */
-    let FEATURED_PHOTOS = [];
-
     const DEFAULT_DATA = {
       settings: {
         siteTitle: "Jason Ward Photography Portfolio",
@@ -1052,7 +1055,6 @@
       const [adminPasswordInput, setAdminPasswordInput] = useState('');
       const [adminAuthError, setAdminAuthError] = useState('');
 
-      const [selectedWindowId, setSelectedWindowId] = useState('win-1');
       const [selectedIconId, setSelectedIconId] = useState(null);
       const [selectedPhotoIds, setSelectedPhotoIds] = useState({});
       const [myComputerTab, setMyComputerTab] = useState('control');
@@ -1090,15 +1092,9 @@
       const [highestZIndex, setHighestZIndex] = useState(120);
       const [sysTime, setSysTime] = useState('');
       const [isStartOpen, setIsStartOpen] = useState(false);
-      const [showShutdownModal, setShowShutdownModal] = useState(false);
-
       useEffect(() => {
         imageManifestPromise.then(setImageManifest);
       }, []);
-
-      useEffect(() => {
-        data.windows.flatMap(window => window.photos || []).forEach(photo => preloadImage(photo.url));
-      }, [data.windows]);
 
       useEffect(() => {
         const observers = Object.entries(galleryRefs.current).map(([winId, element]) => {
@@ -1112,6 +1108,30 @@
         return () => observers.forEach(observer => observer.disconnect());
       }, [data.windows, imageManifest]);
 
+      useEffect(() => {
+        const openGalleryPhotos = data.windows
+          .filter(win => win.isOpen && win.type === 'folder')
+          .flatMap(win => win.photos || [])
+          .filter(photo => photo.url && !photoDimensions[photo.id]);
+        // Wait for all probes together so the layout settles once instead of
+        // shifting repeatedly as individual images finish loading.
+        Promise.all(openGalleryPhotos.map(photo => getPhotoDimensions(photo)))
+          .then(results => {
+            setPhotoDimensions(previous => {
+              const next = { ...previous };
+              let changed = false;
+              openGalleryPhotos.forEach((photo, index) => {
+                const dimensions = results[index];
+                if (dimensions && !next[photo.id]) {
+                  next[photo.id] = dimensions;
+                  changed = true;
+                }
+              });
+              return changed ? next : previous;
+            });
+          });
+      }, [data.windows]);
+
       const getJustifiedRows = (photos, containerWidth, targetHeight) => {
         if (!photos.length || containerWidth <= 0) return [];
         const gap = 8;
@@ -1119,7 +1139,7 @@
         let row = [];
         let aspectTotal = 0;
         photos.forEach((photo, index) => {
-          const dimensions = photoDimensions[photo.id];
+          const dimensions = photoDimensions[photo.id] || photoDimensionValues.get(photo.url);
           const aspect = dimensions ? dimensions.width / dimensions.height : 4 / 3;
           row.push({ photo, aspect });
           aspectTotal += aspect;
@@ -1236,11 +1256,6 @@
               if (!user) return;
               setFirebaseUser(user);
 
-              const docRef = FB.doc(db, 'artifacts', FB.appId, 'public', 'data');
-
-              FB.onSnapshot(docRef, () => {}, (err) => {
-                console.warn("Firestore Snapshot error:", err);
-              });
             });
           };
 
@@ -1357,7 +1372,6 @@
       const bringToFront = (id) => {
         const nextZ = getTopZIndex();
         updateWindow(id, { zIndex: nextZ, isMinimized: false });
-        setSelectedWindowId(id);
       };
 
       const toggleMinimize = (id) => {
@@ -1383,7 +1397,6 @@
         if (data.settings.enableSounds) playXpSound('click');
         setContextMenu(prev => ({ ...prev, visible: false }));
         const nextZ = getTopZIndex();
-        setSelectedWindowId(id);
         setData(prev => {
           let exists = prev.windows.some(w => w.id === id);
           let nextWindows = prev.windows;
@@ -1438,7 +1451,6 @@
           };
         });
         setSelectedAdminWinId(newId);
-        setSelectedWindowId(newId);
       };
 
       const confirmMoveToRecycleBin = (win) => {
@@ -1964,8 +1976,6 @@
       const handleMouseDown = (e, winId) => {
         e.preventDefault();
         bringToFront(winId);
-        setSelectedWindowId(winId);
-        
         const win = data.windows.find(w => w.id === winId);
         if (!win || win.isMaximized) return;
 
@@ -1989,8 +1999,6 @@
       const handleResizeDown = (e, winId, direction = 'se') => {
         e.preventDefault(); e.stopPropagation();
         bringToFront(winId);
-        setSelectedWindowId(winId);
-
         const win = data.windows.find(w => w.id === winId);
         if (!win || win.isMaximized) return;
 
@@ -2199,11 +2207,6 @@
 
       const currentThemeObj = OS_THEMES.find(t => t.id === (data.settings.osTheme || 'xp')) || OS_THEMES[0];
       const selectedAdminWin = data.windows.find(w => w.id === selectedAdminWinId);
-      const cachedImageUrls = [...new Set([
-        ...imageManifest.map(photo => photo.url),
-        ...allPortfolioPhotos.map(photo => photo.url)
-      ].filter(Boolean))];
-
       const renderDesktopIconContent = (iconId) => {
         if (iconId === 'sys-computer') return <><ThemeComputerIcon theme={data.settings.osTheme} /><span>My Computer</span></>;
         if (iconId === 'sys-recyclebin') return <><ThemeRecycleBinIcon theme={data.settings.osTheme} isFull={(data.recycleBin || []).length > 0} /><span>Recycle Bin</span></>;
@@ -2233,10 +2236,6 @@
           }}
         >
           <style>{generateXPCss(data.settings)}</style>
-
-          <div className="image-cache-preload" aria-hidden="true">
-            {cachedImageUrls.map(url => <img key={url} src={getAssetUrl(url)} alt="" decoding="async" />)}
-          </div>
 
           <input 
             type="file" 
@@ -2572,7 +2571,7 @@
                               return (
                                 <div key={p.id} className={`photo-item-clean ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`} style={{ width, height }} onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))} onDoubleClick={() => openPhotoViewer(win.photos, photoIndex, win.title)} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
                                   <div className="photo-item-clean-wrap">
-                                    <img src={getAssetUrl(p.url || 'https://placehold.co/400x300?text=Empty')} alt="" loading="eager" decoding="async" onLoad={(e) => { const { naturalWidth, naturalHeight } = e.currentTarget; setPhotoDimensions(prev => prev[p.id]?.width === naturalWidth && prev[p.id]?.height === naturalHeight ? prev : { ...prev, [p.id]: { width: naturalWidth, height: naturalHeight } }); }} />
+                                    <img src={getAssetUrl(p.url || 'https://placehold.co/400x300?text=Empty')} alt={p.caption || 'Portfolio photograph'} loading="lazy" decoding="async" onLoad={(e) => { const { naturalWidth, naturalHeight } = e.currentTarget; setPhotoDimensions(prev => prev[p.id] ? prev : { ...prev, [p.id]: { width: naturalWidth, height: naturalHeight } }); }} />
                                   </div>
                                 </div>
                               );
@@ -3654,7 +3653,9 @@
     }
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    imageManifestPromise.then(() => root.render(<App />));
+    // Start the interface immediately. The manifest effect fills the galleries
+    // when GitHub or the local fallback responds, without delaying first paint.
+    root.render(<App />);
   </script>
 </body>
 </html>
