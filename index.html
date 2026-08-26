@@ -415,8 +415,12 @@
       return image;
     };
 
-    const imageManifestPromise = fetch(`images.json?v=${assetCacheVersion}`, { cache: 'no-store' })
+    const fetchFreshManifest = (url) => fetch(`${url}${url.includes('?') ? '&' : '?'}v=${assetCacheVersion}`, { cache: 'no-store' })
       .then(response => response.ok ? response.text() : '')
+      .catch(() => '');
+
+    const imageManifestPromise = fetchFreshManifest('https://raw.githubusercontent.com/jasonlfward/jasonlfward.github.io/main/images.json')
+      .then(manifestText => manifestText || fetchFreshManifest('images.json'))
       .then(manifestText => {
         if (!manifestText) return [];
         const cleanManifestText = manifestText.includes('=======')
@@ -651,6 +655,7 @@
         "sys-recyclebin": { x: 15, y: 123 },
         "win-readme": { x: 15, y: 231 },
         "win-1": { x: 15, y: 339 },
+        "manifest-other-photography": { x: 15, y: 447 },
         "paint": { x: 15, y: 555 }
       },
       recycleBin: [],
@@ -707,6 +712,23 @@
           isMaximized: false,
           zIndex: 10,
           photos: FEATURED_PHOTOS
+        },
+        {
+          id: "manifest-other-photography",
+          manifestId: "other-photography",
+          title: "Other Photography",
+          type: "folder",
+          x: 90, y: 70, width: 820, height: 540,
+          layout: "grid",
+          thumbnailSize: "medium",
+          defaultViewMode: "grid",
+          viewMode: "grid",
+          isOpen: false,
+          isOpenOnStart: false,
+          isMinimized: false,
+          isMaximized: false,
+          zIndex: 10,
+          photos: []
         },
       ]
     };
@@ -787,33 +809,15 @@
       </svg>
     );
 
-    const normalizeDesktopIcons = (icons = {}) => {
-      const normalized = {};
-      Object.entries(icons).forEach(([id, position]) => {
-        const requestedColumn = Math.max(0, Math.round(((position?.x ?? DESKTOP_GRID.originX) - DESKTOP_GRID.originX) / DESKTOP_GRID.cellSize));
-        const requestedRow = Math.max(0, Math.round(((position?.y ?? DESKTOP_GRID.originY) - DESKTOP_GRID.originY) / DESKTOP_GRID.cellSize));
-        let column = requestedColumn;
-        let row = requestedRow;
-        while (Object.values(normalized).some(existing => existing.x === DESKTOP_GRID.originX + column * DESKTOP_GRID.cellSize && existing.y === DESKTOP_GRID.originY + row * DESKTOP_GRID.cellSize)) {
-          row += 1;
-          if (row > 7) { row = 0; column += 1; }
-        }
-        normalized[id] = { x: DESKTOP_GRID.originX + column * DESKTOP_GRID.cellSize, y: DESKTOP_GRID.originY + row * DESKTOP_GRID.cellSize };
-      });
-      return normalized;
-    };
+    const loadDefaultPortfolioData = () => JSON.parse(JSON.stringify(DEFAULT_DATA));
 
-    const PORTFOLIO_DATA_KEY = 'jason-ward-photography-portfolio-data';
-    const loadSavedPortfolioData = () => {
-      try {
-        const savedData = window.localStorage.getItem(PORTFOLIO_DATA_KEY);
-        if (!savedData) return JSON.parse(JSON.stringify(DEFAULT_DATA));
-        const parsedData = JSON.parse(savedData);
-        if (parsedData.desktopIcons) parsedData.desktopIcons = normalizeDesktopIcons(parsedData.desktopIcons);
-        return parsedData;
-      } catch (e) {
-        return JSON.parse(JSON.stringify(DEFAULT_DATA));
-      }
+    const getCloudPortfolioData = (portfolioData) => {
+      const { desktopIcons, windows, recycleBin, ...persistedData } = portfolioData;
+      return {
+        ...persistedData,
+        windows: (windows || []).map(({ x, y, ...windowData }) => windowData),
+        recycleBin: (recycleBin || []).map(({ x, y, ...item }) => item)
+      };
     };
 
     const generateXPCss = (settings = {}) => {
@@ -1013,7 +1017,7 @@
     }
 
     function App() {
-      const [data, setData] = useState(loadSavedPortfolioData);
+      const [data, setData] = useState(loadDefaultPortfolioData);
 
       const [firebaseUser, setFirebaseUser] = useState(null);
       const [isSyncing, setIsSyncing] = useState(false);
@@ -1071,12 +1075,6 @@
       }, [data.windows]);
 
       useEffect(() => {
-        try {
-          window.localStorage.setItem(PORTFOLIO_DATA_KEY, JSON.stringify(data));
-        } catch (e) {}
-      }, [data]);
-
-      useEffect(() => {
         if (imageManifest.length === 0) return;
         setData(prev => {
           const groupedManifest = imageManifest.filter(folder => Array.isArray(folder.photos));
@@ -1084,9 +1082,9 @@
           const manifestById = new Map(groupedManifest.map(folder => [folder.id, folder]));
           const windows = [...prev.windows];
           const legacyGallery = windows.find(window => window.id === 'win-1');
-          const legacyFolder = manifestById.get('rockandgem2026') || groupedManifest[0];
+          const legacyFolder = manifestById.get('rock-and-gem-expo-2026') || groupedManifest[0];
 
-          if (legacyGallery && !legacyGallery.manifestId) {
+          if (legacyGallery) {
             Object.assign(legacyGallery, {
               title: legacyFolder.title,
               photos: legacyFolder.photos,
@@ -1196,7 +1194,7 @@
             const app = FB.initializeApp(FB.firebaseConfig);
             const db = FB.getFirestore(app);
             const docRef = FB.doc(db, 'artifacts', FB.appId, 'public', 'data');
-            FB.setDoc(docRef, data).then(() => setIsSyncing(false)).catch(() => setIsSyncing(false));
+            FB.setDoc(docRef, getCloudPortfolioData(data)).then(() => setIsSyncing(false)).catch(() => setIsSyncing(false));
           } catch(e) {
             setIsSyncing(false);
           }
