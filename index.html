@@ -1985,7 +1985,7 @@
         if (viewerState.zoom <= 100 || viewerTouchPointsRef.current.size > 1) return;
         e.preventDefault();
         e.stopPropagation();
-        e.currentTarget.setPointerCapture?.(e.pointerId);
+        try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch (err) {}
         isPanningRef.current = true;
         panStartRef.current = { x: e.clientX, y: e.clientY, panX: viewerState.panX, panY: viewerState.panY };
       };
@@ -2021,7 +2021,7 @@
           if (viewerTouchPointsRef.current.size < 2) viewerGestureRef.current = null;
         }
         isPanningRef.current = false;
-        if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+        try { if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) {}
       };
 
       const handleMouseDown = (e, winId) => {
@@ -2036,13 +2036,15 @@
 
       const handleThumbnailSliderPointerDown = (e, winId) => {
         e.stopPropagation();
-        e.currentTarget.setPointerCapture(e.pointerId);
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
       };
 
       const handleThumbnailSliderPointerUp = (e, winId) => {
-        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-          e.currentTarget.releasePointerCapture(e.pointerId);
-        }
+        try {
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+          }
+        } catch (err) {}
         updateWindow(winId, { thumbnailSize: Number(e.currentTarget.value) });
         e.stopPropagation();
       };
@@ -2083,7 +2085,7 @@
       const handleIconMouseDown = (e, iconId) => {
         e.preventDefault(); e.stopPropagation();
         e.currentTarget.style.touchAction = 'none';
-        if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
+        try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch (err) {}
         setSelectedIconId(iconId);
         draggingIconIdRef.current = iconId;
         
