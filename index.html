@@ -419,14 +419,27 @@
       .then(response => response.ok ? response.text() : '')
       .catch(() => '');
 
-    const imageManifestPromise = fetchFreshManifest('https://raw.githubusercontent.com/jasonlfward/jasonlfward.github.io/main/images.json')
-      .then(manifestText => manifestText || fetchFreshManifest('images.json'))
-      .then(manifestText => {
+    const parseManifest = (manifestText) => {
+      try {
         if (!manifestText) return [];
-        const cleanManifestText = manifestText.includes('=======')
-          ? manifestText.slice(manifestText.indexOf('['), manifestText.indexOf('=======')).trim()
+        const conflictSeparator = manifestText.indexOf('=======');
+        const conflictEnd = manifestText.indexOf('>>>>>>>', conflictSeparator);
+        let cleanManifestText = conflictSeparator >= 0 && conflictEnd > conflictSeparator
+          ? manifestText.slice(conflictSeparator + '======='.length, conflictEnd).trim()
           : manifestText.replace(/^\uFEFF/, '').trim();
+        if (conflictSeparator >= 0 && conflictEnd > conflictSeparator && !cleanManifestText.endsWith(']')) {
+          cleanManifestText += ']';
+        }
         return JSON.parse(cleanManifestText);
+      } catch (error) {
+        return [];
+      }
+    };
+
+    const imageManifestPromise = fetchFreshManifest('https://raw.githubusercontent.com/jasonlfward/jasonlfward.github.io/main/images.json')
+      .then(manifestText => {
+        const remoteManifest = parseManifest(manifestText);
+        return remoteManifest.length > 0 ? remoteManifest : fetchFreshManifest('images.json').then(parseManifest);
       })
       .then(images => Array.isArray(images) ? images : [])
       .then(manifest => {
