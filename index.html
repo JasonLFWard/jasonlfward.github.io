@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Retro OS Portfolio & CMS</title>
+  <title>Jason Ward Photography</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -80,6 +80,7 @@
     }
     .desktop-icon:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
     .desktop-icon.dragging { cursor: grabbing; z-index: 20; }
+    .desktop-icon.drag-preview { opacity: 0.5; pointer-events: none; z-index: 30; }
     .desktop-icon.selected { background: rgba(11, 97, 255, 0.4); border-color: rgba(255,255,255,0.8); }
     .desktop-icon svg, .desktop-icon img { width: 38px; height: 38px; flex-shrink: 0; margin-bottom: 4px; filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.6)); pointer-events: none; }
 
@@ -261,31 +262,39 @@
     }
 
     .photo-grid {
-      column-width: var(--photo-tile-width);
-      column-gap: 4px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(var(--photo-tile-width), var(--photo-tile-width)));
+      grid-auto-rows: var(--photo-image-height);
+      gap: 8px;
+      align-content: start;
+      justify-content: space-between;
     }
     .photo-grid-small { --photo-tile-width: 104px; --photo-image-height: 72px; }
     .photo-grid-medium { --photo-tile-width: 148px; --photo-image-height: 108px; }
     .photo-grid-large { --photo-tile-width: 216px; --photo-image-height: 156px; }
     .photo-grid .photo-item-clean {
+      width: var(--photo-tile-width);
+      height: var(--photo-image-height);
       min-width: 0;
-      display: inline-block;
-      width: 100%;
-      margin: 0 0 4px;
-      padding: 1px;
-      border: 1px solid transparent;
+      padding: 0;
+      border: none;
       background: transparent;
       cursor: pointer;
-      break-inside: avoid;
     }
     .photo-grid .photo-item-clean:hover,
-    .photo-grid .photo-item-clean.selected { background: rgba(49, 106, 197, 0.12); border-color: #316ac5; }
+    .photo-grid .photo-item-clean.selected { background: rgba(49, 106, 197, 0.12); }
     .photo-item-clean-wrap {
-      width: 100%; background: #1a1a1a;
+      width: 100%; height: 100%; background: #1a1a1a;
       display: flex; align-items: center; justify-content: center;
     }
-    .photo-item-clean-wrap img { width: 100%; height: auto; object-fit: contain; display: block; }
-    .photo-grid-mosaic { column-gap: 4px; }
+    .photo-grid .photo-item-clean-wrap { background: #ffffff; }
+    .photo-item-clean-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; border: 2px solid #ffffff; box-sizing: border-box; }
+    .photo-justified { display: flex; flex-direction: column; gap: 8px; }
+    .photo-justified-row { display: flex; gap: 8px; width: 100%; }
+    .photo-justified .photo-item-clean { min-width: 0; min-height: 0; padding: 0; border: none; background: transparent; cursor: pointer; }
+    .photo-justified .photo-item-clean:hover,
+    .photo-justified .photo-item-clean.selected { background: rgba(49, 106, 197, 0.12); }
+    .photo-justified .photo-item-clean-wrap img { border: none; }
     .image-cache-preload {
       position: fixed; width: 1px; height: 1px; left: -10px; top: -10px;
       opacity: 0; pointer-events: none; overflow: hidden;
@@ -444,7 +453,8 @@
       .then(images => Array.isArray(images) ? images : [])
       .then(manifest => {
         const manifestPhotos = manifest.flatMap(folder => Array.isArray(folder.photos) ? folder.photos : [folder]);
-        const urls = [...new Set([...FEATURED_PHOTOS, ...manifestPhotos].map(photo => photo.url).filter(Boolean))];
+        FEATURED_PHOTOS = manifestPhotos;
+        const urls = [...new Set(manifestPhotos.map(photo => photo.url).filter(Boolean))];
         return Promise.all(urls.map(url => {
           const image = preloadImage(url);
           return image.decode ? image.decode().catch(() => undefined) : Promise.resolve();
@@ -536,7 +546,8 @@
       }
     ];
 
-    const FEATURED_PHOTOS = [
+    /* Legacy photo metadata retained below only for migration reference.
+    const LEGACY_FEATURED_PHOTOS = [
       { id: "p1", url: "images/pictonday1-2026-1.jpg", caption: "Picton Day 1 - Photo #1", date: "2026-08-24", size: "0.6 MB" },
       { id: "p2", url: "images/pictonday1-2026-2.jpg", caption: "Picton Day 1 - Photo #2", date: "2026-08-24", size: "0.6 MB" },
       { id: "p3", url: "images/pictonday1-2026-3.jpg", caption: "Picton Day 1 - Photo #3", date: "2026-08-24", size: "0.5 MB" },
@@ -646,7 +657,8 @@
       { id: "p107", url: "images/pictonday1-2026-107.jpg", caption: "Picton Day 1 - Photo #107", date: "2026-08-24", size: "0.7 MB" },
       { id: "p108", url: "images/DSC04207.jpg", caption: "Picton - DSC04207", date: "2026-08-24", size: "2.2 MB" },
       { id: "p109", url: "images/compressed_image.jpeg", caption: "compressed_image", date: "2026-08-24", size: "3.8 MB" }
-    ];
+    ]; */
+    let FEATURED_PHOTOS = [];
 
     const DEFAULT_DATA = {
       settings: {
@@ -715,16 +727,16 @@
           title: "Picton Rock and Gem Expo 2026",
           type: "folder",
           x: 60, y: 30, width: 820, height: 540,
-          layout: "grid",
+          layout: "justified",
           thumbnailSize: "medium",
-          defaultViewMode: "grid",
-          viewMode: "grid",
+          defaultViewMode: "justified",
+          viewMode: "justified",
           isOpen: false,
           isOpenOnStart: false,
           isMinimized: false,
           isMaximized: false,
           zIndex: 10,
-          photos: FEATURED_PHOTOS
+          photos: []
         },
         {
           id: "manifest-other-photography",
@@ -732,10 +744,10 @@
           title: "Other Photography",
           type: "folder",
           x: 90, y: 70, width: 820, height: 540,
-          layout: "grid",
+          layout: "justified",
           thumbnailSize: "medium",
-          defaultViewMode: "grid",
-          viewMode: "grid",
+          defaultViewMode: "justified",
+          viewMode: "justified",
           isOpen: false,
           isOpenOnStart: false,
           isMinimized: false,
@@ -1057,6 +1069,8 @@
         currentIndex: 0,
         title: '',
         zoom: 100,
+        panX: 0,
+        panY: 0,
         rotation: 0,
         flipH: false,
         flipV: false,
@@ -1079,13 +1093,46 @@
       const [showShutdownModal, setShowShutdownModal] = useState(false);
 
       useEffect(() => {
-        FEATURED_PHOTOS.forEach(photo => preloadImage(photo.url));
         imageManifestPromise.then(setImageManifest);
       }, []);
 
       useEffect(() => {
         data.windows.flatMap(window => window.photos || []).forEach(photo => preloadImage(photo.url));
       }, [data.windows]);
+
+      useEffect(() => {
+        const observers = Object.entries(galleryRefs.current).map(([winId, element]) => {
+          if (!element) return null;
+          const updateWidth = () => setGalleryWidths(prev => ({ ...prev, [winId]: element.clientWidth }));
+          const observer = new ResizeObserver(updateWidth);
+          observer.observe(element);
+          updateWidth();
+          return observer;
+        }).filter(Boolean);
+        return () => observers.forEach(observer => observer.disconnect());
+      }, [data.windows, imageManifest]);
+
+      const getJustifiedRows = (photos, containerWidth, targetHeight) => {
+        if (!photos.length || containerWidth <= 0) return [];
+        const gap = 8;
+        const rows = [];
+        let row = [];
+        let aspectTotal = 0;
+        photos.forEach((photo, index) => {
+          const dimensions = photoDimensions[photo.id];
+          const aspect = dimensions ? dimensions.width / dimensions.height : 4 / 3;
+          row.push({ photo, aspect });
+          aspectTotal += aspect;
+          const idealWidth = aspectTotal * targetHeight + gap * (row.length - 1);
+          if (idealWidth >= containerWidth || index === photos.length - 1) {
+            const rowHeight = Math.max(80, (containerWidth - gap * (row.length - 1)) / aspectTotal);
+            rows.push(row.map(item => ({ ...item, width: item.aspect * rowHeight, height: rowHeight })));
+            row = [];
+            aspectTotal = 0;
+          }
+        });
+        return rows;
+      };
 
       useEffect(() => {
         if (imageManifest.length === 0) return;
@@ -1122,10 +1169,10 @@
               y: 30 + ((index + 1) % 4) * 30,
               width: 820,
               height: 540,
-              layout: 'grid',
+              layout: 'justified',
               thumbnailSize: 'medium',
-              defaultViewMode: 'grid',
-              viewMode: 'grid',
+              defaultViewMode: 'justified',
+              viewMode: 'justified',
               isOpen: false,
               isOpenOnStart: false,
               isMinimized: false,
@@ -1154,8 +1201,12 @@
       const [resizingWin, setResizingWin] = useState(null);
       const [resizeDirection, setResizeDirection] = useState('se');
       const [draggingIconId, setDraggingIconId] = useState(null);
+      const [dragPreviewPosition, setDragPreviewPosition] = useState(null);
+      const [photoDimensions, setPhotoDimensions] = useState({});
+      const [galleryWidths, setGalleryWidths] = useState({});
+      const galleryRefs = useRef({});
       const draggingIconIdRef = useRef(null);
-      const dragStartPos = useRef({ x: 0, y: 0, winX: 0, winY: 0, winW: 0, winH: 0, iconX: 0, iconY: 0 });
+      const dragStartPos = useRef({ x: 0, y: 0, winX: 0, winY: 0, winW: 0, winH: 0, iconX: 0, iconY: 0, grabOffsetX: 0, grabOffsetY: 0 });
       const lastPointerPosition = useRef({ x: 0, y: 0 });
 
       const directAddFileInputRef = useRef(null);
@@ -1285,6 +1336,8 @@
       const isPaintingRef = useRef(false);
       const paintStartPosRef = useRef({ x: 0, y: 0 });
       const paintSnapshotRef = useRef(null);
+      const isPanningRef = useRef(false);
+      const panStartRef = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
 
       const getTopZIndex = () => {
         const winZs = (data.windows || []).map(w => w.zIndex || 0);
@@ -1362,27 +1415,28 @@
         const isText = type === 'txt';
         const nextZ = getTopZIndex();
         
-        const nextIconPosition = getFreeDesktopPosition(data.desktopIcons, newId, DESKTOP_GRID.originX, DESKTOP_GRID.originY, true);
-
         const newWin = {
           id: newId,
           title: isText ? "New Document.txt" : "New Photo Gallery",
           type: isText ? "txt" : "folder",
           x: 90, y: 70, width: isText ? 480 : 580, height: isText ? 340 : 440,
-          layout: isText ? "text" : "grid",
+          layout: isText ? "text" : "justified",
           thumbnailSize: isText ? undefined : "medium",
-          defaultViewMode: isText ? "large" : "grid",
-          viewMode: isText ? "large" : "grid",
+          defaultViewMode: isText ? "large" : "justified",
+          viewMode: isText ? "large" : "justified",
           isOpen: true, isMinimized: false, zIndex: nextZ,
           content: isText ? "Enter text document content..." : "",
           photos: []
         };
 
-        setData(prev => ({
-          ...prev,
-          desktopIcons: { ...(prev.desktopIcons || {}), [newId]: nextIconPosition },
-          windows: [...prev.windows, newWin]
-        }));
+        setData(prev => {
+          const windows = [...prev.windows, newWin];
+          return {
+            ...prev,
+            desktopIcons: getArrangedDesktopIcons(getDesktopIconEntries(windows)),
+            windows
+          };
+        });
         setSelectedAdminWinId(newId);
         setSelectedWindowId(newId);
       };
@@ -1536,6 +1590,8 @@
           photos,
           currentIndex: index,
           title: windowTitle,
+          panX: 0,
+          panY: 0,
           rotation: 0,
           flipH: false,
           flipV: false,
@@ -1873,6 +1929,38 @@
         dragStartPos.current = { x: e.clientX, y: e.clientY, winX: viewerState.x, winY: viewerState.y, winW: viewerState.width, winH: viewerState.height };
       };
 
+      const handleViewerViewportWheel = (e) => {
+        if (!viewerState.photos.length) return;
+        e.preventDefault();
+        setViewerState(prev => ({
+          ...prev,
+          zoom: Math.max(100, Math.min(300, prev.zoom + (e.deltaY < 0 ? 25 : -25)))
+        }));
+      };
+
+      const handleViewerPanDown = (e) => {
+        if (viewerState.isPaintOpen || viewerState.zoom <= 100) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.setPointerCapture?.(e.pointerId);
+        isPanningRef.current = true;
+        panStartRef.current = { x: e.clientX, y: e.clientY, panX: viewerState.panX, panY: viewerState.panY };
+      };
+
+      const handleViewerPanMove = (e) => {
+        if (!isPanningRef.current) return;
+        setViewerState(prev => ({
+          ...prev,
+          panX: panStartRef.current.panX + e.clientX - panStartRef.current.x,
+          panY: panStartRef.current.panY + e.clientY - panStartRef.current.y
+        }));
+      };
+
+      const handleViewerPanUp = (e) => {
+        isPanningRef.current = false;
+        if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+      };
+
       const handleMouseDown = (e, winId) => {
         e.preventDefault();
         bringToFront(winId);
@@ -1941,8 +2029,17 @@
         draggingIconIdRef.current = iconId;
         
         const iconPos = data.desktopIcons?.[iconId] || { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY };
-        dragStartPos.current = { x: e.clientX, y: e.clientY, iconX: iconPos.x, iconY: iconPos.y };
+        dragStartPos.current = {
+          x: e.clientX,
+          y: e.clientY,
+          iconX: iconPos.x,
+          iconY: iconPos.y,
+          grabOffsetX: e.clientX - iconPos.x,
+          grabOffsetY: e.clientY - iconPos.y
+        };
         lastPointerPosition.current = { x: e.clientX, y: e.clientY };
+        setDraggingIconId(iconId);
+        setDragPreviewPosition({ x: iconPos.x, y: iconPos.y });
       };
 
       const getFreeDesktopPosition = (icons, iconId, requestedX, requestedY, appendByColumn = false) => {
@@ -2016,16 +2113,10 @@
           const activeIconId = draggingIconId || draggingIconIdRef.current;
           draggingIconIdRef.current = activeIconId;
           setDraggingIconId(activeIconId);
-          const newX = Math.max(0, dragStartPos.current.iconX + dx);
-          const newY = Math.max(0, dragStartPos.current.iconY + dy);
-
-          setData(prev => ({
-            ...prev,
-            desktopIcons: {
-              ...(prev.desktopIcons || {}),
-              [activeIconId]: getFreeDesktopPosition(prev.desktopIcons, activeIconId, newX, newY)
-            }
-          }));
+          setDragPreviewPosition({
+            x: Math.max(0, e.clientX - dragStartPos.current.grabOffsetX),
+            y: Math.max(0, e.clientY - dragStartPos.current.grabOffsetY)
+          });
         }
       };
 
@@ -2034,7 +2125,7 @@
         if (activeIconId) {
           const requestedX = dragStartPos.current.iconX + lastPointerPosition.current.x - dragStartPos.current.x;
           const requestedY = dragStartPos.current.iconY + lastPointerPosition.current.y - dragStartPos.current.y;
-          if (data.desktopIcons?.[activeIconId]) {
+          if (dragPreviewPosition) {
             setData(prev => ({
               ...prev,
               desktopIcons: {
@@ -2045,6 +2136,7 @@
           }
         }
         draggingIconIdRef.current = null;
+        setDragPreviewPosition(null);
         setDraggingWin(null); setResizingWin(null); setResizeDirection('se'); setDraggingIconId(null);
       };
 
@@ -2068,20 +2160,20 @@
         setContextMenu({ visible: true, type: 'icon', x: e.clientX, y: e.clientY, photo: null, sourceWinId: iconId });
       };
 
-      const getDesktopIconEntries = () => [
+      const getDesktopIconEntries = (windows = data.windows) => [
         { id: 'sys-computer', title: 'My Computer' },
         { id: 'sys-recyclebin', title: 'Recycle Bin' },
-        { id: 'paint', title: 'Paint' },
-        ...userSections.map(win => ({ id: win.id, title: win.title }))
+        ...windows.filter(win => win.type !== 'system').map(win => ({ id: win.id, title: win.title })),
+        { id: 'paint', title: 'Paint' }
       ];
 
-      const arrangeDesktopIcons = (sortByName = false) => {
-        const entries = getDesktopIconEntries();
-        if (sortByName) entries.sort((left, right) => left.title.localeCompare(right.title));
+      const getArrangedDesktopIcons = (entries, sortByName = false) => {
+        const arrangedEntries = [...entries];
+        if (sortByName) arrangedEntries.sort((left, right) => left.title.localeCompare(right.title));
         const desktopHeight = Math.max(DESKTOP_GRID.cellSize, window.innerHeight - 70);
         const rowCount = Math.max(1, Math.floor((desktopHeight - DESKTOP_GRID.iconSize) / DESKTOP_GRID.cellSize) + 1);
         const arranged = {};
-        entries.forEach((entry, index) => {
+        arrangedEntries.forEach((entry, index) => {
           const row = index % rowCount;
           const column = Math.floor(index / rowCount);
           arranged[entry.id] = {
@@ -2089,7 +2181,11 @@
             y: DESKTOP_GRID.originY + row * DESKTOP_GRID.cellSize
           };
         });
-        setData(prev => ({ ...prev, desktopIcons: arranged }));
+        return arranged;
+      };
+
+      const arrangeDesktopIcons = (sortByName = false) => {
+        setData(prev => ({ ...prev, desktopIcons: getArrangedDesktopIcons(getDesktopIconEntries(prev.windows), sortByName) }));
         setSelectedIconId(null);
         setContextMenu(prev => ({ ...prev, visible: false }));
       };
@@ -2104,10 +2200,19 @@
       const currentThemeObj = OS_THEMES.find(t => t.id === (data.settings.osTheme || 'xp')) || OS_THEMES[0];
       const selectedAdminWin = data.windows.find(w => w.id === selectedAdminWinId);
       const cachedImageUrls = [...new Set([
-        ...FEATURED_PHOTOS.map(photo => photo.url),
         ...imageManifest.map(photo => photo.url),
         ...allPortfolioPhotos.map(photo => photo.url)
       ].filter(Boolean))];
+
+      const renderDesktopIconContent = (iconId) => {
+        if (iconId === 'sys-computer') return <><ThemeComputerIcon theme={data.settings.osTheme} /><span>My Computer</span></>;
+        if (iconId === 'sys-recyclebin') return <><ThemeRecycleBinIcon theme={data.settings.osTheme} isFull={(data.recycleBin || []).length > 0} /><span>Recycle Bin</span></>;
+        if (iconId === 'paint') return <><ThemePaintIcon /><span>Paint</span></>;
+        const win = data.windows.find(item => item.id === iconId);
+        if (!win) return null;
+        const isText = win.layout === 'text' || win.type === 'txt';
+        return <>{isText ? <ThemeNotepadIcon theme={data.settings.osTheme} /> : <ThemeFolderIcon theme={data.settings.osTheme} />}<span>{win.title}</span></>;
+      };
 
       return (
         <div 
@@ -2119,6 +2224,7 @@
           }}
           onPointerMove={handleMouseMove}
           onPointerUp={handleMouseUp}
+          onPointerCancel={handleMouseUp}
           onContextMenu={handleDesktopContextMenu}
           onClick={() => {
             setSelectedIconId(null);
@@ -2148,8 +2254,7 @@
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'sys-computer')}
             >
-              <ThemeComputerIcon theme={data.settings.osTheme} />
-              <span>My Computer</span>
+              {renderDesktopIconContent('sys-computer')}
             </div>
 
             <div 
@@ -2159,8 +2264,7 @@
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'sys-recyclebin')}
             >
-              <ThemeRecycleBinIcon theme={data.settings.osTheme} isFull={(data.recycleBin || []).length > 0} />
-              <span>Recycle Bin</span>
+              {renderDesktopIconContent('sys-recyclebin')}
             </div>
             <div
               className={`desktop-icon ${selectedIconId === 'paint' ? 'selected' : ''} ${draggingIconId === 'paint' ? 'dragging' : ''}`}
@@ -2169,8 +2273,7 @@
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'paint')}
             >
-              <ThemePaintIcon />
-              <span>Paint</span>
+              {renderDesktopIconContent('paint')}
             </div>
 
             {userSections.map((win, idx) => {
@@ -2195,24 +2298,33 @@
                   onPointerDown={(e) => handleIconMouseDown(e, win.id)}
                   onContextMenu={(e) => handleIconContextMenu(e, win.id)}
                 >
-                  {isText ? <ThemeNotepadIcon theme={data.settings.osTheme} /> : <ThemeFolderIcon theme={data.settings.osTheme} />}
-                  <span>{win.title}</span>
+                  {renderDesktopIconContent(win.id)}
                 </div>
               );
             })}
+
+            {draggingIconId && dragPreviewPosition && (
+              <div
+                className="desktop-icon drag-preview"
+                style={{ left: dragPreviewPosition.x, top: dragPreviewPosition.y }}
+                aria-hidden="true"
+              >
+                {renderDesktopIconContent(draggingIconId)}
+              </div>
+            )}
 
             {}
             {userSections.map(win => {
               if (!win.isOpen || win.isMinimized) return null;
               const isText = win.layout === 'text' || win.type === 'txt';
-              const layoutMode = win.layout === 'mosaic' || win.viewMode === 'mosaic' ? 'mosaic' : (win.layout === 'list' || win.viewMode === 'list' ? 'list' : 'grid');
-              const thumbnailSize = typeof win.thumbnailSize === 'number'
+              const storedThumbnailScale = typeof win.thumbnailSize === 'number' && win.thumbnailSize >= 20 && win.thumbnailSize <= 80
                 ? win.thumbnailSize
-                : win.thumbnailSize === 'small' || win.viewMode === 'compact' ? 104
-                : win.thumbnailSize === 'large' || win.viewMode === 'large' ? 216
-                : 148;
-              const sliderSize = thumbnailSliderValues[win.id] ?? thumbnailSize;
-              const thumbnailHeight = Math.round(sliderSize * 0.72);
+                : 50;
+              const sliderSize = thumbnailSliderValues[win.id] ?? storedThumbnailScale;
+              const galleryWidth = galleryWidths[win.id] || 0;
+              const thumbnailTargetHeight = galleryWidth > 0
+                ? Math.max(80, Math.min(320, galleryWidth * sliderSize / 200))
+                : 180;
               const isClassic = data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98';
               const textFontSize = textDocFontSizes[win.id] || 12;
 
@@ -2353,21 +2465,17 @@
                 {
                   title: 'View',
                   items: [
-                    { icon: '▦', label: 'Grid Layout', bold: layoutMode === 'grid', action: () => updateWindow(win.id, { layout: 'grid', viewMode: 'grid' }) },
-                    { icon: '🧩', label: 'Mosaic Grid', bold: layoutMode === 'mosaic', action: () => updateWindow(win.id, { layout: 'mosaic', viewMode: 'mosaic' }) },
-                    { icon: '📋', label: 'List Layout', bold: layoutMode === 'list', action: () => updateWindow(win.id, { layout: 'list', viewMode: 'list' }) },
-                    { separator: true },
                     {
                       icon: '▪',
-                      label: `Thumbnail Size: ${sliderSize}px`,
+                      label: `Thumbnail Size: ${sliderSize}%`,
                       control: (
                         <input
                           type="range"
-                          min="104"
-                          max="720"
-                          step="8"
+                          min="20"
+                          max="80"
+                          step="5"
                           value={sliderSize}
-                          aria-label="Thumbnail size"
+                          aria-label="Relative thumbnail size"
                           onChange={(e) => {
                             const nextSize = Number(e.currentTarget.value);
                             setThumbnailSliderValues(prev => ({ ...prev, [win.id]: nextSize }));
@@ -2407,7 +2515,7 @@
                           isOpen: true,
                           title: 'Photo Gallery Tips',
                           icon: '💡',
-                          message: '• Click any photo to view full size\n• Right-click any photo to set as wallpaper or open menu\n• Use arrow keys or slideshow in viewer\n• Choose Grid or List Layout, then Small, Medium, or Large Thumbnails from the View menu',
+                          message: '• Click any photo to view full size\n• Right-click any photo to set as wallpaper or open menu\n• Use arrow keys or slideshow in viewer\n• Adjust relative thumbnail size with the View menu slider',
                         });
                       }
                     }
@@ -2455,34 +2563,20 @@
                         className="w-full h-full font-mono leading-relaxed text-slate-800 p-2 border-none outline-none resize-none bg-white select-text"
                         placeholder="Type text here..."
                       />
-                    ) : layoutMode === 'list' ? (
-                      <div className="layout-list">
-                        {(win.photos || []).map((p, idx) => (
-                          <div key={p.id} className={`photo-item-list ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`} onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))} onDoubleClick={() => openPhotoViewer(win.photos, idx, win.title)} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
-                            <img src={getAssetUrl(p.url)} alt="" loading="eager" decoding="async" />
-                            <div className="flex-1 min-w-0">
-                              <div className="font-bold text-xs truncate">{p.caption || 'Photo'}</div>
-                              <div className="text-[10px] text-slate-400">{p.date || '2024'} • {p.size || '3.2 MB'}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     ) : (
-                      <div
-                        className={`photo-grid ${layoutMode === 'mosaic' ? 'photo-grid-mosaic' : ''}`}
-                        style={{ '--photo-tile-width': `${sliderSize}px`, '--photo-image-height': `${thumbnailHeight}px` }}
-                      >
-                        {(win.photos || []).map((p, idx) => (
-                          <div 
-                            key={p.id} 
-                            className={`photo-item-clean ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`}
-                            onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))}
-                            onDoubleClick={() => openPhotoViewer(win.photos, idx, win.title)}
-                            onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}
-                          >
-                            <div className="photo-item-clean-wrap">
-                              <img src={getAssetUrl(p.url || 'https://placehold.co/400x300?text=Empty')} alt="" loading="eager" decoding="async" />
-                            </div>
+                      <div ref={element => { galleryRefs.current[win.id] = element; }} className="photo-justified">
+                        {getJustifiedRows(win.photos || [], galleryWidth, thumbnailTargetHeight).map((row, rowIndex) => (
+                          <div className="photo-justified-row" key={`${win.id}-row-${rowIndex}`}>
+                            {row.map(({ photo: p, width, height }) => {
+                              const photoIndex = win.photos.indexOf(p);
+                              return (
+                                <div key={p.id} className={`photo-item-clean ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`} style={{ width, height }} onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))} onDoubleClick={() => openPhotoViewer(win.photos, photoIndex, win.title)} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
+                                  <div className="photo-item-clean-wrap">
+                                    <img src={getAssetUrl(p.url || 'https://placehold.co/400x300?text=Empty')} alt="" loading="eager" decoding="async" onLoad={(e) => { const { naturalWidth, naturalHeight } = e.currentTarget; setPhotoDimensions(prev => prev[p.id]?.width === naturalWidth && prev[p.id]?.height === naturalHeight ? prev : { ...prev, [p.id]: { width: naturalWidth, height: naturalHeight } }); }} />
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         ))}
                       </div>
@@ -3069,7 +3163,7 @@
                           {
                             icon: '🔎',
                             label: 'Zoom Out (-25%)',
-                            action: () => setViewerState(vs => ({ ...vs, zoom: Math.max(25, vs.zoom - 25) }))
+                            action: () => setViewerState(vs => ({ ...vs, zoom: Math.max(100, vs.zoom - 25) }))
                           },
                           {
                             icon: '🎯',
@@ -3305,12 +3399,19 @@
                   )}
 
                   {/* Image Viewport & Markup Canvas Area */}
-                  <div className="flex-1 flex flex-col items-center justify-center relative p-2 overflow-hidden bg-slate-900 select-none">
+                  <div
+                    className={`flex-1 flex flex-col items-center justify-center relative p-2 overflow-hidden bg-slate-900 select-none ${viewerState.zoom > 100 && !viewerState.isPaintOpen ? 'cursor-grab' : ''} ${isPanningRef.current ? 'cursor-grabbing' : ''}`}
+                    onWheel={handleViewerViewportWheel}
+                    onPointerDown={handleViewerPanDown}
+                    onPointerMove={handleViewerPanMove}
+                    onPointerUp={handleViewerPanUp}
+                    onPointerCancel={handleViewerPanUp}
+                  >
                     {currentPhoto.url ? (
                       <div
-                        className="relative flex items-center justify-center max-w-full max-h-[calc(100%-52px)]"
+                        className={`relative flex items-center justify-center ${viewerState.isPaintOpen ? '' : 'max-w-full max-h-[calc(100%-52px)]'}`}
                         style={{
-                          transform: `scale(${viewerState.zoom / 100}) rotate(${viewerState.rotation}deg) ${viewerState.flipH ? 'scaleX(-1)' : ''} ${viewerState.flipV ? 'scaleY(-1)' : ''}`,
+                          transform: `translate(${viewerState.panX}px, ${viewerState.panY}px) scale(${viewerState.zoom / 100}) rotate(${viewerState.rotation}deg) ${viewerState.flipH ? 'scaleX(-1)' : ''} ${viewerState.flipV ? 'scaleY(-1)' : ''}`,
                           filter: viewerState.filter === 'grayscale' ? 'grayscale(100%)' : viewerState.filter === 'sepia' ? 'sepia(85%)' : viewerState.filter === 'invert' ? 'invert(100%)' : 'none',
                           transition: 'transform 0.15s ease'
                         }}
@@ -3318,7 +3419,15 @@
                         <img
                           src={getAssetUrl(currentPhoto.url)}
                           alt=""
-                          className="max-w-full max-h-[calc(100vh-230px)] object-contain shadow-2xl border border-slate-700 select-none pointer-events-none"
+                          className={`${viewerState.isPaintOpen ? '' : 'max-w-full max-h-[calc(100vh-230px)]'} object-contain shadow-2xl border border-slate-700 select-none pointer-events-none`}
+                          onLoad={(e) => {
+                            if (!paintCanvasRef.current) return;
+                            const canvas = paintCanvasRef.current;
+                            if (canvas.width !== e.currentTarget.naturalWidth || canvas.height !== e.currentTarget.naturalHeight) {
+                              canvas.width = e.currentTarget.naturalWidth;
+                              canvas.height = e.currentTarget.naturalHeight;
+                            }
+                          }}
                         />
                         <canvas
                           ref={paintCanvasRef}
@@ -3376,7 +3485,7 @@
 
                       {/* Zoom Controls */}
                       <button
-                        onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, zoom: Math.max(25, vs.zoom - 25) })); }}
+                        onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, zoom: Math.max(100, vs.zoom - 25) })); }}
                         className="px-1.5 py-0.5 bg-white border rounded font-bold hover:bg-slate-100 text-xs"
                         title="Zoom Out"
                       >
@@ -3488,17 +3597,17 @@
               </div>
               <div className="start-menu-body">
                 <div className="start-menu-left">
-                  <div className="start-item font-bold" onClick={() => { openWindow('sys-computer'); setMyComputerTab('control'); setIsStartOpen(false); }}>⚙️ Control Panel</div>
+                  <div className="start-item font-bold" onClick={() => { openWindow('sys-computer'); setMyComputerTab('control'); setIsStartOpen(false); }}><ThemeComputerIcon theme={data.settings.osTheme} className="w-6 h-6" /> Control Panel</div>
                   <div className="start-item font-bold text-amber-800" onClick={() => { openWindow('sys-computer'); setMyComputerTab('admin'); setIsStartOpen(false); }}>🔐 Admin CMS Access</div>
                   <div className="my-1 border-t" />
                   {userSections.map(w => (
-                    <div key={`start-${w.id}`} className="start-item" onClick={() => { openWindow(w.id); setIsStartOpen(false); }}>📁 {w.title}</div>
+                    <div key={`start-${w.id}`} className="start-item" onClick={() => { openWindow(w.id); setIsStartOpen(false); }}>{w.type === 'txt' ? <ThemeNotepadIcon theme={data.settings.osTheme} className="w-6 h-6" /> : <ThemeFolderIcon theme={data.settings.osTheme} className="w-6 h-6" />} {w.title}</div>
                   ))}
                 </div>
                 <div className="start-menu-right">
-                  <div className="start-item" onClick={() => { openWindow('sys-computer'); setMyComputerTab('control'); setIsStartOpen(false); }}>💻 My Computer</div>
-                  <div className="start-item" onClick={() => { openPaint(); setIsStartOpen(false); }}>🎨 Paint</div>
-                  <div className="start-item" onClick={() => { openWindow('sys-recyclebin'); setIsStartOpen(false); }}>🗑️ Recycle Bin</div>
+                  <div className="start-item" onClick={() => { openWindow('sys-computer'); setMyComputerTab('control'); setIsStartOpen(false); }}><ThemeComputerIcon theme={data.settings.osTheme} className="w-6 h-6" /> My Computer</div>
+                  <div className="start-item" onClick={() => { openPaint(); setIsStartOpen(false); }}><ThemePaintIcon className="w-6 h-6" /> Paint</div>
+                  <div className="start-item" onClick={() => { openWindow('sys-recyclebin'); setIsStartOpen(false); }}><ThemeRecycleBinIcon theme={data.settings.osTheme} isFull={(data.recycleBin || []).length > 0} className="w-6 h-6" /> Recycle Bin</div>
                 </div>
               </div>
               <div className="start-menu-footer">
