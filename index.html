@@ -294,6 +294,7 @@
     .photo-justified .photo-item-clean:hover,
     .photo-justified .photo-item-clean.selected { background: rgba(49, 106, 197, 0.12); }
     .photo-justified .photo-item-clean-wrap img { border: none; }
+    .viewer-viewport { touch-action: none; }
     .taskbar {
       background: var(--xp-taskbar); height: 40px; width: 100%;
       position: absolute; bottom: 0; left: 0; display: flex; align-items: center; z-index: 99999;
@@ -723,7 +724,7 @@
           isMinimized: false,
           isMaximized: false,
           zIndex: 12,
-          content: "Welcome to Jason Ward Photography Portfolio!\n\nThis website is an interactive retro operating system portfolio.\n\nTips for visitors:\n• Right-click any photograph to set it as your desktop background, move it between folders, or open in full view!\n• Click any photo thumbnail in a folder to open it in the Photo Viewer.\n• Double-click desktop icons to open folders and documents.\n• Drag desktop icons around on the desktop grid to organize your layout.\n• Drag windows by their titlebars or resize them from the bottom-right corner.\n• Open 'My Computer' or 'Control Panel' to change theme styles, wallpapers, or enter Admin Password to manage portfolio content."
+          content: "Welcome to Jason Ward Photography Portfolio!\n\nThis website is an interactive retro operating system portfolio.\n\nTips for visitors:\n• Click or double-click a photograph to open it in Picture and Fax Viewer.\n• Right-click a photograph to set it as wallpaper, move it between folders, or open its menu.\n• On a phone or tablet, tap a photograph to open it, pinch in the viewer to zoom, and drag a zoomed image to pan.\n• Use two fingers on a photograph or the desktop to open its right-click menu.\n• Scroll inside a folder to browse the complete photo collection.\n• Double-click desktop icons, or tap them on touch devices, to open folders and documents.\n• Drag desktop icons around the desktop grid to organize your layout.\n• Drag windows by their titlebars or resize them from the edges and corners.\n• Use Picture and Fax Viewer controls for navigation, slideshow, zoom, rotation, filters, download, wallpaper, and MS Paint markup.\n• Open 'My Computer' or 'Control Panel' to change themes, wallpapers, sounds, and portfolio content."
         },
         {
           id: "win-1",
@@ -1231,6 +1232,11 @@
 
       const directAddFileInputRef = useRef(null);
       const currentUploadingWinId = useRef(null);
+      const viewerTouchPointsRef = useRef(new Map());
+      const viewerGestureRef = useRef(null);
+      const photoTouchPointsRef = useRef(new Map());
+      const photoContextTriggeredRef = useRef(false);
+      const desktopTouchPointsRef = useRef(new Map());
 
       useEffect(() => {
         const FB = window.FirebaseBridge;
@@ -1885,6 +1891,12 @@
       };
 
       useEffect(() => {
+        if (viewerState.zoom <= 100 && (viewerState.panX !== 0 || viewerState.panY !== 0)) {
+          setViewerState(prev => ({ ...prev, panX: 0, panY: 0 }));
+        }
+      }, [viewerState.zoom]);
+
+      useEffect(() => {
         if (!viewerState.isOpen || !viewerState.isSlideshow || viewerState.photos.length <= 1) return;
         const timer = setInterval(() => {
           setViewerState(prev => ({
@@ -1951,7 +1963,26 @@
       };
 
       const handleViewerPanDown = (e) => {
-        if (viewerState.isPaintOpen || viewerState.zoom <= 100) return;
+        if (viewerState.isPaintOpen) return;
+        if (e.target.closest('button, input, select, textarea, a')) return;
+        if (e.pointerType === 'touch') {
+          viewerTouchPointsRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          if (viewerTouchPointsRef.current.size === 2) {
+            const points = [...viewerTouchPointsRef.current.values()];
+            const midpoint = { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 };
+            viewerGestureRef.current = {
+              distance: Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y),
+              zoom: viewerState.zoom,
+              midpoint,
+              panX: viewerState.panX,
+              panY: viewerState.panY
+            };
+            isPanningRef.current = false;
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }
+        if (viewerState.zoom <= 100 || viewerTouchPointsRef.current.size > 1) return;
         e.preventDefault();
         e.stopPropagation();
         e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -1960,6 +1991,22 @@
       };
 
       const handleViewerPanMove = (e) => {
+        if (e.pointerType === 'touch' && viewerTouchPointsRef.current.has(e.pointerId)) {
+          viewerTouchPointsRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          if (viewerTouchPointsRef.current.size >= 2 && viewerGestureRef.current) {
+            const points = [...viewerTouchPointsRef.current.values()];
+            const distance = Math.hypot(points[1].x - points[0].x, points[1].y - points[0].y);
+            const midpoint = { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 };
+            const gesture = viewerGestureRef.current;
+            setViewerState(prev => ({
+              ...prev,
+              zoom: Math.max(100, Math.min(300, gesture.zoom * (distance / Math.max(1, gesture.distance)))),
+              panX: gesture.panX + midpoint.x - gesture.midpoint.x,
+              panY: gesture.panY + midpoint.y - gesture.midpoint.y
+            }));
+            return;
+          }
+        }
         if (!isPanningRef.current) return;
         setViewerState(prev => ({
           ...prev,
@@ -1969,6 +2016,10 @@
       };
 
       const handleViewerPanUp = (e) => {
+        if (e.pointerType === 'touch') {
+          viewerTouchPointsRef.current.delete(e.pointerId);
+          if (viewerTouchPointsRef.current.size < 2) viewerGestureRef.current = null;
+        }
         isPanningRef.current = false;
         if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
       };
@@ -2154,10 +2205,59 @@
         setContextMenu({ visible: true, type: 'photo', x: e.clientX, y: e.clientY, photo, sourceWinId });
       };
 
+      const handlePhotoPointerDown = (e, photo, sourceWinId) => {
+        if (e.pointerType !== 'touch') return;
+        photoTouchPointsRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (photoTouchPointsRef.current.size >= 2) {
+          const points = [...photoTouchPointsRef.current.values()];
+          e.preventDefault();
+          e.stopPropagation();
+          photoContextTriggeredRef.current = true;
+          setContextMenu({
+            visible: true,
+            type: 'photo',
+            x: (points[0].x + points[1].x) / 2,
+            y: (points[0].y + points[1].y) / 2,
+            photo,
+            sourceWinId
+          });
+        }
+      };
+
+      const handlePhotoPointerUp = (e, photos, photoIndex, title) => {
+        if (e.pointerType !== 'touch') return;
+        photoTouchPointsRef.current.delete(e.pointerId);
+        if (photoTouchPointsRef.current.size === 0) {
+          if (!photoContextTriggeredRef.current) openPhotoViewer(photos, photoIndex, title);
+          photoContextTriggeredRef.current = false;
+        }
+      };
+
+      const handleIconPointerUp = (e, iconId) => {
+        if (e.pointerType === 'touch' && Math.hypot(e.clientX - dragStartPos.current.x, e.clientY - dragStartPos.current.y) < 8) {
+          openWindow(iconId);
+        }
+      };
+
       const handleDesktopContextMenu = (e) => {
         e.preventDefault();
         if (data.settings.enableSounds) playXpSound('click');
         setContextMenu({ visible: true, type: 'desktop', x: e.clientX, y: e.clientY, photo: null, sourceWinId: null });
+      };
+
+      const handleDesktopPointerDown = (e) => {
+        if (e.pointerType !== 'touch' || e.target.closest('.xp-window, .desktop-icon')) return;
+        desktopTouchPointsRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (desktopTouchPointsRef.current.size >= 2) {
+          const points = [...desktopTouchPointsRef.current.values()];
+          e.preventDefault();
+          setContextMenu({ visible: true, type: 'desktop', x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2, photo: null, sourceWinId: null });
+        }
+      };
+
+      const handleDesktopPointerUp = (e) => {
+        handleMouseUp();
+        if (e.pointerType === 'touch') desktopTouchPointsRef.current.delete(e.pointerId);
       };
 
       const handleIconContextMenu = (e, iconId) => {
@@ -2226,7 +2326,7 @@
               : { backgroundImage: `url(${data.settings.desktopBg})`, backgroundSize: 'cover', backgroundPosition: 'center' })
           }}
           onPointerMove={handleMouseMove}
-          onPointerUp={handleMouseUp}
+          onPointerUp={handleDesktopPointerUp}
           onPointerCancel={handleMouseUp}
           onContextMenu={handleDesktopContextMenu}
           onClick={() => {
@@ -2245,13 +2345,14 @@
             onChange={handleDirectPhotoFileSelect} 
           />
 
-          <div className="desktop" onClick={() => setSelectedIconId(null)}>
+          <div className="desktop" onClick={() => setSelectedIconId(null)} onPointerDown={handleDesktopPointerDown}>
             <div 
               className={`desktop-icon ${selectedIconId === 'sys-computer' ? 'selected' : ''} ${draggingIconId === 'sys-computer' ? 'dragging' : ''}`}
               style={{ left: data.desktopIcons?.['sys-computer']?.x ?? 15, top: data.desktopIcons?.['sys-computer']?.y ?? 15 }}
               onDoubleClick={() => openWindow('sys-computer')}
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'sys-computer')}
+              onPointerUp={(e) => handleIconPointerUp(e, 'sys-computer')}
             >
               {renderDesktopIconContent('sys-computer')}
             </div>
@@ -2262,6 +2363,7 @@
               onDoubleClick={() => openWindow('sys-recyclebin')}
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'sys-recyclebin')}
+              onPointerUp={(e) => handleIconPointerUp(e, 'sys-recyclebin')}
             >
               {renderDesktopIconContent('sys-recyclebin')}
             </div>
@@ -2271,6 +2373,7 @@
               onDoubleClick={openPaint}
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'paint')}
+              onPointerUp={(e) => handleIconPointerUp(e, 'paint')}
             >
               {renderDesktopIconContent('paint')}
             </div>
@@ -2295,6 +2398,7 @@
                   onDoubleClick={() => openWindow(win.id)}
                   onClick={(e) => e.stopPropagation()}
                   onPointerDown={(e) => handleIconMouseDown(e, win.id)}
+                  onPointerUp={(e) => handleIconPointerUp(e, win.id)}
                   onContextMenu={(e) => handleIconContextMenu(e, win.id)}
                 >
                   {renderDesktopIconContent(win.id)}
@@ -2569,7 +2673,7 @@
                             {row.map(({ photo: p, width, height }) => {
                               const photoIndex = win.photos.indexOf(p);
                               return (
-                                <div key={p.id} className={`photo-item-clean ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`} style={{ width, height }} onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))} onDoubleClick={() => openPhotoViewer(win.photos, photoIndex, win.title)} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
+                                <div key={p.id} className={`photo-item-clean ${selectedPhotoIds[win.id] === p.id ? 'selected' : ''}`} style={{ width, height }} onClick={() => setSelectedPhotoIds(prev => ({ ...prev, [win.id]: p.id }))} onDoubleClick={() => openPhotoViewer(win.photos, photoIndex, win.title)} onPointerDown={(e) => handlePhotoPointerDown(e, p, win.id)} onPointerUp={(e) => handlePhotoPointerUp(e, win.photos, photoIndex, win.title)} onPointerCancel={(e) => { photoTouchPointsRef.current.delete(e.pointerId); photoContextTriggeredRef.current = false; }} onContextMenu={(e) => handlePhotoContextMenu(e, p, win.id)}>
                                   <div className="photo-item-clean-wrap">
                                     <img src={getAssetUrl(p.url || 'https://placehold.co/400x300?text=Empty')} alt={p.caption || 'Portfolio photograph'} loading="lazy" decoding="async" onLoad={(e) => { const { naturalWidth, naturalHeight } = e.currentTarget; setPhotoDimensions(prev => prev[p.id] ? prev : { ...prev, [p.id]: { width: naturalWidth, height: naturalHeight } }); }} />
                                   </div>
@@ -3399,7 +3503,7 @@
 
                   {/* Image Viewport & Markup Canvas Area */}
                   <div
-                    className={`flex-1 flex flex-col items-center justify-center relative p-2 overflow-hidden bg-slate-900 select-none ${viewerState.zoom > 100 && !viewerState.isPaintOpen ? 'cursor-grab' : ''} ${isPanningRef.current ? 'cursor-grabbing' : ''}`}
+                    className={`viewer-viewport flex-1 flex flex-col items-center justify-center relative p-2 overflow-hidden bg-slate-900 select-none ${viewerState.zoom > 100 && !viewerState.isPaintOpen ? 'cursor-grab' : ''} ${isPanningRef.current ? 'cursor-grabbing' : ''}`}
                     onWheel={handleViewerViewportWheel}
                     onPointerDown={handleViewerPanDown}
                     onPointerMove={handleViewerPanMove}
