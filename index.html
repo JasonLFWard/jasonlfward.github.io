@@ -76,9 +76,10 @@
       box-sizing: border-box; width: 104px; height: 104px; cursor: move; color: white;
       text-shadow: 1px 1px 2px black; font-size: 11px; text-align: center;
       padding: 12px 6px; border: 1px dashed transparent; border-radius: 3px;
-      z-index: 5;
+      z-index: 5; touch-action: none;
     }
     .desktop-icon:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
+    .desktop-icon.dragging { cursor: grabbing; z-index: 20; }
     .desktop-icon.selected { background: rgba(11, 97, 255, 0.4); border-color: rgba(255,255,255,0.8); }
     .desktop-icon svg, .desktop-icon img { width: 38px; height: 38px; flex-shrink: 0; margin-bottom: 4px; filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.6)); pointer-events: none; }
 
@@ -396,7 +397,7 @@
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-    const DESKTOP_GRID = { originX: 15, originY: 15, cellWidth: 108, cellHeight: 108, iconWidth: 104, iconHeight: 104 };
+    const DESKTOP_GRID = { originX: 15, originY: 15, cellSize: 108, iconSize: 104 };
     const imageCache = new Map();
     const assetCacheVersion = Date.now().toString(36);
 
@@ -415,7 +416,14 @@
     };
 
     const imageManifestPromise = fetch(`images.json?v=${assetCacheVersion}`, { cache: 'no-store' })
-      .then(response => response.ok ? response.json() : [])
+      .then(response => response.ok ? response.text() : '')
+      .then(manifestText => {
+        if (!manifestText) return [];
+        const cleanManifestText = manifestText.includes('=======')
+          ? manifestText.slice(manifestText.indexOf('['), manifestText.indexOf('=======')).trim()
+          : manifestText.replace(/^\uFEFF/, '').trim();
+        return JSON.parse(cleanManifestText);
+      })
       .then(images => Array.isArray(images) ? images : [])
       .then(manifest => {
         const manifestPhotos = manifest.flatMap(folder => Array.isArray(folder.photos) ? folder.photos : [folder]);
@@ -640,10 +648,10 @@
       },
       desktopIcons: {
         "sys-computer": { x: 15, y: 15 },
-        "sys-recyclebin": { x: 15, y: 99 },
-        "win-readme": { x: 15, y: 183 },
-        "win-1": { x: 15, y: 267 },
-        "paint": { x: 15, y: 351 }
+        "sys-recyclebin": { x: 15, y: 123 },
+        "win-readme": { x: 15, y: 231 },
+        "win-1": { x: 15, y: 339 },
+        "paint": { x: 15, y: 555 }
       },
       recycleBin: [],
       windows: [
@@ -782,17 +790,30 @@
     const normalizeDesktopIcons = (icons = {}) => {
       const normalized = {};
       Object.entries(icons).forEach(([id, position]) => {
-        const requestedColumn = Math.max(0, Math.round(((position?.x ?? DESKTOP_GRID.originX) - DESKTOP_GRID.originX) / DESKTOP_GRID.cellWidth));
-        const requestedRow = Math.max(0, Math.round(((position?.y ?? DESKTOP_GRID.originY) - DESKTOP_GRID.originY) / DESKTOP_GRID.cellHeight));
+        const requestedColumn = Math.max(0, Math.round(((position?.x ?? DESKTOP_GRID.originX) - DESKTOP_GRID.originX) / DESKTOP_GRID.cellSize));
+        const requestedRow = Math.max(0, Math.round(((position?.y ?? DESKTOP_GRID.originY) - DESKTOP_GRID.originY) / DESKTOP_GRID.cellSize));
         let column = requestedColumn;
         let row = requestedRow;
-        while (Object.values(normalized).some(existing => existing.x === DESKTOP_GRID.originX + column * DESKTOP_GRID.cellWidth && existing.y === DESKTOP_GRID.originY + row * DESKTOP_GRID.cellHeight)) {
+        while (Object.values(normalized).some(existing => existing.x === DESKTOP_GRID.originX + column * DESKTOP_GRID.cellSize && existing.y === DESKTOP_GRID.originY + row * DESKTOP_GRID.cellSize)) {
           row += 1;
           if (row > 7) { row = 0; column += 1; }
         }
-        normalized[id] = { x: DESKTOP_GRID.originX + column * DESKTOP_GRID.cellWidth, y: DESKTOP_GRID.originY + row * DESKTOP_GRID.cellHeight };
+        normalized[id] = { x: DESKTOP_GRID.originX + column * DESKTOP_GRID.cellSize, y: DESKTOP_GRID.originY + row * DESKTOP_GRID.cellSize };
       });
       return normalized;
+    };
+
+    const PORTFOLIO_DATA_KEY = 'jason-ward-photography-portfolio-data';
+    const loadSavedPortfolioData = () => {
+      try {
+        const savedData = window.localStorage.getItem(PORTFOLIO_DATA_KEY);
+        if (!savedData) return JSON.parse(JSON.stringify(DEFAULT_DATA));
+        const parsedData = JSON.parse(savedData);
+        if (parsedData.desktopIcons) parsedData.desktopIcons = normalizeDesktopIcons(parsedData.desktopIcons);
+        return parsedData;
+      } catch (e) {
+        return JSON.parse(JSON.stringify(DEFAULT_DATA));
+      }
     };
 
     const generateXPCss = (settings = {}) => {
@@ -992,7 +1013,7 @@
     }
 
     function App() {
-      const [data, setData] = useState(() => JSON.parse(JSON.stringify(DEFAULT_DATA)));
+      const [data, setData] = useState(loadSavedPortfolioData);
 
       const [firebaseUser, setFirebaseUser] = useState(null);
       const [isSyncing, setIsSyncing] = useState(false);
@@ -1048,6 +1069,12 @@
       useEffect(() => {
         data.windows.flatMap(window => window.photos || []).forEach(photo => preloadImage(photo.url));
       }, [data.windows]);
+
+      useEffect(() => {
+        try {
+          window.localStorage.setItem(PORTFOLIO_DATA_KEY, JSON.stringify(data));
+        } catch (e) {}
+      }, [data]);
 
       useEffect(() => {
         if (imageManifest.length === 0) return;
@@ -1324,7 +1351,7 @@
         const isText = type === 'txt';
         const nextZ = getTopZIndex();
         
-        const nextIconPosition = getFreeDesktopPosition(data.desktopIcons, newId, DESKTOP_GRID.originX, DESKTOP_GRID.originY);
+        const nextIconPosition = getFreeDesktopPosition(data.desktopIcons, newId, DESKTOP_GRID.originX, DESKTOP_GRID.originY, true);
 
         const newWin = {
           id: newId,
@@ -1370,6 +1397,23 @@
           };
         });
         setRecycleConfirmItem(null);
+      };
+
+      const sendToRecycleBin = (winId) => {
+        const item = data.windows.find(win => win.id === winId && win.type !== 'system');
+        if (!item) return;
+        if (data.settings.enableSounds) playXpSound('recycle');
+        setData(prev => {
+          const nextIcons = { ...(prev.desktopIcons || {}) };
+          delete nextIcons[item.id];
+          return {
+            ...prev,
+            desktopIcons: nextIcons,
+            recycleBin: [...(prev.recycleBin || []), item],
+            windows: prev.windows.filter(win => win.id !== item.id)
+          };
+        });
+        setContextMenu(prev => ({ ...prev, visible: false }));
       };
 
       const triggerDirectPhotoUpload = (winId) => {
@@ -1880,30 +1924,43 @@
 
       const handleIconMouseDown = (e, iconId) => {
         e.preventDefault(); e.stopPropagation();
+        e.currentTarget.style.touchAction = 'none';
+        if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
         setSelectedIconId(iconId);
-        draggingIconIdRef.current = null;
+        draggingIconIdRef.current = iconId;
         
-        const iconPos = data.desktopIcons?.[iconId] || { x: 15, y: 15 };
+        const iconPos = data.desktopIcons?.[iconId] || { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY };
         dragStartPos.current = { x: e.clientX, y: e.clientY, iconX: iconPos.x, iconY: iconPos.y };
         lastPointerPosition.current = { x: e.clientX, y: e.clientY };
       };
 
-      const getFreeDesktopPosition = (icons, iconId, requestedX, requestedY) => {
-        const { originX, originY, cellWidth, cellHeight, iconWidth, iconHeight } = DESKTOP_GRID;
-        const desktopWidth = Math.max(cellWidth, window.innerWidth - 30);
-        const desktopHeight = Math.max(cellHeight, window.innerHeight - 70);
-        const maxColumn = Math.max(0, Math.floor((desktopWidth - iconWidth) / cellWidth));
-        const maxRow = Math.max(0, Math.floor((desktopHeight - iconHeight) / cellHeight));
+      const getFreeDesktopPosition = (icons, iconId, requestedX, requestedY, appendByColumn = false) => {
+        const { originX, originY, cellSize, iconSize } = DESKTOP_GRID;
+        const desktopWidth = Math.max(cellSize, window.innerWidth - 30);
+        const desktopHeight = Math.max(cellSize, window.innerHeight - 70);
+        const maxColumn = Math.max(0, Math.floor((desktopWidth - iconSize) / cellSize));
+        const maxRow = Math.max(0, Math.floor((desktopHeight - iconSize) / cellSize));
         const occupied = new Set(Object.entries(icons || {})
           .filter(([id]) => id !== iconId)
-          .map(([, position]) => `${Math.round((position.x - originX) / cellWidth)}:${Math.round((position.y - originY) / cellHeight)}`));
-        const requestedColumn = Math.max(0, Math.min(maxColumn, Math.round((requestedX - originX) / cellWidth)));
-        const requestedRow = Math.max(0, Math.min(maxRow, Math.round((requestedY - originY) / cellHeight)));
+          .map(([, position]) => `${Math.round((position.x - originX) / cellSize)}:${Math.round((position.y - originY) / cellSize)}`));
+        const requestedColumn = Math.max(0, Math.min(maxColumn, Math.round((requestedX - originX) / cellSize)));
+        const requestedRow = Math.max(0, Math.min(maxRow, Math.round((requestedY - originY) / cellSize)));
+        if (appendByColumn) {
+          for (let column = 0; column <= maxColumn; column += 1) {
+            const occupiedRows = [...occupied]
+              .filter(key => Number(key.split(':')[0]) === column)
+              .map(key => Number(key.split(':')[1]));
+            const firstRow = column === 0 && occupiedRows.length > 0 ? Math.max(...occupiedRows) + 1 : 0;
+            for (let row = firstRow; row <= maxRow; row += 1) {
+              if (!occupied.has(`${column}:${row}`)) return { x: originX + column * cellSize, y: originY + row * cellSize };
+            }
+          }
+        }
         for (let distance = 0; distance <= maxColumn + maxRow + 1; distance += 1) {
-          for (let row = Math.max(0, requestedRow - distance); row <= Math.min(maxRow, requestedRow + distance); row += 1) {
-            for (let column = Math.max(0, requestedColumn - distance); column <= Math.min(maxColumn, requestedColumn + distance); column += 1) {
+          for (let column = Math.max(0, requestedColumn - distance); column <= Math.min(maxColumn, requestedColumn + distance); column += 1) {
+            for (let row = Math.max(0, requestedRow - distance); row <= Math.min(maxRow, requestedRow + distance); row += 1) {
               const key = `${column}:${row}`;
-              if (!occupied.has(key)) return { x: originX + column * cellWidth, y: originY + row * cellHeight };
+              if (!occupied.has(key)) return { x: originX + column * cellSize, y: originY + row * cellSize };
             }
           }
         }
@@ -1953,7 +2010,10 @@
 
           setData(prev => ({
             ...prev,
-            desktopIcons: { ...(prev.desktopIcons || {}), [activeIconId]: { x: newX, y: newY } }
+            desktopIcons: {
+              ...(prev.desktopIcons || {}),
+              [activeIconId]: getFreeDesktopPosition(prev.desktopIcons, activeIconId, newX, newY)
+            }
           }));
         }
       };
@@ -1989,6 +2049,14 @@
         setContextMenu({ visible: true, type: 'desktop', x: e.clientX, y: e.clientY, photo: null, sourceWinId: null });
       };
 
+      const handleIconContextMenu = (e, iconId) => {
+        e.preventDefault(); e.stopPropagation();
+        const item = data.windows.find(win => win.id === iconId && win.type !== 'system');
+        if (!item) return;
+        if (data.settings.enableSounds) playXpSound('click');
+        setContextMenu({ visible: true, type: 'icon', x: e.clientX, y: e.clientY, photo: null, sourceWinId: iconId });
+      };
+
       const getDesktopIconEntries = () => [
         { id: 'sys-computer', title: 'My Computer' },
         { id: 'sys-recyclebin', title: 'Recycle Bin' },
@@ -1999,13 +2067,15 @@
       const arrangeDesktopIcons = (sortByName = false) => {
         const entries = getDesktopIconEntries();
         if (sortByName) entries.sort((left, right) => left.title.localeCompare(right.title));
+        const desktopHeight = Math.max(DESKTOP_GRID.cellSize, window.innerHeight - 70);
+        const rowCount = Math.max(1, Math.floor((desktopHeight - DESKTOP_GRID.iconSize) / DESKTOP_GRID.cellSize) + 1);
         const arranged = {};
         entries.forEach((entry, index) => {
-          const row = index % 8;
-          const column = Math.floor(index / 8);
+          const row = index % rowCount;
+          const column = Math.floor(index / rowCount);
           arranged[entry.id] = {
-            x: DESKTOP_GRID.originX + column * DESKTOP_GRID.cellWidth,
-            y: DESKTOP_GRID.originY + row * DESKTOP_GRID.cellHeight
+            x: DESKTOP_GRID.originX + column * DESKTOP_GRID.cellSize,
+            y: DESKTOP_GRID.originY + row * DESKTOP_GRID.cellSize
           };
         });
         setData(prev => ({ ...prev, desktopIcons: arranged }));
@@ -2061,7 +2131,7 @@
 
           <div className="desktop" onClick={() => setSelectedIconId(null)}>
             <div 
-              className={`desktop-icon ${selectedIconId === 'sys-computer' ? 'selected' : ''}`}
+              className={`desktop-icon ${selectedIconId === 'sys-computer' ? 'selected' : ''} ${draggingIconId === 'sys-computer' ? 'dragging' : ''}`}
               style={{ left: data.desktopIcons?.['sys-computer']?.x ?? 15, top: data.desktopIcons?.['sys-computer']?.y ?? 15 }}
               onDoubleClick={() => openWindow('sys-computer')}
               onClick={(e) => e.stopPropagation()}
@@ -2072,8 +2142,8 @@
             </div>
 
             <div 
-              className={`desktop-icon ${selectedIconId === 'sys-recyclebin' ? 'selected' : ''}`}
-              style={{ left: data.desktopIcons?.['sys-recyclebin']?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.['sys-recyclebin']?.y ?? (DESKTOP_GRID.originY + DESKTOP_GRID.cellHeight) }}
+              className={`desktop-icon ${selectedIconId === 'sys-recyclebin' ? 'selected' : ''} ${draggingIconId === 'sys-recyclebin' ? 'dragging' : ''}`}
+              style={{ left: data.desktopIcons?.['sys-recyclebin']?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.['sys-recyclebin']?.y ?? (DESKTOP_GRID.originY + DESKTOP_GRID.cellSize) }}
               onDoubleClick={() => openWindow('sys-recyclebin')}
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'sys-recyclebin')}
@@ -2082,8 +2152,8 @@
               <span>Recycle Bin</span>
             </div>
             <div
-              className={`desktop-icon ${selectedIconId === 'paint' ? 'selected' : ''}`}
-              style={{ left: data.desktopIcons?.paint?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.paint?.y ?? (DESKTOP_GRID.originY + (DESKTOP_GRID.cellHeight * 4)) }}
+              className={`desktop-icon ${selectedIconId === 'paint' ? 'selected' : ''} ${draggingIconId === 'paint' ? 'dragging' : ''}`}
+              style={{ left: data.desktopIcons?.paint?.x ?? DESKTOP_GRID.originX, top: data.desktopIcons?.paint?.y ?? (DESKTOP_GRID.originY + (DESKTOP_GRID.cellSize * 4)) }}
               onDoubleClick={openPaint}
               onClick={(e) => e.stopPropagation()}
               onPointerDown={(e) => handleIconMouseDown(e, 'paint')}
@@ -2094,15 +2164,25 @@
 
             {userSections.map((win, idx) => {
               const isText = win.layout === 'text' || win.type === 'txt';
-              const iconPos = data.desktopIcons?.[win.id] || { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY + ((idx + 2) * DESKTOP_GRID.cellHeight) };
+              const photoFolderIndex = userSections
+                .filter(section => section.type === 'folder' && Array.isArray(section.photos))
+                .indexOf(win);
+              const photoFolderRowCount = Math.max(1, Math.floor(((window.innerHeight - 70) - DESKTOP_GRID.iconSize) / DESKTOP_GRID.cellSize) + 1);
+              const iconPos = data.desktopIcons?.[win.id] || (photoFolderIndex >= 0
+                ? {
+                    x: DESKTOP_GRID.originX + Math.floor(photoFolderIndex / photoFolderRowCount) * DESKTOP_GRID.cellSize,
+                    y: DESKTOP_GRID.originY + ((3 + (photoFolderIndex % photoFolderRowCount)) * DESKTOP_GRID.cellSize)
+                  }
+                : { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY + ((idx + 2) * DESKTOP_GRID.cellSize) });
               return (
                 <div 
                   key={`icon-${win.id}`} 
-                  className={`desktop-icon ${selectedIconId === win.id ? 'selected' : ''}`}
+                  className={`desktop-icon ${selectedIconId === win.id ? 'selected' : ''} ${draggingIconId === win.id ? 'dragging' : ''}`}
                   style={{ left: iconPos.x, top: iconPos.y }}
                   onDoubleClick={() => openWindow(win.id)}
                   onClick={(e) => e.stopPropagation()}
                   onPointerDown={(e) => handleIconMouseDown(e, win.id)}
+                  onContextMenu={(e) => handleIconContextMenu(e, win.id)}
                 >
                   {isText ? <ThemeNotepadIcon theme={data.settings.osTheme} /> : <ThemeFolderIcon theme={data.settings.osTheme} />}
                   <span>{win.title}</span>
@@ -2793,7 +2873,7 @@
                               const restoredWindows = (prev.recycleBin || []).map(r => ({ ...r, isOpen: false, isMinimized: false }));
                               const restoredIcons = { ...(prev.desktopIcons || {}) };
                               (prev.recycleBin || []).forEach((item, i) => {
-                                restoredIcons[item.id] = { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY + ((i + 2) * DESKTOP_GRID.cellHeight) };
+                                restoredIcons[item.id] = { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY + ((i + 2) * DESKTOP_GRID.cellSize) };
                               });
                               return {
                                 ...prev,
@@ -2856,7 +2936,7 @@
                             if (data.settings.enableSounds) playXpSound('notify');
                             setData(prev => ({
                               ...prev,
-                              desktopIcons: { ...(prev.desktopIcons || {}), [item.id]: { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY + (2 * DESKTOP_GRID.cellHeight) } },
+                              desktopIcons: { ...(prev.desktopIcons || {}), [item.id]: { x: DESKTOP_GRID.originX, y: DESKTOP_GRID.originY + (2 * DESKTOP_GRID.cellSize) } },
                               recycleBin: (prev.recycleBin || []).filter(r => r.id !== item.id),
                               windows: [...prev.windows, { ...item, isOpen: false, isMinimized: false }]
                             }));
@@ -3372,6 +3452,8 @@
                     <div className="my-1 border-t" />
                     <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer" onClick={() => { openWindow('sys-computer'); setMyComputerTab('admin'); setContextMenu({ visible: false }); }}>🔐 Admin CMS Access</div>
                   </>
+                ) : contextMenu.type === 'icon' ? (
+                  <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer font-bold" onClick={() => sendToRecycleBin(contextMenu.sourceWinId)}>🗑️ Send to Recycle Bin</div>
                 ) : contextMenu.photo && (
                   <>
                     <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer font-bold" onClick={() => { setWallpaperForCurrentTheme(contextMenu.photo.url); setContextMenu({ visible: false }); }}>🖼️ Set as Desktop Background</div>
