@@ -1,506 +1,479 @@
 [
   {
-    "id": "other-photograhaphy",
-    "title": "other photograhaphy",
-    "photos": [
-      {
-        "id": "other photograhaphy-1",
-        "url": "images/other%20photograhaphy/20170818_112143-01.jpeg",
-        "caption": "20170818 112143 01",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-2",
-        "url": "images/other%20photograhaphy/bridgeafter.jpg",
-        "caption": "bridgeafter",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-3",
-        "url": "images/other%20photograhaphy/cabin-1-edited.jpg",
-        "caption": "cabin 1 edited",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-4",
-        "url": "images/other%20photograhaphy/DSC00395-Edit.jpg",
-        "caption": "DSC00395 Edit",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-5",
-        "url": "images/other%20photograhaphy/PXL_20241013_210652530.MP~3.jpg",
-        "caption": "PXL 20241013 210652530.MP~3",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-6",
-        "url": "images/other%20photograhaphy/PXL_20250718_185916006.jpg",
-        "caption": "PXL 20250718 185916006",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-7",
-        "url": "images/other%20photograhaphy/PXL_20250921_234955070.MP.jpg",
-        "caption": "PXL 20250921 234955070.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-8",
-        "url": "images/other%20photograhaphy/PXL_20250921_235408136.MP.jpg",
-        "caption": "PXL 20250921 235408136.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-9",
-        "url": "images/other%20photograhaphy/PXL_20250921_235409486.jpg",
-        "caption": "PXL 20250921 235409486",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-10",
-        "url": "images/other%20photograhaphy/PXL_20250921_235821518.MP.jpg",
-        "caption": "PXL 20250921 235821518.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-11",
-        "url": "images/other%20photograhaphy/PXL_20250921_235824962.MP.jpg",
-        "caption": "PXL 20250921 235824962.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-12",
-        "url": "images/other%20photograhaphy/PXL_20250921_235829803.MP.jpg",
-        "caption": "PXL 20250921 235829803.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-13",
-        "url": "images/other%20photograhaphy/PXL_20250921_235903596.MP.jpg",
-        "caption": "PXL 20250921 235903596.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-14",
-        "url": "images/other%20photograhaphy/PXL_20250921_235904700~2.jpg",
-        "caption": "PXL 20250921 235904700~2",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-15",
-        "url": "images/other%20photograhaphy/PXL_20250921_235906146.LS_exported_21795_1758516707090.jpg",
-        "caption": "PXL 20250921 235906146.LS exported 21795 1758516707090",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-16",
-        "url": "images/other%20photograhaphy/PXL_20250922_000105613.MP.jpg",
-        "caption": "PXL 20250922 000105613.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-17",
-        "url": "images/other%20photograhaphy/PXL_20250922_000106805.jpg",
-        "caption": "PXL 20250922 000106805",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-18",
-        "url": "images/other%20photograhaphy/PXL_20250922_001128007.MP.jpg",
-        "caption": "PXL 20250922 001128007.MP",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-19",
-        "url": "images/other%20photograhaphy/PXL_20250922_001745735.MP~2.jpg",
-        "caption": "PXL 20250922 001745735.MP~2",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-20",
-        "url": "images/other%20photograhaphy/PXL_20260626_231630653.jpg",
-        "caption": "PXL 20260626 231630653",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-21",
-        "url": "images/other%20photograhaphy/star.jpg",
-        "caption": "star",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "other photograhaphy-22",
-        "url": "images/other%20photograhaphy/steak.jpg",
-        "caption": "steak",
-        "date": "",
-        "size": ""
-      }
-    ]
-  },
-  {
     "id": "other-photography",
     "title": "Other Photography",
     "photos": [
       {
         "id": "Other Photography-1",
-        "url": "images/Other%20Photography/20180706_174808.jpg",
-        "caption": "20180706 174808",
+        "url": "images/Other%20Photography/20170818_112143-01.jpeg",
+        "caption": "20170818 112143 01",
         "date": "",
         "size": ""
       },
       {
         "id": "Other Photography-2",
-        "url": "images/Other%20Photography/20180706_174813.jpg",
-        "caption": "20180706 174813",
-        "date": "",
-        "size": ""
-      },
-      {
-        "id": "Other Photography-3",
         "url": "images/Other%20Photography/20180706_174820-01.jpeg",
         "caption": "20180706 174820 01",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-4",
+        "id": "Other Photography-3",
         "url": "images/Other%20Photography/20180807_185621.jpg",
         "caption": "20180807 185621",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-5",
+        "id": "Other Photography-4",
         "url": "images/Other%20Photography/20190519_154029.jpg",
         "caption": "20190519 154029",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-6",
+        "id": "Other Photography-5",
         "url": "images/Other%20Photography/20191020_165944.jpg",
         "caption": "20191020 165944",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-7",
+        "id": "Other Photography-6",
         "url": "images/Other%20Photography/barstuffafter.jpg",
         "caption": "barstuffafter",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-8",
+        "id": "Other Photography-7",
         "url": "images/Other%20Photography/blue%20sky%202_.jpg",
         "caption": "blue sky 2 ",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-9",
+        "id": "Other Photography-8",
         "url": "images/Other%20Photography/blue%20sky_.jpg",
         "caption": "blue sky ",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-10",
+        "id": "Other Photography-9",
         "url": "images/Other%20Photography/bread.jpg",
         "caption": "bread",
         "date": "",
         "size": ""
       },
       {
+        "id": "Other Photography-10",
+        "url": "images/Other%20Photography/bridgeafter.jpg",
+        "caption": "bridgeafter",
+        "date": "",
+        "size": ""
+      },
+      {
         "id": "Other Photography-11",
+        "url": "images/Other%20Photography/cabin-1-edited.jpg",
+        "caption": "cabin 1 edited",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-12",
         "url": "images/Other%20Photography/cabin-1.jpg",
         "caption": "cabin 1",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-12",
+        "id": "Other Photography-13",
         "url": "images/Other%20Photography/cabin-2.jpg",
         "caption": "cabin 2",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-13",
+        "id": "Other Photography-14",
         "url": "images/Other%20Photography/cabin-4.jpg",
         "caption": "cabin 4",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-14",
+        "id": "Other Photography-15",
         "url": "images/Other%20Photography/cabin-5.jpg",
         "caption": "cabin 5",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-15",
+        "id": "Other Photography-16",
         "url": "images/Other%20Photography/cabin-6.jpg",
         "caption": "cabin 6",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-16",
+        "id": "Other Photography-17",
         "url": "images/Other%20Photography/cabin-8.jpg",
         "caption": "cabin 8",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-17",
+        "id": "Other Photography-18",
         "url": "images/Other%20Photography/cupcakes.jpg",
         "caption": "cupcakes",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-18",
+        "id": "Other Photography-19",
         "url": "images/Other%20Photography/DSC00266.jpg",
         "caption": "DSC00266",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-19",
+        "id": "Other Photography-20",
         "url": "images/Other%20Photography/DSC00274.jpg",
         "caption": "DSC00274",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-20",
+        "id": "Other Photography-21",
         "url": "images/Other%20Photography/DSC00293.jpg",
         "caption": "DSC00293",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-21",
+        "id": "Other Photography-22",
         "url": "images/Other%20Photography/DSC00314.jpg",
         "caption": "DSC00314",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-22",
+        "id": "Other Photography-23",
+        "url": "images/Other%20Photography/DSC00395-Edit.jpg",
+        "caption": "DSC00395 Edit",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-24",
         "url": "images/Other%20Photography/DSC00655.jpg",
         "caption": "DSC00655",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-23",
+        "id": "Other Photography-25",
         "url": "images/Other%20Photography/DSC00699-2.jpg",
         "caption": "DSC00699 2",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-24",
+        "id": "Other Photography-26",
         "url": "images/Other%20Photography/DSC00733.JPG",
         "caption": "DSC00733",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-25",
+        "id": "Other Photography-27",
         "url": "images/Other%20Photography/DSC00734.jpg",
         "caption": "DSC00734",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-26",
+        "id": "Other Photography-28",
         "url": "images/Other%20Photography/DSC01520.jpg",
         "caption": "DSC01520",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-27",
+        "id": "Other Photography-29",
         "url": "images/Other%20Photography/DSC03182-2.jpg",
         "caption": "DSC03182 2",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-28",
+        "id": "Other Photography-30",
         "url": "images/Other%20Photography/DSC03353-Edit.jpg",
         "caption": "DSC03353 Edit",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-29",
+        "id": "Other Photography-31",
         "url": "images/Other%20Photography/DSC03476.jpg",
         "caption": "DSC03476",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-30",
+        "id": "Other Photography-32",
         "url": "images/Other%20Photography/IMG_4746.jpg",
         "caption": "IMG 4746",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-31",
+        "id": "Other Photography-33",
         "url": "images/Other%20Photography/IMG_4747.jpg",
         "caption": "IMG 4747",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-32",
+        "id": "Other Photography-34",
         "url": "images/Other%20Photography/looking%20back.jpg",
         "caption": "looking back",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-33",
+        "id": "Other Photography-35",
         "url": "images/Other%20Photography/mono.jpg",
         "caption": "mono",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-34",
+        "id": "Other Photography-36",
         "url": "images/Other%20Photography/peach%20posed.jpg",
         "caption": "peach posed",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-35",
+        "id": "Other Photography-37",
         "url": "images/Other%20Photography/peaches.jpg",
         "caption": "peaches",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-36",
+        "id": "Other Photography-38",
         "url": "images/Other%20Photography/pink%20peach.jpg",
         "caption": "pink peach",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-37",
+        "id": "Other Photography-39",
         "url": "images/Other%20Photography/proof2.png",
         "caption": "proof2",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-38",
+        "id": "Other Photography-40",
         "url": "images/Other%20Photography/proof4.png",
         "caption": "proof4",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-39",
+        "id": "Other Photography-41",
         "url": "images/Other%20Photography/proof5.png",
         "caption": "proof5",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-40",
+        "id": "Other Photography-42",
         "url": "images/Other%20Photography/proof6.png",
         "caption": "proof6",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-41",
+        "id": "Other Photography-43",
         "url": "images/Other%20Photography/PXL_20231007_211025068.MP.jpg",
         "caption": "PXL 20231007 211025068.MP",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-42",
+        "id": "Other Photography-44",
+        "url": "images/Other%20Photography/PXL_20241013_210652530.MP~3.jpg",
+        "caption": "PXL 20241013 210652530.MP~3",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-45",
+        "url": "images/Other%20Photography/PXL_20250718_185916006.jpg",
+        "caption": "PXL 20250718 185916006",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-46",
+        "url": "images/Other%20Photography/PXL_20250921_234955070.MP.jpg",
+        "caption": "PXL 20250921 234955070.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-47",
+        "url": "images/Other%20Photography/PXL_20250921_235408136.MP.jpg",
+        "caption": "PXL 20250921 235408136.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-48",
+        "url": "images/Other%20Photography/PXL_20250921_235409486.jpg",
+        "caption": "PXL 20250921 235409486",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-49",
+        "url": "images/Other%20Photography/PXL_20250921_235821518.MP.jpg",
+        "caption": "PXL 20250921 235821518.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-50",
+        "url": "images/Other%20Photography/PXL_20250921_235824962.MP.jpg",
+        "caption": "PXL 20250921 235824962.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-51",
+        "url": "images/Other%20Photography/PXL_20250921_235829803.MP.jpg",
+        "caption": "PXL 20250921 235829803.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-52",
+        "url": "images/Other%20Photography/PXL_20250921_235903596.MP.jpg",
+        "caption": "PXL 20250921 235903596.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-53",
+        "url": "images/Other%20Photography/PXL_20250921_235904700~2.jpg",
+        "caption": "PXL 20250921 235904700~2",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-54",
+        "url": "images/Other%20Photography/PXL_20250921_235906146.LS_exported_21795_1758516707090.jpg",
+        "caption": "PXL 20250921 235906146.LS exported 21795 1758516707090",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-55",
+        "url": "images/Other%20Photography/PXL_20250922_000105613.MP.jpg",
+        "caption": "PXL 20250922 000105613.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-56",
+        "url": "images/Other%20Photography/PXL_20250922_000106805.jpg",
+        "caption": "PXL 20250922 000106805",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-57",
+        "url": "images/Other%20Photography/PXL_20250922_001128007.MP.jpg",
+        "caption": "PXL 20250922 001128007.MP",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-58",
+        "url": "images/Other%20Photography/PXL_20250922_001745735.MP~2.jpg",
+        "caption": "PXL 20250922 001745735.MP~2",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-59",
+        "url": "images/Other%20Photography/PXL_20260626_231630653.jpg",
+        "caption": "PXL 20260626 231630653",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-60",
         "url": "images/Other%20Photography/received_704169183967070.jpg",
         "caption": "received 704169183967070",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-43",
+        "id": "Other Photography-61",
         "url": "images/Other%20Photography/rock%20beach.jpg",
         "caption": "rock beach",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-44",
+        "id": "Other Photography-62",
+        "url": "images/Other%20Photography/star.jpg",
+        "caption": "star",
+        "date": "",
+        "size": ""
+      },
+      {
+        "id": "Other Photography-63",
         "url": "images/Other%20Photography/steak.jpg",
         "caption": "steak",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-45",
+        "id": "Other Photography-64",
         "url": "images/Other%20Photography/stek1.jpg",
         "caption": "stek1",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-46",
+        "id": "Other Photography-65",
         "url": "images/Other%20Photography/tortillas.jpg",
         "caption": "tortillas",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-47",
+        "id": "Other Photography-66",
         "url": "images/Other%20Photography/up%20close%20shot_.jpg",
         "caption": "up close shot ",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-48",
+        "id": "Other Photography-67",
         "url": "images/Other%20Photography/Wicklow%202_.jpg",
         "caption": "Wicklow 2 ",
         "date": "",
         "size": ""
       },
       {
-        "id": "Other Photography-49",
+        "id": "Other Photography-68",
         "url": "images/Other%20Photography/Wicklow_.jpg",
         "caption": "Wicklow ",
         "date": "",
