@@ -539,131 +539,10 @@
           { id: "plum", name: "Plum Deep Purple", primary: "#400040" },
           { id: "charcoal", name: "Charcoal Dark", primary: "#222222" }
         ]
-      },
-      { 
-        id: "w98", 
-        name: "Windows 98 Classic", 
-        defaultBg: "#008080",
-        subSchemes: [
-          { id: "standard", name: "Windows Standard", primary: "#000080" },
-          { id: "brick", name: "Red Brick", primary: "#800000" },
-          { id: "highcontrast", name: "High Contrast Black", primary: "#000000" }
-        ]
       }
     ];
 
-    /* Legacy photo metadata retained below only for migration reference.
-    const LEGACY_FEATURED_PHOTOS = [
-      { id: "p1", url: "images/pictonday1-2026-1.jpg", caption: "Picton Day 1 - Photo #1", date: "2026-08-24", size: "0.6 MB" },
-      { id: "p2", url: "images/pictonday1-2026-2.jpg", caption: "Picton Day 1 - Photo #2", date: "2026-08-24", size: "0.6 MB" },
-      { id: "p3", url: "images/pictonday1-2026-3.jpg", caption: "Picton Day 1 - Photo #3", date: "2026-08-24", size: "0.5 MB" },
-      { id: "p4", url: "images/pictonday1-2026-4.jpg", caption: "Picton Day 1 - Photo #4", date: "2026-08-24", size: "1 MB" },
-      { id: "p5", url: "images/pictonday1-2026-5.jpg", caption: "Picton Day 1 - Photo #5", date: "2026-08-24", size: "1 MB" },
-      { id: "p6", url: "images/pictonday1-2026-6.jpg", caption: "Picton Day 1 - Photo #6", date: "2026-08-24", size: "1 MB" },
-      { id: "p7", url: "images/pictonday1-2026-7.jpg", caption: "Picton Day 1 - Photo #7", date: "2026-08-24", size: "1.3 MB" },
-      { id: "p8", url: "images/pictonday1-2026-8.jpg", caption: "Picton Day 1 - Photo #8", date: "2026-08-24", size: "1 MB" },
-      { id: "p9", url: "images/pictonday1-2026-9.jpg", caption: "Picton Day 1 - Photo #9", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p10", url: "images/pictonday1-2026-10.jpg", caption: "Picton Day 1 - Photo #10", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p11", url: "images/pictonday1-2026-11.jpg", caption: "Picton Day 1 - Photo #11", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p12", url: "images/pictonday1-2026-12.jpg", caption: "Picton Day 1 - Photo #12", date: "2026-08-24", size: "1.3 MB" },
-      { id: "p13", url: "images/pictonday1-2026-13.jpg", caption: "Picton Day 1 - Photo #13", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p14", url: "images/pictonday1-2026-14.jpg", caption: "Picton Day 1 - Photo #14", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p15", url: "images/pictonday1-2026-15.jpg", caption: "Picton Day 1 - Photo #15", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p16", url: "images/pictonday1-2026-16.jpg", caption: "Picton Day 1 - Photo #16", date: "2026-08-24", size: "1 MB" },
-      { id: "p17", url: "images/pictonday1-2026-17.jpg", caption: "Picton Day 1 - Photo #17", date: "2026-08-24", size: "0.5 MB" },
-      { id: "p18", url: "images/pictonday1-2026-18.jpg", caption: "Picton Day 1 - Photo #18", date: "2026-08-24", size: "0.6 MB" },
-      { id: "p19", url: "images/pictonday1-2026-19.jpg", caption: "Picton Day 1 - Photo #19", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p20", url: "images/pictonday1-2026-20.jpg", caption: "Picton Day 1 - Photo #20", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p21", url: "images/pictonday1-2026-21.jpg", caption: "Picton Day 1 - Photo #21", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p22", url: "images/pictonday1-2026-22.jpg", caption: "Picton Day 1 - Photo #22", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p23", url: "images/pictonday1-2026-23.jpg", caption: "Picton Day 1 - Photo #23", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p24", url: "images/pictonday1-2026-24.jpg", caption: "Picton Day 1 - Photo #24", date: "2026-08-24", size: "0.5 MB" },
-      { id: "p25", url: "images/pictonday1-2026-25.jpg", caption: "Picton Day 1 - Photo #25", date: "2026-08-24", size: "1 MB" },
-      { id: "p26", url: "images/pictonday1-2026-26.jpg", caption: "Picton Day 1 - Photo #26", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p27", url: "images/pictonday1-2026-27.jpg", caption: "Picton Day 1 - Photo #27", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p28", url: "images/pictonday1-2026-28.jpg", caption: "Picton Day 1 - Photo #28", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p29", url: "images/pictonday1-2026-29.jpg", caption: "Picton Day 1 - Photo #29", date: "2026-08-24", size: "0.5 MB" },
-      { id: "p30", url: "images/pictonday1-2026-30.jpg", caption: "Picton Day 1 - Photo #30", date: "2026-08-24", size: "1 MB" },
-      { id: "p31", url: "images/pictonday1-2026-31.jpg", caption: "Picton Day 1 - Photo #31", date: "2026-08-24", size: "1.3 MB" },
-      { id: "p32", url: "images/pictonday1-2026-32.jpg", caption: "Picton Day 1 - Photo #32", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p33", url: "images/pictonday1-2026-33.jpg", caption: "Picton Day 1 - Photo #33", date: "2026-08-24", size: "1.4 MB" },
-      { id: "p34", url: "images/pictonday1-2026-34.jpg", caption: "Picton Day 1 - Photo #34", date: "2026-08-24", size: "0.5 MB" },
-      { id: "p35", url: "images/pictonday1-2026-35.jpg", caption: "Picton Day 1 - Photo #35", date: "2026-08-24", size: "1 MB" },
-      { id: "p36", url: "images/pictonday1-2026-36.jpg", caption: "Picton Day 1 - Photo #36", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p37", url: "images/pictonday1-2026-37.jpg", caption: "Picton Day 1 - Photo #37", date: "2026-08-24", size: "1 MB" },
-      { id: "p38", url: "images/pictonday1-2026-38.jpg", caption: "Picton Day 1 - Photo #38", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p39", url: "images/pictonday1-2026-39.jpg", caption: "Picton Day 1 - Photo #39", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p40", url: "images/pictonday1-2026-40.jpg", caption: "Picton Day 1 - Photo #40", date: "2026-08-24", size: "0.6 MB" },
-      { id: "p41", url: "images/pictonday1-2026-41.jpg", caption: "Picton Day 1 - Photo #41", date: "2026-08-24", size: "1.3 MB" },
-      { id: "p42", url: "images/pictonday1-2026-42.jpg", caption: "Picton Day 1 - Photo #42", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p43", url: "images/pictonday1-2026-43.jpg", caption: "Picton Day 1 - Photo #43", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p44", url: "images/pictonday1-2026-44.jpg", caption: "Picton Day 1 - Photo #44", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p45", url: "images/pictonday1-2026-45.jpg", caption: "Picton Day 1 - Photo #45", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p46", url: "images/pictonday1-2026-46.jpg", caption: "Picton Day 1 - Photo #46", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p47", url: "images/pictonday1-2026-47.jpg", caption: "Picton Day 1 - Photo #47", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p48", url: "images/pictonday1-2026-48.jpg", caption: "Picton Day 1 - Photo #48", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p49", url: "images/pictonday1-2026-49.jpg", caption: "Picton Day 1 - Photo #49", date: "2026-08-24", size: "0.6 MB" },
-      { id: "p50", url: "images/pictonday1-2026-50.jpg", caption: "Picton Day 1 - Photo #50", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p51", url: "images/pictonday1-2026-51.jpg", caption: "Picton Day 1 - Photo #51", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p52", url: "images/pictonday1-2026-52.jpg", caption: "Picton Day 1 - Photo #52", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p53", url: "images/pictonday1-2026-53.jpg", caption: "Picton Day 1 - Photo #53", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p54", url: "images/pictonday1-2026-54.jpg", caption: "Picton Day 1 - Photo #54", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p55", url: "images/pictonday1-2026-55.jpg", caption: "Picton Day 1 - Photo #55", date: "2026-08-24", size: "1 MB" },
-      { id: "p56", url: "images/pictonday1-2026-56.jpg", caption: "Picton Day 1 - Photo #56", date: "2026-08-24", size: "1 MB" },
-      { id: "p57", url: "images/pictonday1-2026-57.jpg", caption: "Picton Day 1 - Photo #57", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p58", url: "images/pictonday1-2026-58.jpg", caption: "Picton Day 1 - Photo #58", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p59", url: "images/pictonday1-2026-59.jpg", caption: "Picton Day 1 - Photo #59", date: "2026-08-24", size: "0.5 MB" },
-      { id: "p60", url: "images/pictonday1-2026-60.jpg", caption: "Picton Day 1 - Photo #60", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p61", url: "images/pictonday1-2026-61.jpg", caption: "Picton Day 1 - Photo #61", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p62", url: "images/pictonday1-2026-62.jpg", caption: "Picton Day 1 - Photo #62", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p63", url: "images/pictonday1-2026-63.jpg", caption: "Picton Day 1 - Photo #63", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p64", url: "images/pictonday1-2026-64.jpg", caption: "Picton Day 1 - Photo #64", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p65", url: "images/pictonday1-2026-65.jpg", caption: "Picton Day 1 - Photo #65", date: "2026-08-24", size: "1 MB" },
-      { id: "p66", url: "images/pictonday1-2026-66.jpg", caption: "Picton Day 1 - Photo #66", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p67", url: "images/pictonday1-2026-67.jpg", caption: "Picton Day 1 - Photo #67", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p68", url: "images/pictonday1-2026-68.jpg", caption: "Picton Day 1 - Photo #68", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p69", url: "images/pictonday1-2026-69.jpg", caption: "Picton Day 1 - Photo #69", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p70", url: "images/pictonday1-2026-70.jpg", caption: "Picton Day 1 - Photo #70", date: "2026-08-24", size: "0.6 MB" },
-      { id: "p71", url: "images/pictonday1-2026-71.jpg", caption: "Picton Day 1 - Photo #71", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p72", url: "images/pictonday1-2026-72.jpg", caption: "Picton Day 1 - Photo #72", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p73", url: "images/pictonday1-2026-73.jpg", caption: "Picton Day 1 - Photo #73", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p74", url: "images/pictonday1-2026-74.jpg", caption: "Picton Day 1 - Photo #74", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p75", url: "images/pictonday1-2026-75.jpg", caption: "Picton Day 1 - Photo #75", date: "2026-08-24", size: "0.6 MB" },
-      { id: "p76", url: "images/pictonday1-2026-76.jpg", caption: "Picton Day 1 - Photo #76", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p77", url: "images/pictonday1-2026-77.jpg", caption: "Picton Day 1 - Photo #77", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p78", url: "images/pictonday1-2026-78.jpg", caption: "Picton Day 1 - Photo #78", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p79", url: "images/pictonday1-2026-79.jpg", caption: "Picton Day 1 - Photo #79", date: "2026-08-24", size: "1 MB" },
-      { id: "p80", url: "images/pictonday1-2026-80.jpg", caption: "Picton Day 1 - Photo #80", date: "2026-08-24", size: "1.4 MB" },
-      { id: "p81", url: "images/pictonday1-2026-81.jpg", caption: "Picton Day 1 - Photo #81", date: "2026-08-24", size: "1 MB" },
-      { id: "p82", url: "images/pictonday1-2026-82.jpg", caption: "Picton Day 1 - Photo #82", date: "2026-08-24", size: "1.7 MB" },
-      { id: "p83", url: "images/pictonday1-2026-83.jpg", caption: "Picton Day 1 - Photo #83", date: "2026-08-24", size: "1.5 MB" },
-      { id: "p84", url: "images/pictonday1-2026-84.jpg", caption: "Picton Day 1 - Photo #84", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p85", url: "images/pictonday1-2026-85.jpg", caption: "Picton Day 1 - Photo #85", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p86", url: "images/pictonday1-2026-86.jpg", caption: "Picton Day 1 - Photo #86", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p87", url: "images/pictonday1-2026-87.jpg", caption: "Picton Day 1 - Photo #87", date: "2026-08-24", size: "1 MB" },
-      { id: "p88", url: "images/pictonday1-2026-88.jpg", caption: "Picton Day 1 - Photo #88", date: "2026-08-24", size: "0.8 MB" },
-      { id: "p89", url: "images/pictonday1-2026-89.jpg", caption: "Picton Day 1 - Photo #89", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p90", url: "images/pictonday1-2026-90.jpg", caption: "Picton Day 1 - Photo #90", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p91", url: "images/pictonday1-2026-91.jpg", caption: "Picton Day 1 - Photo #91", date: "2026-08-24", size: "1.4 MB" },
-      { id: "p92", url: "images/pictonday1-2026-92.jpg", caption: "Picton Day 1 - Photo #92", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p93", url: "images/pictonday1-2026-93.jpg", caption: "Picton Day 1 - Photo #93", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p94", url: "images/pictonday1-2026-94.jpg", caption: "Picton Day 1 - Photo #94", date: "2026-08-24", size: "1 MB" },
-      { id: "p95", url: "images/pictonday1-2026-95.jpg", caption: "Picton Day 1 - Photo #95", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p96", url: "images/pictonday1-2026-96.jpg", caption: "Picton Day 1 - Photo #96", date: "2026-08-24", size: "1.2 MB" },
-      { id: "p97", url: "images/pictonday1-2026-97.jpg", caption: "Picton Day 1 - Photo #97", date: "2026-08-24", size: "1 MB" },
-      { id: "p98", url: "images/pictonday1-2026-98.jpg", caption: "Picton Day 1 - Photo #98", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p99", url: "images/pictonday1-2026-99.jpg", caption: "Picton Day 1 - Photo #99", date: "2026-08-24", size: "1.1 MB" },
-      { id: "p100", url: "images/pictonday1-2026-100.jpg", caption: "Picton Day 1 - Photo #100", date: "2026-08-24", size: "1 MB" },
-      { id: "p101", url: "images/pictonday1-2026-101.jpg", caption: "Picton Day 1 - Photo #101", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p102", url: "images/pictonday1-2026-102.jpg", caption: "Picton Day 1 - Photo #102", date: "2026-08-24", size: "0.9 MB" },
-      { id: "p103", url: "images/pictonday1-2026-103.jpg", caption: "Picton Day 1 - Photo #103", date: "2026-08-24", size: "0.4 MB" },
-      { id: "p104", url: "images/pictonday1-2026-104.jpg", caption: "Picton Day 1 - Photo #104", date: "2026-08-24", size: "0.2 MB" },
-      { id: "p105", url: "images/pictonday1-2026-105.jpg", caption: "Picton Day 1 - Photo #105", date: "2026-08-24", size: "0.4 MB" },
-      { id: "p106", url: "images/pictonday1-2026-106.jpg", caption: "Picton Day 1 - Photo #106", date: "2026-08-24", size: "0.3 MB" },
-      { id: "p107", url: "images/pictonday1-2026-107.jpg", caption: "Picton Day 1 - Photo #107", date: "2026-08-24", size: "0.7 MB" },
-      { id: "p108", url: "images/DSC04207.jpg", caption: "Picton - DSC04207", date: "2026-08-24", size: "2.2 MB" },
-      { id: "p109", url: "images/compressed_image.jpeg", caption: "compressed_image", date: "2026-08-24", size: "3.8 MB" }
-    ]; */
+
     const DEFAULT_DATA = {
       settings: {
         siteTitle: "Jason Ward Photography Portfolio",
@@ -674,8 +553,7 @@
         desktopBg: "images/backgrounds/bliss-xp.jpg",
         themeWallpapers: {
           xp: "images/backgrounds/bliss-xp.jpg",
-          w2k: "#3A6EA5",
-          w98: "#008080"
+          w2k: "#3A6EA5"
         },
         enableSounds: true
       },
@@ -724,7 +602,7 @@
           isMinimized: false,
           isMaximized: false,
           zIndex: 12,
-          content: "Welcome to Jason Ward Photography Portfolio!\n\nThis website is an interactive retro operating system portfolio.\n\nTips for visitors:\n• Click or double-click a photograph to open it in Picture and Fax Viewer.\n• Right-click a photograph to set it as wallpaper, move it between folders, or open its menu.\n• On a phone or tablet, tap a photograph to open it, pinch in the viewer to zoom, and drag a zoomed image to pan.\n• Use two fingers on a photograph or the desktop to open its right-click menu.\n• Scroll inside a folder to browse the complete photo collection.\n• Double-click desktop icons, or tap them on touch devices, to open folders and documents.\n• Drag desktop icons around the desktop grid to organize your layout.\n• Drag windows by their titlebars or resize them from the edges and corners.\n• Use Picture and Fax Viewer controls for navigation, slideshow, zoom, rotation, filters, download, wallpaper, and MS Paint markup.\n• Open 'My Computer' or 'Control Panel' to change themes, wallpapers, sounds, and portfolio content."
+          content: "Welcome to Jason Ward Photography Portfolio!\n\nThis website is an interactive retro operating system portfolio.\n\nTips for visitors:\n• Click or double-click a photograph to open it in Picture Viewer.\n• Right-click a photograph to set it as wallpaper, move it between folders, or open its menu.\n• On a phone or tablet, tap a photograph to open it, pinch in the viewer to zoom, and drag a zoomed image to pan.\n• Use two fingers on a photograph or the desktop to open its right-click menu.\n• Scroll inside a folder to browse the complete photo collection.\n• Double-click desktop icons, or tap them on touch devices, to open folders and documents.\n• Drag desktop icons around the desktop grid to organize your layout.\n• Drag windows by their titlebars or resize them from the edges and corners.\n• Use Picture Viewer controls for navigation, slideshow, zoom, rotation, download, wallpaper, and MS Paint.\n• Open 'My Computer' or 'Control Panel' to change themes, wallpapers, sounds, and portfolio content."
         },
         {
           id: "win-1",
@@ -897,21 +775,6 @@
           primaryColor = '#000080';
           titleGradient = 'linear-gradient(to right, #000080 0%, #1084d0 100%)';
         }
-      } else if (os === 'w98') {
-        bgWindow = '#c0c0c0';
-        taskbarBg = '#c0c0c0';
-        startBtnBg = '#c0c0c0';
-        if (sub === 'brick') {
-          primaryColor = '#800000';
-          titleGradient = 'linear-gradient(to right, #800000 0%, #e04040 100%)';
-        } else if (sub === 'highcontrast') {
-          primaryColor = '#000000';
-          titleGradient = '#000000';
-          titleText = '#ffff00';
-        } else {
-          primaryColor = '#000080';
-          titleGradient = 'linear-gradient(to right, #000080 0%, #1084d0 100%)';
-        }
       }
 
       return `
@@ -1078,11 +941,20 @@
         flipH: false,
         flipV: false,
         filter: 'none',
-        isPaintOpen: false,
+        isSlideshow: false
+      });
+
+      const [paintState, setPaintState] = useState({
+        isOpen: false,
+        isMinimized: false,
+        isMaximized: false,
+        x: 140, y: 60, width: 820, height: 580,
+        zIndex: 210,
+        title: 'Paint - Untitled',
         activeTool: 'pencil',
         brushColor: '#ff0000',
         brushSize: 3,
-        isSlideshow: false
+        photo: null
       });
 
       const [activeMenu, setActiveMenu] = useState(null);
@@ -1362,7 +1234,7 @@
 
       const getTopZIndex = () => {
         const winZs = (data.windows || []).map(w => w.zIndex || 0);
-        const currentHighest = Math.max(highestZIndex, ...winZs, viewerState.zIndex || 0, 100);
+        const currentHighest = Math.max(highestZIndex, ...winZs, viewerState.zIndex || 0, paintState.zIndex || 0, 100);
         const nextZ = currentHighest + 1;
         setHighestZIndex(nextZ);
         return nextZ;
@@ -1596,6 +1468,87 @@
         reader.readAsDataURL(file);
       };
 
+      const restoreOriginalFolders = () => {
+        if (data.settings.enableSounds) playXpSound('notify');
+        imageManifestPromise.then(manifest => {
+          const defaultWin1 = DEFAULT_DATA.windows.find(w => w.id === 'win-1') || {};
+          const defaultReadme = DEFAULT_DATA.windows.find(w => w.id === 'win-readme') || {};
+
+          let updatedFolderWindows = [];
+          if (manifest && manifest.length > 0) {
+            const manifestById = new Map(manifest.map(folder => [folder.id, folder]));
+            const legacyFolder = manifestById.get('rock-and-gem-expo-2026') || manifest[0];
+
+            const legacyWin = {
+              ...defaultWin1,
+              title: legacyFolder.title,
+              photos: legacyFolder.photos,
+              manifestId: legacyFolder.id,
+              isOpen: false,
+              isMinimized: false
+            };
+            updatedFolderWindows.push(legacyWin);
+
+            manifest.forEach((folder, index) => {
+              if (folder.id === legacyFolder.id) return;
+              updatedFolderWindows.push({
+                id: `manifest-${folder.id}`,
+                manifestId: folder.id,
+                title: folder.title,
+                type: 'folder',
+                x: 60 + ((index + 1) % 4) * 30,
+                y: 30 + ((index + 1) % 4) * 30,
+                width: 820,
+                height: 540,
+                layout: 'justified',
+                thumbnailSize: 'medium',
+                defaultViewMode: 'justified',
+                viewMode: 'justified',
+                isOpen: false,
+                isMinimized: false,
+                zIndex: 10,
+                photos: folder.photos
+              });
+            });
+          } else {
+            updatedFolderWindows = DEFAULT_DATA.windows.filter(w => w.type !== 'system').map(w => ({ ...w, isOpen: false, isMinimized: false }));
+          }
+
+          const defaultSystemWins = [
+            {
+              id: "sys-computer",
+              title: "My Computer & Control Panel",
+              type: "system",
+              x: 100, y: 60, width: 620, height: 460,
+              isOpen: true, isMinimized: false, zIndex: 100
+            },
+            {
+              id: "sys-recyclebin",
+              title: "Recycle Bin",
+              type: "system",
+              x: 140, y: 100, width: 480, height: 320,
+              isOpen: false, isMinimized: false, zIndex: 100
+            }
+          ];
+
+          const readmeWin = { ...defaultReadme, isOpen: false, isMinimized: false };
+          const allWindows = [...defaultSystemWins, readmeWin, ...updatedFolderWindows];
+
+          setData(prev => ({
+            ...prev,
+            windows: allWindows,
+            desktopIcons: getArrangedDesktopIcons(getDesktopIconEntries(allWindows))
+          }));
+
+          setDialogModal({
+            isOpen: true,
+            title: 'Original Folders Restored',
+            icon: '📁',
+            message: 'All default photo folders have been restored to their original layout.'
+          });
+        });
+      };
+
       const openPhotoViewer = (photos, index, windowTitle = 'Photo Gallery') => {
         if (!photos || photos.length === 0) return;
         if (data.settings.enableSounds) playXpSound('click');
@@ -1617,41 +1570,64 @@
           zoom: 100,
           isSlideshow: false
         }));
-        paintUndoStack.current = [];
-        paintRedoStack.current = [];
-        if (paintCanvasRef.current) {
-          const ctx = paintCanvasRef.current.getContext('2d');
-          ctx.clearRect(0, 0, paintCanvasRef.current.width, paintCanvasRef.current.height);
-        }
       };
-      const openPaint = () => {
+
+      const openPaint = (initialPhoto = null) => {
         if (data.settings.enableSounds) playXpSound('click');
         setContextMenu(prev => ({ ...prev, visible: false }));
         const nextZ = getTopZIndex();
-        setViewerState(prev => ({
+        const photoTitle = initialPhoto ? (initialPhoto.caption || 'Image') : 'Untitled';
+        setPaintState(prev => ({
           ...prev,
           isOpen: true,
           isMinimized: false,
-          isPaintOpen: true,
           zIndex: nextZ,
-          photos: [],
-          currentIndex: 0,
-          title: 'MS Paint',
-          rotation: 0,
-          flipH: false,
-          flipV: false,
-          filter: 'none',
-          zoom: 100,
-          isSlideshow: false
+          title: `Paint - ${photoTitle}`,
+          photo: initialPhoto
         }));
         paintUndoStack.current = [];
         paintRedoStack.current = [];
+      };
+
+      const sendCurrentPhotoToPaint = () => {
+        const currentPhoto = viewerState.photos[viewerState.currentIndex];
+        if (!currentPhoto || !currentPhoto.url) return;
+        openPaint(currentPhoto);
+        if (data.settings.enableSounds) playXpSound('notify');
       };
 
       const bringViewerToFront = () => {
         const nextZ = getTopZIndex();
         setViewerState(vs => ({ ...vs, zIndex: nextZ, isMinimized: false }));
       };
+
+      const bringPaintToFront = () => {
+        const nextZ = getTopZIndex();
+        setPaintState(ps => ({ ...ps, zIndex: nextZ, isMinimized: false }));
+      };
+
+      useEffect(() => {
+        if (!paintState.isOpen || !paintCanvasRef.current) return;
+        const canvas = paintCanvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (paintState.photo && paintState.photo.url) {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+            canvas.width = img.naturalWidth || 800;
+            canvas.height = img.naturalHeight || 600;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            savePaintSnapshot();
+          };
+          img.src = getAssetUrl(paintState.photo.url);
+        } else {
+          canvas.width = 800;
+          canvas.height = 600;
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, 800, 600);
+          savePaintSnapshot();
+        }
+      }, [paintState.isOpen, paintState.photo]);
 
       const getCanvasCoords = (e) => {
         const canvas = paintCanvasRef.current;
@@ -1673,12 +1649,12 @@
         const { x, y } = getCanvasCoords(e);
         paintStartPosRef.current = { x, y };
 
-        if (viewerState.activeTool === 'text') {
-          const txt = prompt("Enter text to stamp onto photo:", "Jason Ward Photography");
+        if (paintState.activeTool === 'text') {
+          const txt = prompt("Enter text to stamp onto canvas:", "Jason Ward Photography");
           if (txt) {
             ctx.save();
-            ctx.font = `bold ${Math.max(16, viewerState.brushSize * 6)}px Tahoma, sans-serif`;
-            ctx.fillStyle = viewerState.brushColor;
+            ctx.font = `bold ${Math.max(16, paintState.brushSize * 6)}px Tahoma, sans-serif`;
+            ctx.fillStyle = paintState.brushColor;
             ctx.shadowColor = "rgba(0,0,0,0.8)";
             ctx.shadowBlur = 4;
             ctx.fillText(txt, x, y);
@@ -1692,23 +1668,23 @@
         isPaintingRef.current = true;
         paintSnapshotRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        ctx.lineWidth = viewerState.brushSize;
-        ctx.strokeStyle = viewerState.brushColor;
-        ctx.fillStyle = viewerState.brushColor;
+        ctx.lineWidth = paintState.brushSize;
+        ctx.strokeStyle = paintState.brushColor;
+        ctx.fillStyle = paintState.brushColor;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        if (viewerState.activeTool === 'eraser') {
+        if (paintState.activeTool === 'eraser') {
           ctx.globalCompositeOperation = 'destination-out';
-          ctx.lineWidth = viewerState.brushSize * 3;
-        } else if (viewerState.activeTool === 'brush') {
+          ctx.lineWidth = paintState.brushSize * 3;
+        } else if (paintState.activeTool === 'brush') {
           ctx.globalCompositeOperation = 'source-over';
-          ctx.lineWidth = viewerState.brushSize * 2.5;
+          ctx.lineWidth = paintState.brushSize * 2.5;
         } else {
           ctx.globalCompositeOperation = 'source-over';
         }
 
-        if (viewerState.activeTool === 'pencil' || viewerState.activeTool === 'brush' || viewerState.activeTool === 'eraser') {
+        if (paintState.activeTool === 'pencil' || paintState.activeTool === 'brush' || paintState.activeTool === 'eraser') {
           ctx.beginPath();
           ctx.moveTo(x, y);
           ctx.lineTo(x, y);
@@ -1724,38 +1700,38 @@
         const { x, y } = getCanvasCoords(e);
         const start = paintStartPosRef.current;
 
-        if (viewerState.activeTool === 'pencil' || viewerState.activeTool === 'brush' || viewerState.activeTool === 'eraser') {
+        if (paintState.activeTool === 'pencil' || paintState.activeTool === 'brush' || paintState.activeTool === 'eraser') {
           ctx.lineTo(x, y);
           ctx.stroke();
-        } else if (['line', 'rect', 'circle', 'arrow'].includes(viewerState.activeTool)) {
+        } else if (['line', 'rect', 'circle', 'arrow'].includes(paintState.activeTool)) {
           if (paintSnapshotRef.current) {
             ctx.putImageData(paintSnapshotRef.current, 0, 0);
           }
           ctx.beginPath();
-          ctx.lineWidth = viewerState.brushSize;
-          ctx.strokeStyle = viewerState.brushColor;
-          ctx.fillStyle = viewerState.brushColor;
+          ctx.lineWidth = paintState.brushSize;
+          ctx.strokeStyle = paintState.brushColor;
+          ctx.fillStyle = paintState.brushColor;
           ctx.lineCap = 'round';
 
-          if (viewerState.activeTool === 'line') {
+          if (paintState.activeTool === 'line') {
             ctx.moveTo(start.x, start.y);
             ctx.lineTo(x, y);
             ctx.stroke();
-          } else if (viewerState.activeTool === 'rect') {
+          } else if (paintState.activeTool === 'rect') {
             ctx.strokeRect(start.x, start.y, x - start.x, y - start.y);
-          } else if (viewerState.activeTool === 'circle') {
+          } else if (paintState.activeTool === 'circle') {
             const rx = Math.abs(x - start.x) / 2;
             const ry = Math.abs(y - start.y) / 2;
             const cx = Math.min(start.x, x) + rx;
             const cy = Math.min(start.y, y) + ry;
             ctx.ellipse(cx, cy, Math.max(1, rx), Math.max(1, ry), 0, 0, 2 * Math.PI);
             ctx.stroke();
-          } else if (viewerState.activeTool === 'arrow') {
+          } else if (paintState.activeTool === 'arrow') {
             ctx.moveTo(start.x, start.y);
             ctx.lineTo(x, y);
             ctx.stroke();
             const angle = Math.atan2(y - start.y, x - start.x);
-            const headLen = Math.max(10, viewerState.brushSize * 4);
+            const headLen = Math.max(10, paintState.brushSize * 4);
             ctx.beginPath();
             ctx.moveTo(x, y);
             ctx.lineTo(x - headLen * Math.cos(angle - Math.PI / 6), y - headLen * Math.sin(angle - Math.PI / 6));
@@ -1811,9 +1787,34 @@
         const canvas = paintCanvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         savePaintSnapshot();
         if (data.settings.enableSounds) playXpSound('recycle');
+      };
+
+      const exportPaintImage = (asWallpaper = false) => {
+        const canvas = paintCanvasRef.current;
+        if (!canvas) return;
+        const finalDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        if (asWallpaper) {
+          setWallpaperForCurrentTheme(finalDataUrl);
+          if (data.settings.enableSounds) playXpSound('notify');
+          setDialogModal({
+            isOpen: true,
+            title: "Desktop Background Updated",
+            icon: "🖼️",
+            message: "Your Paint creation has been set as your desktop background!"
+          });
+        } else {
+          const a = document.createElement('a');
+          a.href = finalDataUrl;
+          a.download = `paint-drawing-${Date.now()}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          if (data.settings.enableSounds) playXpSound('notify');
+        }
       };
 
       const exportViewerImage = (asWallpaper = false) => {
@@ -1863,10 +1864,6 @@
             ctx.putImageData(imgData, 0, 0);
           }
 
-          if (paintCanvasRef.current) {
-            ctx.drawImage(paintCanvasRef.current, 0, 0, canvas.width, canvas.height);
-          }
-
           const finalDataUrl = canvas.toDataURL('image/jpeg', 0.9);
           if (asWallpaper) {
             setWallpaperForCurrentTheme(finalDataUrl);
@@ -1875,12 +1872,12 @@
               isOpen: true,
               title: "Desktop Background Updated",
               icon: "🖼️",
-              message: "The edited photo with your markup and filters has been set as your desktop background!"
+              message: "The photo has been set as your desktop background!"
             });
           } else {
             const a = document.createElement('a');
             a.href = finalDataUrl;
-            a.download = `${(currentPhoto.caption || 'photo').toLowerCase().replace(/\s+/g, '-')}-edited.jpg`;
+            a.download = `${(currentPhoto.caption || 'photo').toLowerCase().replace(/\s+/g, '-')}.jpg`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -1951,6 +1948,23 @@
         setResizingWin('sys-viewer');
         setResizeDirection(direction);
         dragStartPos.current = { x: e.clientX, y: e.clientY, winX: viewerState.x, winY: viewerState.y, winW: viewerState.width, winH: viewerState.height };
+      };
+
+      const handlePaintMouseDown = (e) => {
+        e.preventDefault();
+        bringPaintToFront();
+        if (paintState.isMaximized) return;
+        setDraggingWin('sys-paint');
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winX: paintState.x, winY: paintState.y };
+      };
+
+      const handlePaintResizeDown = (e, direction = 'se') => {
+        e.preventDefault(); e.stopPropagation();
+        bringPaintToFront();
+        if (paintState.isMaximized) return;
+        setResizingWin('sys-paint');
+        setResizeDirection(direction);
+        dragStartPos.current = { x: e.clientX, y: e.clientY, winX: paintState.x, winY: paintState.y, winW: paintState.width, winH: paintState.height };
       };
 
       const handleViewerViewportWheel = (e) => {
@@ -2148,6 +2162,23 @@
         } else if (resizingWin === 'sys-viewer') {
           const bounds = getResizedBounds(340, 240, e.clientX, e.clientY);
           setViewerState(prev => ({
+            ...prev,
+            ...(bounds.x === undefined ? {} : { x: bounds.x }),
+            ...(bounds.y === undefined ? {} : { y: bounds.y }),
+            width: bounds.width,
+            height: bounds.height
+          }));
+        } else if (draggingWin === 'sys-paint') {
+          const dx = e.clientX - dragStartPos.current.x;
+          const dy = e.clientY - dragStartPos.current.y;
+          setPaintState(prev => ({
+            ...prev,
+            x: Math.max(0, dragStartPos.current.winX + dx),
+            y: Math.max(0, dragStartPos.current.winY + dy)
+          }));
+        } else if (resizingWin === 'sys-paint') {
+          const bounds = getResizedBounds(340, 240, e.clientX, e.clientY);
+          setPaintState(prev => ({
             ...prev,
             ...(bounds.x === undefined ? {} : { x: bounds.x }),
             ...(bounds.y === undefined ? {} : { y: bounds.y }),
@@ -2422,15 +2453,15 @@
             {userSections.map(win => {
               if (!win.isOpen || win.isMinimized) return null;
               const isText = win.layout === 'text' || win.type === 'txt';
-              const storedThumbnailScale = typeof win.thumbnailSize === 'number' && win.thumbnailSize >= 20 && win.thumbnailSize <= 80
+              const storedThumbnailScale = typeof win.thumbnailSize === 'number' && win.thumbnailSize >= 20 && win.thumbnailSize <= 160
                 ? win.thumbnailSize
                 : 50;
               const sliderSize = thumbnailSliderValues[win.id] ?? storedThumbnailScale;
               const galleryWidth = galleryWidths[win.id] || 0;
               const thumbnailTargetHeight = galleryWidth > 0
-                ? Math.max(80, Math.min(320, galleryWidth * sliderSize / 200))
+                ? Math.max(80, Math.min(800, galleryWidth * sliderSize / 150))
                 : 180;
-              const isClassic = data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98';
+              const isClassic = data.settings.osTheme === 'w2k';
               const textFontSize = textDocFontSizes[win.id] || 12;
 
               const textMenuConfig = [
@@ -2577,7 +2608,7 @@
                         <input
                           type="range"
                           min="20"
-                          max="80"
+                          max="160"
                           step="5"
                           value={sliderSize}
                           aria-label="Relative thumbnail size"
@@ -2607,7 +2638,7 @@
                           isOpen: true,
                           title: win.title,
                           icon: '📁',
-                          message: `This folder contains ${(win.photos || []).length} photos.\nClick any photo to open in Picture and Fax Viewer with MS Paint markup tools.`,
+                          message: `This folder contains ${(win.photos || []).length} photos.\nClick any photo to open in Picture Viewer.`,
                           details: `Location: C:\\Documents and Settings\\${data.settings.username}\\My Pictures\\${win.title}`
                         });
                       }
@@ -2700,7 +2731,7 @@
             {}
             {winComp && winComp.isOpen && !winComp.isMinimized && (
               <div 
-                className={`xp-window ${(data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98') ? 'classic-win' : ''} ${winComp.isMaximized ? 'maximized' : ''}`} 
+                className={`xp-window ${data.settings.osTheme === 'w2k' ? 'classic-win' : ''} ${winComp.isMaximized ? 'maximized' : ''}`} 
                 style={{ 
                   left: winComp.isMaximized ? 0 : winComp.x, 
                   top: winComp.isMaximized ? 0 : winComp.y, 
@@ -2760,6 +2791,11 @@
                             setWallpaperForCurrentTheme(OS_THEMES[0].defaultBg);
                             if (data.settings.enableSounds) playXpSound('notify');
                           }
+                        },
+                        {
+                          icon: '📁',
+                          label: 'Restore Original Folders',
+                          action: restoreOriginalFolders
                         }
                       ]
                     },
@@ -2770,15 +2806,6 @@
                           icon: '🗑️',
                           label: 'Open Recycle Bin',
                           action: () => openWindow('sys-recyclebin')
-                        },
-                        {
-                          icon: data.settings.enableSounds ? '🔊' : '🔇',
-                          label: data.settings.enableSounds ? 'Mute System Sounds' : 'Enable System Sounds',
-                          action: () => {
-                            const nextVal = !data.settings.enableSounds;
-                            updateSettings('enableSounds', nextVal);
-                            if (nextVal) playXpSound('notify');
-                          }
                         }
                       ]
                     },
@@ -2861,6 +2888,40 @@
                             className="px-2.5 py-1 border rounded bg-slate-100 hover:bg-slate-200 text-xs font-bold whitespace-nowrap"
                           >
                             Reset Default
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t text-xs space-y-2">
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase">System Audio</label>
+                        <div className="flex items-center justify-between p-2 bg-slate-50 border rounded">
+                          <span className="font-medium text-slate-700 flex items-center gap-1.5">
+                            {data.settings.enableSounds ? '🔊 System Audio Enabled' : '🔇 System Audio Muted'}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nextVal = !data.settings.enableSounds;
+                              updateSettings('enableSounds', nextVal);
+                              if (nextVal) playXpSound('notify');
+                            }}
+                            className="px-3 py-1 border rounded bg-white hover:bg-slate-100 text-xs font-bold shadow-xs"
+                          >
+                            {data.settings.enableSounds ? 'Mute System Sounds' : 'Enable System Sounds'}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t text-xs space-y-2">
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase">Folder Options</label>
+                        <div className="flex items-center justify-between p-2 bg-slate-50 border rounded">
+                          <span className="font-medium text-slate-700">Reset portfolio photo folders to default state</span>
+                          <button
+                            type="button"
+                            onClick={restoreOriginalFolders}
+                            className="px-3 py-1 border rounded bg-white hover:bg-slate-100 text-xs font-bold text-slate-800 shadow-xs flex items-center gap-1"
+                          >
+                            📁 Restore Original Folders
                           </button>
                         </div>
                       </div>
@@ -3024,7 +3085,7 @@
             {}
             {winRecycle && winRecycle.isOpen && !winRecycle.isMinimized && (
               <div 
-                className={`xp-window ${(data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98') ? 'classic-win' : ''} ${winRecycle.isMaximized ? 'maximized' : ''}`}
+                className={`xp-window ${data.settings.osTheme === 'w2k' ? 'classic-win' : ''} ${winRecycle.isMaximized ? 'maximized' : ''}`}
                 style={{ 
                   left: winRecycle.isMaximized ? 0 : winRecycle.x, 
                   top: winRecycle.isMaximized ? 0 : winRecycle.y, 
@@ -3164,10 +3225,10 @@
               </div>
             )}
 
-            {}
+            {/* Picture Viewer Window */}
             {viewerState.isOpen && !viewerState.isMinimized && (
               <div 
-                className={`xp-window ${(data.settings.osTheme === 'w2k' || data.settings.osTheme === 'w98') ? 'classic-win' : ''} ${viewerState.isMaximized ? 'maximized' : ''}`}
+                className={`xp-window ${data.settings.osTheme === 'w2k' ? 'classic-win' : ''} ${viewerState.isMaximized ? 'maximized' : ''}`}
                 style={{ 
                   left: viewerState.isMaximized ? 0 : viewerState.x, 
                   top: viewerState.isMaximized ? 0 : viewerState.y, 
@@ -3179,7 +3240,7 @@
               >
                 <div className="xp-titlebar" onPointerDown={handleViewerMouseDown}>
                   <span className="flex items-center gap-1.5 truncate">
-                    🖼️ Picture and Fax Viewer & MS Paint - {viewerState.title}
+                    🖼️ Picture Viewer - {viewerState.title}
                   </span>
                   <div className="xp-controls">
                     <button onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, isMinimized: true })); if (data.settings.enableSounds) playXpSound('click'); }}>_</button>
@@ -3188,7 +3249,7 @@
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center bg-[var(--xp-bg)] border-b">
+                <div className="flex justify-between items-center bg-[var(--xp-bg)] border-b pr-2">
                   <XpMenuBar 
                     winId="sys-viewer" 
                     activeMenu={activeMenu} 
@@ -3198,10 +3259,16 @@
                         title: 'File',
                         items: [
                           {
+                            icon: '🎨',
+                            label: 'Send to MS Paint',
+                            shortcut: 'Ctrl+P',
+                            bold: true,
+                            action: sendCurrentPhotoToPaint
+                          },
+                          {
                             icon: '💾',
                             label: 'Save / Download Image',
                             shortcut: 'Ctrl+S',
-                            bold: true,
                             action: () => exportViewerImage(false)
                           },
                           {
@@ -3234,26 +3301,10 @@
                         items: [
                           {
                             icon: '🎨',
-                            label: viewerState.isPaintOpen ? 'Hide MS Paint Toolbar' : 'Show MS Paint Toolbar',
+                            label: 'Send to MS Paint',
+                            shortcut: 'Ctrl+P',
                             bold: true,
-                            action: () => setViewerState(vs => ({ ...vs, isPaintOpen: !vs.isPaintOpen }))
-                          },
-                          {
-                            icon: '↩️',
-                            label: 'Undo Markup',
-                            shortcut: 'Ctrl+Z',
-                            action: handlePaintUndo
-                          },
-                          {
-                            icon: '↪️',
-                            label: 'Redo Markup',
-                            shortcut: 'Ctrl+Y',
-                            action: handlePaintRedo
-                          },
-                          {
-                            icon: '🧹',
-                            label: 'Clear All Drawings',
-                            action: handlePaintClear
+                            action: sendCurrentPhotoToPaint
                           }
                         ]
                       },
@@ -3324,31 +3375,6 @@
                             icon: '↕️',
                             label: 'Flip Vertical',
                             action: () => setViewerState(vs => ({ ...vs, flipV: !vs.flipV }))
-                          },
-                          { separator: true },
-                          {
-                            icon: '🎨',
-                            label: 'Normal Colors',
-                            bold: viewerState.filter === 'none',
-                            action: () => setViewerState(vs => ({ ...vs, filter: 'none' }))
-                          },
-                          {
-                            icon: '🖤',
-                            label: 'Black & White (Grayscale)',
-                            bold: viewerState.filter === 'grayscale',
-                            action: () => setViewerState(vs => ({ ...vs, filter: 'grayscale' }))
-                          },
-                          {
-                            icon: '📜',
-                            label: 'Vintage Sepia',
-                            bold: viewerState.filter === 'sepia',
-                            action: () => setViewerState(vs => ({ ...vs, filter: 'sepia' }))
-                          },
-                          {
-                            icon: '⚡',
-                            label: 'Invert Negative',
-                            bold: viewerState.filter === 'invert',
-                            action: () => setViewerState(vs => ({ ...vs, filter: 'invert' }))
                           }
                         ]
                       },
@@ -3357,27 +3383,15 @@
                         items: [
                           {
                             icon: '🖼️',
-                            label: 'About Picture Viewer & MS Paint',
+                            label: 'About Picture Viewer',
                             bold: true,
                             action: () => {
                               setDialogModal({
                                 isOpen: true,
-                                title: 'Windows XP Picture and Fax Viewer & MS Paint',
+                                title: 'Windows XP Picture Viewer',
                                 icon: '🖼️',
-                                message: `Current photo: ${currentPhoto.caption || 'Image'}\nDimensions: ${viewerState.zoom}% zoom, ${viewerState.rotation}° rotation\nMarkup tools: Pencil, Brush, Rectangle, Circle, Arrow, Text, and Eraser.`,
-                                details: 'Microsoft Windows XP Photo & Imaging Platform\nBuild 2600.xpsp_sp3_gdr'
-                              });
-                            }
-                          },
-                          {
-                            icon: '⌨️',
-                            label: 'Keyboard Shortcuts',
-                            action: () => {
-                              setDialogModal({
-                                isOpen: true,
-                                title: 'Viewer & Paint Shortcuts',
-                                icon: '⌨️',
-                                message: '• Left / Right Arrow: Previous / Next Photo\n• Spacebar: Advance Photo\n• Ctrl + S: Save & Download Photo\n• Ctrl + W: Set as Desktop Wallpaper\n• Ctrl + Z: Undo Markup Drawing\n• Ctrl + Y: Redo Markup Drawing\n• Esc: Close active menus',
+                                message: `Current photo: ${currentPhoto.caption || 'Image'}\nDimensions: ${viewerState.zoom}% zoom, ${viewerState.rotation}° rotation`,
+                                details: 'Microsoft Windows XP Photo Viewer Subsystem\nBuild 2600.xpsp_sp3_gdr'
                               });
                             }
                           }
@@ -3385,127 +3399,17 @@
                       }
                     ]} 
                   />
-                  <div className="text-[10px] text-slate-600 font-mono pr-2">
-                    {viewerState.currentIndex + 1} / {viewerState.photos.length}
+                  <div className="flex items-center gap-2 pr-2">
+                    <span className="text-[10px] text-slate-600 font-mono">
+                      {viewerState.currentIndex + 1} / {viewerState.photos.length}
+                    </span>
                   </div>
                 </div>
 
                 <div className="xp-content bg-[#222] flex flex-1 relative overflow-hidden p-0">
-                  {/* MS Paint Toolbar on Left */}
-                  {viewerState.isPaintOpen && (
-                    <div className="xp-paint-toolbar flex flex-col justify-between" onClick={(e) => e.stopPropagation()}>
-                      <div className="space-y-2">
-                        <div className="text-[9px] font-bold text-slate-700 text-center uppercase tracking-tighter border-b pb-0.5">MS Paint</div>
-                        
-                        {/* Tools Grid */}
-                        <div className="grid grid-cols-2 gap-1">
-                          {[
-                            { id: 'pencil', icon: '✏️', title: 'Pencil (Freehand)' },
-                            { id: 'brush', icon: '🖌️', title: 'Brush (Thick)' },
-                            { id: 'line', icon: '📏', title: 'Straight Line' },
-                            { id: 'rect', icon: '🔲', title: 'Rectangle' },
-                            { id: 'circle', icon: '⭕', title: 'Circle / Oval' },
-                            { id: 'arrow', icon: '➡️', title: 'Arrow Pointer' },
-                            { id: 'text', icon: '🔤', title: 'Text Annotation' },
-                            { id: 'eraser', icon: '🧹', title: 'Eraser' },
-                          ].map(tool => (
-                            <button
-                              key={tool.id}
-                              type="button"
-                              title={tool.title}
-                              onClick={() => {
-                                setViewerState(vs => ({ ...vs, activeTool: tool.id }));
-                                if (data.settings.enableSounds) playXpSound('click');
-                              }}
-                              className={`xp-paint-btn ${viewerState.activeTool === tool.id ? 'active' : ''}`}
-                            >
-                              {tool.icon}
-                            </button>
-                          ))}
-                        </div>
-
-                        {/* Brush Width Selector */}
-                        <div className="border-t pt-1.5 space-y-1">
-                          <div className="text-[9px] text-slate-600 font-bold text-center">Width</div>
-                          <div className="flex justify-center gap-1">
-                            {[1, 3, 6, 12].map(sz => (
-                              <button
-                                key={`sz-${sz}`}
-                                type="button"
-                                onClick={() => setViewerState(vs => ({ ...vs, brushSize: sz }))}
-                                className={`w-3.5 h-4 flex items-center justify-center border rounded ${viewerState.brushSize === sz ? 'bg-blue-600 text-white font-bold border-blue-800' : 'bg-white text-slate-700'}`}
-                              >
-                                <div style={{ width: Math.min(8, sz + 1), height: Math.min(8, sz + 1), borderRadius: '50%', backgroundColor: 'currentColor' }} />
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Classic 16-Color Palette Grid */}
-                        <div className="border-t pt-1.5 space-y-1">
-                          <div className="text-[9px] text-slate-600 font-bold text-center">Color</div>
-                          <div className="grid grid-cols-4 gap-1 place-items-center">
-                            {[
-                              '#000000', '#808080', '#800000', '#808000',
-                              '#008000', '#008080', '#000080', '#800080',
-                              '#ffffff', '#c0c0c0', '#ff0000', '#ffff00',
-                              '#00ff00', '#00ffff', '#0000ff', '#ff00ff'
-                            ].map(c => (
-                              <div
-                                key={c}
-                                onClick={() => setViewerState(vs => ({ ...vs, brushColor: c }))}
-                                className={`xp-color-swatch ${viewerState.brushColor === c ? 'selected' : ''}`}
-                                style={{ backgroundColor: c }}
-                                title={c}
-                              />
-                            ))}
-                          </div>
-                          <div className="flex items-center justify-center pt-1">
-                            <input
-                              type="color"
-                              value={viewerState.brushColor}
-                              onChange={(e) => setViewerState(vs => ({ ...vs, brushColor: e.target.value }))}
-                              className="w-5 h-5 p-0 border cursor-pointer"
-                              title="Custom Color Picker"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Quick Undo / Redo / Clear */}
-                      <div className="border-t pt-1 space-y-1">
-                        <div className="flex gap-1 justify-center">
-                          <button
-                            type="button"
-                            title="Undo (Ctrl+Z)"
-                            onClick={handlePaintUndo}
-                            className="xp-paint-btn"
-                          >
-                            ↩️
-                          </button>
-                          <button
-                            type="button"
-                            title="Redo (Ctrl+Y)"
-                            onClick={handlePaintRedo}
-                            className="xp-paint-btn"
-                          >
-                            ↪️
-                          </button>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handlePaintClear}
-                          className="w-full text-[9px] font-bold bg-white border border-slate-300 rounded py-0.5 hover:bg-red-50 hover:text-red-700"
-                        >
-                          Clear
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Image Viewport & Markup Canvas Area */}
+                  {/* Image Viewport Area */}
                   <div
-                    className={`viewer-viewport flex-1 flex flex-col items-center justify-center relative p-2 overflow-hidden bg-slate-900 select-none ${viewerState.zoom > 100 && !viewerState.isPaintOpen ? 'cursor-grab' : ''} ${isPanningRef.current ? 'cursor-grabbing' : ''}`}
+                    className={`viewer-viewport flex-1 flex flex-col items-center justify-center relative p-2 overflow-hidden bg-slate-900 select-none ${viewerState.zoom > 100 ? 'cursor-grab' : ''} ${isPanningRef.current ? 'cursor-grabbing' : ''}`}
                     onWheel={handleViewerViewportWheel}
                     onPointerDown={handleViewerPanDown}
                     onPointerMove={handleViewerPanMove}
@@ -3514,7 +3418,7 @@
                   >
                     {currentPhoto.url ? (
                       <div
-                        className={`relative flex items-center justify-center ${viewerState.isPaintOpen ? '' : 'max-w-full max-h-[calc(100%-52px)]'}`}
+                        className="relative flex items-center justify-center max-w-full max-h-[calc(100%-52px)]"
                         style={{
                           transform: `translate(${viewerState.panX}px, ${viewerState.panY}px) scale(${viewerState.zoom / 100}) rotate(${viewerState.rotation}deg) ${viewerState.flipH ? 'scaleX(-1)' : ''} ${viewerState.flipV ? 'scaleY(-1)' : ''}`,
                           filter: viewerState.filter === 'grayscale' ? 'grayscale(100%)' : viewerState.filter === 'sepia' ? 'sepia(85%)' : viewerState.filter === 'invert' ? 'invert(100%)' : 'none',
@@ -3524,38 +3428,7 @@
                         <img
                           src={getAssetUrl(currentPhoto.url)}
                           alt=""
-                          className={`${viewerState.isPaintOpen ? '' : 'max-w-full max-h-[calc(100vh-230px)]'} object-contain shadow-2xl border border-slate-700 select-none pointer-events-none`}
-                          onLoad={(e) => {
-                            if (!paintCanvasRef.current) return;
-                            const canvas = paintCanvasRef.current;
-                            if (canvas.width !== e.currentTarget.naturalWidth || canvas.height !== e.currentTarget.naturalHeight) {
-                              canvas.width = e.currentTarget.naturalWidth;
-                              canvas.height = e.currentTarget.naturalHeight;
-                            }
-                          }}
-                        />
-                        <canvas
-                          ref={paintCanvasRef}
-                          width={1200}
-                          height={800}
-                          className={`absolute inset-0 w-full h-full ${viewerState.isPaintOpen ? 'cursor-crosshair' : 'pointer-events-none'} z-10 touch-none`}
-                          onPointerDown={viewerState.isPaintOpen ? startPaint : undefined}
-                          onPointerMove={viewerState.isPaintOpen ? doPaint : undefined}
-                          onPointerUp={viewerState.isPaintOpen ? endPaint : undefined}
-                          onMouseLeave={viewerState.isPaintOpen ? endPaint : undefined}
-                        />
-                      </div>
-                    ) : viewerState.isPaintOpen ? (
-                      <div className="relative w-[min(90%,900px)] h-[min(72%,600px)] bg-white shadow-2xl">
-                        <canvas
-                          ref={paintCanvasRef}
-                          width={1200}
-                          height={800}
-                          className="absolute inset-0 w-full h-full cursor-crosshair touch-none"
-                          onPointerDown={startPaint}
-                          onPointerMove={doPaint}
-                          onPointerUp={endPaint}
-                          onMouseLeave={endPaint}
+                          className="max-w-full max-h-[calc(100vh-230px)] object-contain shadow-2xl border border-slate-700 select-none pointer-events-none"
                         />
                       </div>
                     ) : null}
@@ -3578,15 +3451,6 @@
                       </button>
 
                       <div className="h-4 w-px bg-slate-400 mx-0.5" />
-
-                      {/* Slideshow Button */}
-                      <button disabled={viewerState.photos.length < 2}
-                        onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, isSlideshow: !vs.isSlideshow })); }}
-                        className={`px-2 py-0.5 rounded font-bold border disabled:opacity-40 disabled:cursor-not-allowed ${viewerState.isSlideshow ? 'bg-amber-500 text-white' : 'bg-white hover:bg-slate-100'}`}
-                        title="Toggle Auto Slideshow"
-                      >
-                        {viewerState.isSlideshow ? '⏸️ Pause' : '▶️ Slide'}
-                      </button>
 
                       {/* Zoom Controls */}
                       <button
@@ -3620,34 +3484,6 @@
                       >
                         🔄
                       </button>
-
-                      <div className="h-4 w-px bg-slate-400 mx-0.5" />
-
-                      {/* MS Paint Mode Toggle */}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setViewerState(vs => ({ ...vs, isPaintOpen: !vs.isPaintOpen })); }}
-                        className={`px-2 py-0.5 rounded font-bold border ${viewerState.isPaintOpen ? 'bg-purple-600 text-white' : 'bg-white text-purple-700 hover:bg-purple-50'}`}
-                        title="Toggle MS Paint Markup Tools"
-                      >
-                        🎨 MS Paint {viewerState.isPaintOpen ? 'ON' : 'OFF'}
-                      </button>
-
-                      {/* Wallpaper & Export */}
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); exportViewerImage(true); }}
-                        className="px-2 py-0.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 shadow-xs"
-                        title="Set Image with Markup as Desktop Wallpaper"
-                      >
-                        🖼️ Set Background
-                      </button>
-
-                      <button
-                        onClick={(e) => { e.stopPropagation(); exportViewerImage(false); }}
-                        className="px-2 py-0.5 bg-emerald-600 text-white rounded font-bold hover:bg-emerald-700 shadow-xs"
-                        title="Download Edited Photo"
-                      >
-                        💾 Save
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -3655,6 +3491,247 @@
                 {!viewerState.isMaximized && (
                   ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'].map(direction => (
                     <div key={direction} className={`xp-resize-handle ${direction}`} onMouseDown={(e) => handleViewerResizeDown(e, direction)} title="Resize Window" />
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* MS Paint Standalone App Window */}
+            {paintState.isOpen && !paintState.isMinimized && (
+              <div 
+                className={`xp-window ${data.settings.osTheme === 'w2k' ? 'classic-win' : ''} ${paintState.isMaximized ? 'maximized' : ''}`}
+                style={{ 
+                  left: paintState.isMaximized ? 0 : paintState.x, 
+                  top: paintState.isMaximized ? 0 : paintState.y, 
+                  width: paintState.isMaximized ? '100%' : paintState.width, 
+                  height: paintState.isMaximized ? 'calc(100vh - 40px)' : paintState.height, 
+                  zIndex: paintState.zIndex || 210 
+                }}
+                onClick={bringPaintToFront}
+              >
+                <div className="xp-titlebar" onPointerDown={handlePaintMouseDown}>
+                  <span className="flex items-center gap-1.5 truncate">
+                    🎨 {paintState.title || 'Paint'}
+                  </span>
+                  <div className="xp-controls">
+                    <button onClick={(e) => { e.stopPropagation(); setPaintState(ps => ({ ...ps, isMinimized: true })); if (data.settings.enableSounds) playXpSound('click'); }}>_</button>
+                    <button onClick={(e) => { e.stopPropagation(); setPaintState(ps => ({ ...ps, isMaximized: !ps.isMaximized })); if (data.settings.enableSounds) playXpSound('click'); }}>□</button>
+                    <button className="close" onClick={(e) => { e.stopPropagation(); setPaintState(ps => ({ ...ps, isOpen: false })); if (data.settings.enableSounds) playXpSound('click'); }}>X</button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center bg-[var(--xp-bg)] border-b">
+                  <XpMenuBar 
+                    winId="sys-paint" 
+                    activeMenu={activeMenu} 
+                    setActiveMenu={setActiveMenu} 
+                    menuConfig={[
+                      {
+                        title: 'File',
+                        items: [
+                          {
+                            icon: '💾',
+                            label: 'Save / Download Drawing',
+                            shortcut: 'Ctrl+S',
+                            bold: true,
+                            action: () => exportPaintImage(false)
+                          },
+                          {
+                            icon: '🖼️',
+                            label: 'Set as Desktop Background',
+                            shortcut: 'Ctrl+W',
+                            action: () => exportPaintImage(true)
+                          },
+                          {
+                            icon: '🧹',
+                            label: 'Clear Canvas',
+                            action: handlePaintClear
+                          },
+                          { separator: true },
+                          {
+                            icon: '❌',
+                            label: 'Exit Paint',
+                            shortcut: 'Alt+F4',
+                            action: () => setPaintState(ps => ({ ...ps, isOpen: false }))
+                          }
+                        ]
+                      },
+                      {
+                        title: 'Edit',
+                        items: [
+                          {
+                            icon: '↩️',
+                            label: 'Undo',
+                            shortcut: 'Ctrl+Z',
+                            action: handlePaintUndo
+                          },
+                          {
+                            icon: '↪️',
+                            label: 'Redo',
+                            shortcut: 'Ctrl+Y',
+                            action: handlePaintRedo
+                          },
+                          {
+                            icon: '🧹',
+                            label: 'Clear All',
+                            action: handlePaintClear
+                          }
+                        ]
+                      },
+                      {
+                        title: 'Help',
+                        items: [
+                          {
+                            icon: '🎨',
+                            label: 'About MS Paint',
+                            bold: true,
+                            action: () => {
+                              setDialogModal({
+                                isOpen: true,
+                                title: 'Microsoft Paint',
+                                icon: '🎨',
+                                message: 'Windows Paint graphics & image markup editor.',
+                                details: 'Microsoft Windows XP Paint Subsystem\nBuild 2600.xpsp_sp3_gdr'
+                              });
+                            }
+                          }
+                        ]
+                      }
+                    ]} 
+                  />
+                </div>
+
+                <div className="xp-content bg-[#808080] flex flex-1 relative overflow-hidden p-0">
+                  {/* MS Paint Toolbar on Left */}
+                  <div className="xp-paint-toolbar flex flex-col justify-between" onClick={(e) => e.stopPropagation()}>
+                    <div className="space-y-2">
+                      <div className="text-[9px] font-bold text-slate-700 text-center uppercase tracking-tighter border-b pb-0.5">Tools</div>
+                      
+                      {/* Tools Grid */}
+                      <div className="grid grid-cols-2 gap-1">
+                        {[
+                          { id: 'pencil', icon: '✏️', title: 'Pencil (Freehand)' },
+                          { id: 'brush', icon: '🖌️', title: 'Brush (Thick)' },
+                          { id: 'line', icon: '📏', title: 'Straight Line' },
+                          { id: 'rect', icon: '🔲', title: 'Rectangle' },
+                          { id: 'circle', icon: '⭕', title: 'Circle / Oval' },
+                          { id: 'arrow', icon: '➡️', title: 'Arrow Pointer' },
+                          { id: 'text', icon: '🔤', title: 'Text Annotation' },
+                          { id: 'eraser', icon: '🧹', title: 'Eraser' },
+                        ].map(tool => (
+                          <button
+                            key={tool.id}
+                            type="button"
+                            title={tool.title}
+                            onClick={() => {
+                              setPaintState(ps => ({ ...ps, activeTool: tool.id }));
+                              if (data.settings.enableSounds) playXpSound('click');
+                            }}
+                            className={`xp-paint-btn ${paintState.activeTool === tool.id ? 'active' : ''}`}
+                          >
+                            {tool.icon}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Brush Width Selector */}
+                      <div className="border-t pt-1.5 space-y-1">
+                        <div className="text-[9px] text-slate-600 font-bold text-center">Width</div>
+                        <div className="flex justify-center gap-1">
+                          {[1, 3, 6, 12].map(sz => (
+                            <button
+                              key={`sz-${sz}`}
+                              type="button"
+                              onClick={() => setPaintState(ps => ({ ...ps, brushSize: sz }))}
+                              className={`w-3.5 h-4 flex items-center justify-center border rounded ${paintState.brushSize === sz ? 'bg-blue-600 text-white font-bold border-blue-800' : 'bg-white text-slate-700'}`}
+                            >
+                              <div style={{ width: Math.min(8, sz + 1), height: Math.min(8, sz + 1), borderRadius: '50%', backgroundColor: 'currentColor' }} />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Classic 16-Color Palette Grid */}
+                      <div className="border-t pt-1.5 space-y-1">
+                        <div className="text-[9px] text-slate-600 font-bold text-center">Color</div>
+                        <div className="grid grid-cols-4 gap-1 place-items-center">
+                          {[
+                            '#000000', '#808080', '#800000', '#808000',
+                            '#008000', '#008080', '#000080', '#800080',
+                            '#ffffff', '#c0c0c0', '#ff0000', '#ffff00',
+                            '#00ff00', '#00ffff', '#0000ff', '#ff00ff'
+                          ].map(c => (
+                            <div
+                              key={c}
+                              onClick={() => setPaintState(ps => ({ ...ps, brushColor: c }))}
+                              className={`xp-color-swatch ${paintState.brushColor === c ? 'selected' : ''}`}
+                              style={{ backgroundColor: c }}
+                              title={c}
+                            />
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-center pt-1">
+                          <input
+                            type="color"
+                            value={paintState.brushColor}
+                            onChange={(e) => setPaintState(ps => ({ ...ps, brushColor: e.target.value }))}
+                            className="w-5 h-5 p-0 border cursor-pointer"
+                            title="Custom Color Picker"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quick Undo / Redo / Clear */}
+                    <div className="border-t pt-1 space-y-1">
+                      <div className="flex gap-1 justify-center">
+                        <button
+                          type="button"
+                          title="Undo (Ctrl+Z)"
+                          onClick={handlePaintUndo}
+                          className="xp-paint-btn"
+                        >
+                          ↩️
+                        </button>
+                        <button
+                          type="button"
+                          title="Redo (Ctrl+Y)"
+                          onClick={handlePaintRedo}
+                          className="xp-paint-btn"
+                        >
+                          ↪️
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handlePaintClear}
+                        className="w-full text-[9px] font-bold bg-white border border-slate-300 rounded py-0.5 hover:bg-red-50 hover:text-red-700"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Paint Canvas Area */}
+                  <div className="flex-1 flex items-center justify-center p-4 overflow-auto bg-slate-600 select-none">
+                    <div className="relative bg-white shadow-2xl">
+                      <canvas
+                        ref={paintCanvasRef}
+                        width={800}
+                        height={600}
+                        className="cursor-crosshair touch-none block"
+                        onPointerDown={startPaint}
+                        onPointerMove={doPaint}
+                        onPointerUp={endPaint}
+                        onMouseLeave={endPaint}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {!paintState.isMaximized && (
+                  ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'].map(direction => (
+                    <div key={direction} className={`xp-resize-handle ${direction}`} onMouseDown={(e) => handlePaintResizeDown(e, direction)} title="Resize Window" />
                   ))
                 )}
               </div>
@@ -3682,7 +3759,14 @@
                 ) : contextMenu.photo && (
                   <>
                     <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer font-bold" onClick={() => { setWallpaperForCurrentTheme(contextMenu.photo.url); setContextMenu({ visible: false }); }}>🖼️ Set as Desktop Background</div>
-                    <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer" onClick={() => { openPhotoViewer([contextMenu.photo], 0, 'Photo Viewer'); setContextMenu({ visible: false }); }}>🔍 View Full Photo</div>
+                    <div className="px-3 py-1.5 hover:bg-blue-600 hover:text-white cursor-pointer" onClick={() => {
+                      const sourceWin = data.windows.find(w => w.id === contextMenu.sourceWinId);
+                      const photos = sourceWin && sourceWin.photos && sourceWin.photos.length > 0 ? sourceWin.photos : [contextMenu.photo];
+                      const photoIndex = Math.max(0, photos.findIndex(p => p.id === contextMenu.photo.id));
+                      const title = sourceWin ? sourceWin.title : 'Photo Viewer';
+                      openPhotoViewer(photos, photoIndex, title);
+                      setContextMenu({ visible: false });
+                    }}>🔍 Open in Photo Viewer</div>
                   </>
                 )}
               </div>
@@ -3746,6 +3830,20 @@
                   }}
                 >
                   <span className="truncate">🖼️ {viewerState.title || 'Photo Viewer'}</span>
+                </div>
+              )}
+              {paintState.isOpen && (
+                <div 
+                  className={`taskbar-item ${!paintState.isMinimized && paintState.zIndex === highestZIndex ? 'active' : ''}`}
+                  onClick={() => {
+                    if (!paintState.isMinimized && paintState.zIndex === highestZIndex) {
+                      setPaintState(ps => ({ ...ps, isMinimized: true }));
+                    } else {
+                      bringPaintToFront();
+                    }
+                  }}
+                >
+                  <span className="truncate">🎨 {paintState.title || 'Paint'}</span>
                 </div>
               )}
             </div>
